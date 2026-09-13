@@ -23,8 +23,8 @@ export default async function handler(req, res) {
   const bytes = Buffer.from(audio, "base64");
   const ext = /mp4|m4a|aac/.test(mime) ? "m4a" : /ogg/.test(mime) ? "ogg" : /wav/.test(mime) ? "wav" : "webm";
   const form = new FormData();
-  form.append("name", `Rosin · ${String(name).slice(0, 40)}`);
-  form.append("description", "Teacher's voice for practice captions. Recorded in Rosin with consent.");
+  form.append("name", `Sostenuto · ${String(name).slice(0, 40)}`);
+  form.append("description", "Teacher's voice for practice captions. Recorded in Sostenuto with consent.");
   form.append("remove_background_noise", "true");
   form.append("files", new Blob([bytes], { type: mime }), `sample.${ext}`);
   const r = await fetch("https://api.elevenlabs.io/v1/voices/add", { method: "POST", headers: { "xi-api-key": xi }, body: form });

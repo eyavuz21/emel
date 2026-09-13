@@ -1,4 +1,4 @@
--- Rosin: a studio is a teacher and their pupils. Each pupil's plan, sessions and flags live in one
+-- Sostenuto (tables keep the historic rosin_ prefix): a studio is a teacher and their pupils. Each pupil's plan, sessions and flags live in one
 -- JSON document that the pupil and their teacher can both read and write. Run once in the SQL editor.
 -- Safe to run in the same Supabase project as Noticed: every object here is prefixed rosin_.
 

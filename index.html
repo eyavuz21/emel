@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Rosin</title>
-<meta name="description" content="Couch to 5K for practising an instrument. Your teacher sets the week; Rosin gets you to Thursday.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 64 64%27%3E%3Crect width=%2764%27 height=%2764%27 rx=%2716%27 fill=%27%23C8792A%27/%3E%3Ctext x=%2732%27 y=%2746%27 font-family=%27Georgia,serif%27 font-size=%2740%27 text-anchor=%27middle%27 fill=%27%23FFF7EA%27%3ER%3C/text%3E%3C/svg%3E">
+<title>Sostenuto</title>
+<meta name="description" content="Couch to 5K for practising an instrument. Your teacher sets the week; Sostenuto gets you to Thursday.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 64 64%27%3E%3Crect width=%2764%27 height=%2764%27 rx=%2716%27 fill=%27%23C8792A%27/%3E%3Ctext x=%2732%27 y=%2746%27 font-family=%27Georgia,serif%27 font-size=%2740%27 text-anchor=%27middle%27 fill=%27%23FFF7EA%27%3ES%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@400;500;600;700&display=swap">
 <style>
@@ -133,14 +133,14 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
 <div class="wrap">
   <div id="demoBar" hidden></div>
   <header class="top">
-    <div class="brand"><h1>Rosin<i>.</i></h1><small>Couch to 5K, for practising an instrument.</small></div>
+    <div class="brand"><h1>Sostenuto<i>.</i></h1><small>Couch to 5K, for practising an instrument.</small></div>
     <div class="auth" id="auth"></div>
   </header>
 
   <!-- LANDING -->
   <section class="view on" id="v-landing">
     <div class="hero">
-      <h2>Your teacher sets the week. Rosin gets you to Thursday.</h2>
+      <h2>Your teacher sets the week. Sostenuto gets you to Thursday.</h2>
       <p>Three short guided sessions between lessons, in your teacher's words. A checklist for the next lesson, a journey to get there, a place to flag the thing that squeaked, and a streak that forgives a missed day. Nothing listens to you play and scores you. It does the harder thing: it gets you to turn up.</p>
     </div>
     <div class="grid2">
@@ -222,7 +222,7 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
   function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('show'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),2000); }
 
   // ------------------------------------------------------------ store: local or cloud
-  const LKEY='rosin.local.v1';
+  const LKEY='sostenuto.local.v1'; const LKEY_OLD='rosin.local.v1';
   let mode='none'; // 'local' | 'cloud' | 'demo'
   let sb=null, me=null, cfg=null; // me: {role, name, studio, code, studio_id, voice_ready, voice_id}
   async function authHeaders(){ if(!sb) return {}; const {data:{session}}=await sb.auth.getSession(); return session?{authorization:'Bearer '+session.access_token}:{}; }
@@ -231,13 +231,13 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
   let pushTimer=null;
 
   function blankDoc(name){ return {profile:{name:name||'', instrument:'violin', level:'beginner', goalLabel:'', goalDate:'', sessionsPerWeek:3, minutes:18}, notes:[], weeks:[], flags:[], tokens:{earned:0, redeemed:0}, teacherName:''}; }
-  function loadLocal(){ try{ const s=localStorage.getItem(LKEY); if(s) return JSON.parse(s); }catch(e){} return null; }
+  function loadLocal(){ try{ let s=localStorage.getItem(LKEY); if(!s){ s=localStorage.getItem(LKEY_OLD); if(s){ localStorage.setItem(LKEY,s); localStorage.removeItem(LKEY_OLD); } } if(s) return JSON.parse(s); }catch(e){} return null; }
   function saveLocal(o){ try{ localStorage.setItem(LKEY, JSON.stringify(o)); }catch(e){} }
 
   async function saveCurrent(){
     if(!current) return;
     if(mode==='local'){ const o=loadLocal()||{}; o.doc=current.data; saveLocal(o); return; }
-    if(mode==='demo'){ try{ localStorage.setItem('rosin.demo.v1', JSON.stringify(students)); }catch(e){} return; }
+    if(mode==='demo'){ try{ localStorage.setItem('sostenuto.demo.v1', JSON.stringify(students)); }catch(e){} return; }
     clearTimeout(pushTimer); pushTimer=setTimeout(async()=>{ const {error}=await sb.rpc('rosin_save_student',{target:current.user_id, doc:current.data}); if(error){ console.warn(error); toast('Could not save. Check your connection.'); } }, 500);
   }
   async function refresh(){
@@ -379,8 +379,8 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
       <div class="row" style="justify-content:center"><button class="btn" id="shareBtn">Share the card</button><button class="btn quiet" id="dlBtn">Save the image</button></div>
       <p class="note" style="text-align:center">${w?'':'There is no week to show yet, so the card is a preview.'}</p>`;
     drawCard($('#cardc'));
-    $('#shareBtn').onclick=async()=>{ const c=$('#cardc'); c.toBlob(async blob=>{ const file=new File([blob],'rosin-week.png',{type:'image/png'}); if(navigator.canShare&&navigator.canShare({files:[file]})){ try{ await navigator.share({files:[file], title:'My practice week', text:'My week on Rosin'}); }catch(e){} } else { const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='rosin-week.png'; a.click(); toast('Saved. Share it from your photos.'); } },'image/png'); };
-    $('#dlBtn').onclick=()=>{ const c=$('#cardc'); c.toBlob(blob=>{ const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='rosin-week.png'; a.click(); },'image/png'); };
+    $('#shareBtn').onclick=async()=>{ const c=$('#cardc'); c.toBlob(async blob=>{ const file=new File([blob],'sostenuto-week.png',{type:'image/png'}); if(navigator.canShare&&navigator.canShare({files:[file]})){ try{ await navigator.share({files:[file], title:'My practice week', text:'My week on Sostenuto'}); }catch(e){} } else { const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='sostenuto-week.png'; a.click(); toast('Saved. Share it from your photos.'); } },'image/png'); };
+    $('#dlBtn').onclick=()=>{ const c=$('#cardc'); c.toBlob(blob=>{ const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='sostenuto-week.png'; a.click(); },'image/png'); };
     if(showIt!==false) show('share');
   }
   function drawCard(c){
@@ -389,7 +389,7 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
     const wrap=(t,x,y,mw,lh,font,col)=>{ ctx.font=font; ctx.fillStyle=col; const words=String(t).split(' '); let line='', yy=y; for(const wd of words){ const test=line?line+' '+wd:wd; if(ctx.measureText(test).width>mw&&line){ ctx.fillText(line,x,yy); line=wd; yy+=lh; } else line=test; } if(line) ctx.fillText(line,x,yy); return yy+lh; };
     ctx.fillStyle='#F7F3EA'; ctx.fillRect(0,0,W,H);
     ctx.strokeStyle='#E6DECB'; ctx.lineWidth=2; for(let y=60;y<H;y+=42){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
-    ctx.fillStyle='#5A2A1E'; ctx.font='italic 400 34px "Instrument Serif", Georgia, serif'; ctx.fillText('Rosin.',60,90);
+    ctx.fillStyle='#5A2A1E'; ctx.font='italic 400 34px "Instrument Serif", Georgia, serif'; ctx.fillText('Sostenuto.',60,90);
     ctx.fillStyle='#6F6659'; ctx.font='600 20px "Instrument Sans", system-ui, sans-serif'; ctx.fillText((p.name||'My')+"'s week"+(w?' · from '+fmt(w.lessonDate||w.createdAt):''),60,130);
     ctx.fillStyle='#5A2A1E'; ctx.font='400 74px "Instrument Serif", Georgia, serif'; ctx.fillText(w&&n===tot?'Week complete.':(n+' of '+tot+' done.'),60,230);
     const stats=[[String(n)+'/'+tot,'sessions'],[String(mins),'minutes'],[String(streak()),'streak']];
@@ -449,11 +449,11 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
     const v=$('#v-voice'); const has=!!me?.voice_ready;
     v.innerHTML=`<button class="btn sm quiet" id="voiceBack">← Pupils</button>
       <div class="eyebrow" style="margin-top:10px">Your voice</div><h2 class="big">${has?'Recorded.':'Pupils hear the week in your voice.'}</h2>
-      <p>${has?`Your voice is set${me.voice_name?' ('+h(me.voice_name)+')':''}. New weeks you publish are spoken in it. You can re-record or remove it at any time; removing it deletes the clone.`:'Read the passage below aloud, about thirty seconds, in the voice you use in a lesson. Rosin makes a clone of it and every caption you publish is spoken by it. Only text you have read and published is ever spoken; nothing is generated that you have not approved.'}</p>
+      <p>${has?`Your voice is set${me.voice_name?' ('+h(me.voice_name)+')':''}. New weeks you publish are spoken in it. You can re-record or remove it at any time; removing it deletes the clone.`:'Read the passage below aloud, about thirty seconds, in the voice you use in a lesson. Sostenuto makes a clone of it and every caption you publish is spoken by it. Only text you have read and published is ever spoken; nothing is generated that you have not approved.'}</p>
       ${cfg?.voice?'':'<div class="box c"><b>Voice is not configured on this deployment yet.</b> The captions will use the browser\'s built-in voice until it is.</div>'}
       <div class="script" id="voiceScript">${h(VOICE_SCRIPT)}</div>
       <div class="card" style="margin-top:12px">
-        <label class="switch" style="font-size:14.5px;color:var(--ink)"><input type="checkbox" id="consent"> I'm recording my own voice and I agree to Rosin cloning it to speak captions I publish. I can delete it whenever I like.</label>
+        <label class="switch" style="font-size:14.5px;color:var(--ink)"><input type="checkbox" id="consent"> I'm recording my own voice and I agree to Sostenuto cloning it to speak captions I publish. I can delete it whenever I like.</label>
         <div class="row" style="margin-top:12px"><button class="btn" id="recStart" ${cfg?.voice?'':'disabled'}>Record</button><button class="btn quiet" id="recStop" disabled>Stop</button><span class="rec" id="recInd" hidden><span class="blink"></span><span id="recTime">0:00</span></span></div>
         <audio id="recPlay" controls hidden style="width:100%;margin-top:10px"></audio>
         <div class="row" style="margin-top:10px"><button class="btn" id="voiceUse" disabled>Use this voice</button>${has?'<button class="btn danger" id="voiceDel">Remove my voice</button>':''}</div>
@@ -574,10 +574,10 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
   let demoRole='pupil';
   function enterDemo(){
     mode='demo'; me={role:'teacher', name:'Melisande', studio:"Melisande's pupils", code:'DEMO01', studio_id:'demo', voice_ready:false};
-    let saved=null; try{ saved=JSON.parse(localStorage.getItem('rosin.demo.v1')||'null'); }catch(e){} students=saved||demoSeed(); current=students[0];
+    let saved=null; try{ saved=JSON.parse(localStorage.getItem('sostenuto.demo.v1')||'null'); }catch(e){} students=saved||demoSeed(); current=students[0];
     renderAuth(); renderDemoBar(); setDemoRole('pupil');
   }
-  function renderDemoBar(){ const b=$('#demoBar'); b.className='demo-bar'; b.hidden=false; b.innerHTML=`<span><b>Demo.</b> Nothing here is saved to an account. Switch sides:</span><span class="seg"><button data-r="pupil" class="${demoRole==='pupil'?'on':''}">Pupil</button><button data-r="teacher" class="${demoRole==='teacher'?'on':''}">Teacher</button><button data-r="share" class="${demoRole==='share'?'on':''}">Parent's view</button></span><button class="x" id="demoReset">Reset demo</button>`; $$('#demoBar [data-r]').forEach(x=>x.onclick=()=>setDemoRole(x.dataset.r)); $('#demoReset').onclick=()=>{ try{ localStorage.removeItem('rosin.demo.v1'); }catch(e){} students=demoSeed(); current=students[0]; setDemoRole(demoRole); }; }
+  function renderDemoBar(){ const b=$('#demoBar'); b.className='demo-bar'; b.hidden=false; b.innerHTML=`<span><b>Demo.</b> Nothing here is saved to an account. Switch sides:</span><span class="seg"><button data-r="pupil" class="${demoRole==='pupil'?'on':''}">Pupil</button><button data-r="teacher" class="${demoRole==='teacher'?'on':''}">Teacher</button><button data-r="share" class="${demoRole==='share'?'on':''}">Parent's view</button></span><button class="x" id="demoReset">Reset demo</button>`; $$('#demoBar [data-r]').forEach(x=>x.onclick=()=>setDemoRole(x.dataset.r)); $('#demoReset').onclick=()=>{ try{ localStorage.removeItem('sostenuto.demo.v1'); }catch(e){} students=demoSeed(); current=students[0]; setDemoRole(demoRole); }; }
   function setDemoRole(r){ demoRole=r; renderDemoBar(); if(r==='teacher'){ setTabs('teacher'); renderTeacher(); } else if(r==='share'){ current=students[0]; setTabs('student'); renderShare(); } else { current=students[0]; setTabs('student'); renderToday(); } }
 
   // ------------------------------------------------------------ boot
