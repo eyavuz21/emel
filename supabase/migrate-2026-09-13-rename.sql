@@ -15,9 +15,8 @@ begin
     execute format('drop policy if exists %I on %I.%I', r.policyname, r.schemaname, r.tablename);
   end loop;
 
-  -- 3. the old audio bucket (empty) and anything in it
-  delete from storage.objects where bucket_id = 'rosin-audio';
-  delete from storage.buckets where id = 'rosin-audio';
+  -- 3. the old audio bucket: Supabase does not allow SQL to touch storage rows, so the empty
+  --    'rosin-audio' bucket is left in place. Delete it by hand in Storage if you want it gone.
 
   -- 4. every old function, whatever its signature
   for r in select p.oid::regprocedure as sig from pg_proc p join pg_namespace n on n.oid = p.pronamespace
