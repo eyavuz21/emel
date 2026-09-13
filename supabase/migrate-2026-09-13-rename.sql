@@ -1,36 +1,32 @@
--- Sostenuto: rename everything from the rosin_ prefix. Paste the whole file once. Data in the tables is kept.
+-- Sostenuto: move everything off the rosin_ prefix. Safe to run more than once, from any half-finished state.
+-- Data in the three tables is kept.
 
--- 1. Tables: rename in place (data preserved). Skips cleanly if already renamed.
-alter table if exists public.rosin_studios rename to sostenuto_studios;
-alter table if exists public.rosin_members rename to sostenuto_members;
-alter table if exists public.rosin_students rename to sostenuto_students;
+do $$
+declare r record;
+begin
+  -- 1. tables: rename if the old ones still exist
+  if to_regclass('public.rosin_studios') is not null then alter table public.rosin_studios rename to sostenuto_studios; end if;
+  if to_regclass('public.rosin_members') is not null then alter table public.rosin_members rename to sostenuto_members; end if;
+  if to_regclass('public.rosin_students') is not null then alter table public.rosin_students rename to sostenuto_students; end if;
 
--- 2. Old policies on the (now renamed) tables.
-drop policy if exists "rosin members: read own or my studio as teacher" on public.sostenuto_members;
-drop policy if exists "rosin studios: read mine" on public.sostenuto_studios;
-drop policy if exists "rosin students: read own or my studio as teacher" on public.sostenuto_students;
-drop policy if exists "rosin students: write own or my studio as teacher" on public.sostenuto_students;
+  -- 2. every policy on those tables and on storage.objects whose name starts with "rosin"
+  for r in select schemaname, tablename, policyname from pg_policies
+           where policyname like 'rosin%' loop
+    execute format('drop policy if exists %I on %I.%I', r.policyname, r.schemaname, r.tablename);
+  end loop;
 
--- 3. Old audio bucket and its policies first: they depend on the old functions.
-drop policy if exists "rosin audio: public read" on storage.objects;
-drop policy if exists "rosin audio: members write" on storage.objects;
-drop policy if exists "rosin audio: members update" on storage.objects;
-drop policy if exists "rosin audio: members delete" on storage.objects;
-delete from storage.objects where bucket_id = 'rosin-audio';
-delete from storage.buckets where id = 'rosin-audio';
+  -- 3. the old audio bucket (empty) and anything in it
+  delete from storage.objects where bucket_id = 'rosin-audio';
+  delete from storage.buckets where id = 'rosin-audio';
 
--- 4. Old functions (their bodies name the old tables, so they are replaced, not renamed). Nothing depends on them now.
-drop function if exists public.rosin_save_student(uuid, jsonb);
-drop function if exists public.rosin_students_list();
-drop function if exists public.rosin_me();
-drop function if exists public.rosin_join_studio(text, text);
-drop function if exists public.rosin_create_studio(text, text);
-drop function if exists public.rosin_clear_voice();
-drop function if exists public.rosin_set_voice(text, text);
-drop function if exists public.rosin_my_role();
-drop function if exists public.rosin_my_studio();
+  -- 4. every old function, whatever its signature
+  for r in select p.oid::regprocedure as sig from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+           where n.nspname = 'public' and p.proname like 'rosin\_%' loop
+    execute format('drop function if exists %s cascade', r.sig);
+  end loop;
+end $$;
 
--- 5. Everything again under the new names.
+-- 5. Everything under the new names.
 -- Sostenuto (tables keep the historic sostenuto_ prefix): a studio is a teacher and their pupils. Each pupil's plan, sessions and flags live in one
 -- JSON document that the pupil and their teacher can both read and write. Run once in the SQL editor.
 -- Safe to run in the same Supabase project as Noticed: every object here is prefixed sostenuto_.
