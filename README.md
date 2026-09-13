@@ -33,10 +33,10 @@ Two kinds of account: teacher and pupil. There is no parent login. A young pupil
 - `index.html`: the whole app, no build step, two Google Fonts
 - `api/plan.js`: a Vercel function. Takes the teacher's note and the pupil's profile, calls Claude (`claude-opus-5`, structured JSON output, effort `medium`, server-side refusal fallbacks) and returns the week: sessions with steps, minutes and captions, a checklist, one line of encouragement
 - `api/voice.js`: creates the teacher's cloned voice from the recorded sample (ElevenLabs), or deletes it. Teacher only, verified server-side against Supabase
-- `api/speak.js`: turns one caption into audio in the studio's voice and stores it in the `rosin-audio` bucket under the studio's folder, using the teacher's own session so storage policies apply
+- `api/speak.js`: turns one caption into audio in the studio's voice and stores it in the `sostenuto-audio` bucket under the studio's folder, using the teacher's own session so storage policies apply
 - `api/transcribe.js`: spoken notes to text (ElevenLabs Scribe) for browsers without built-in dictation
 - `api/config.js`: public Supabase config for the page, plus which features are configured
-- `supabase/schema.sql`: studios, members, one JSON document per pupil that the pupil and their teacher can both read and write, row-level security, five RPCs. Every object is prefixed `rosin_` (the app's first name) so it can share a project with other apps
+- `supabase/schema.sql`: studios, members, one JSON document per pupil that the pupil and their teacher can both read and write, row-level security, five RPCs. Every object is prefixed `sostenuto_` so it can share a project with other apps
 
 ## Deploying
 
@@ -48,7 +48,7 @@ Vercel serves `index.html` as static and `api/*` as Node functions. Environment 
 | `SUPABASE_URL`, `SUPABASE_ANON_KEY` | for accounts | Project Settings → API. The anon key is public by design |
 | `ELEVENLABS_API_KEY` | for the voice | Voice cloning, spoken captions, and transcription fallback |
 
-Supabase: run `supabase/schema.sql` in the SQL editor once; under Authentication → URL Configuration add the live URL to Redirect URLs. The built-in email sender is rate-limited, so add custom SMTP (Resend) before a real cohort.
+Supabase: run `supabase/schema.sql` in the SQL editor once (or `supabase/migrate-2026-09-13-rename.sql` if you had the earlier `rosin_` objects); under Authentication → URL Configuration add the live URL to Redirect URLs. The built-in email sender is rate-limited, so add custom SMTP (Resend) before a real cohort.
 
 ## Running locally
 

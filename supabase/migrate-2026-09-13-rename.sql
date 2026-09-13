@@ -1,3 +1,36 @@
+-- Sostenuto: rename everything from the rosin_ prefix. Paste the whole file once. Data in the tables is kept.
+
+-- 1. Tables: rename in place (data preserved). Skips cleanly if already renamed.
+alter table if exists public.rosin_studios rename to sostenuto_studios;
+alter table if exists public.rosin_members rename to sostenuto_members;
+alter table if exists public.rosin_students rename to sostenuto_students;
+
+-- 2. Old policies on the (now renamed) tables.
+drop policy if exists "rosin members: read own or my studio as teacher" on public.sostenuto_members;
+drop policy if exists "rosin studios: read mine" on public.sostenuto_studios;
+drop policy if exists "rosin students: read own or my studio as teacher" on public.sostenuto_students;
+drop policy if exists "rosin students: write own or my studio as teacher" on public.sostenuto_students;
+
+-- 3. Old functions (their bodies name the old tables, so they are replaced, not renamed).
+drop function if exists public.rosin_save_student(uuid, jsonb);
+drop function if exists public.rosin_students_list();
+drop function if exists public.rosin_me();
+drop function if exists public.rosin_join_studio(text, text);
+drop function if exists public.rosin_create_studio(text, text);
+drop function if exists public.rosin_clear_voice();
+drop function if exists public.rosin_set_voice(text, text);
+drop function if exists public.rosin_my_role();
+drop function if exists public.rosin_my_studio();
+
+-- 4. Old audio bucket and its policies (the bucket is empty; no voice has been recorded yet).
+drop policy if exists "rosin audio: public read" on storage.objects;
+drop policy if exists "rosin audio: members write" on storage.objects;
+drop policy if exists "rosin audio: members update" on storage.objects;
+drop policy if exists "rosin audio: members delete" on storage.objects;
+delete from storage.objects where bucket_id = 'rosin-audio';
+delete from storage.buckets where id = 'rosin-audio';
+
+-- 5. Everything again under the new names.
 -- Sostenuto (tables keep the historic sostenuto_ prefix): a studio is a teacher and their pupils. Each pupil's plan, sessions and flags live in one
 -- JSON document that the pupil and their teacher can both read and write. Run once in the SQL editor.
 -- Safe to run in the same Supabase project as Noticed: every object here is prefixed sostenuto_.

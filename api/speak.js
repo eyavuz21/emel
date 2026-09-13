@@ -1,5 +1,5 @@
 // Turn one caption into audio in the studio's voice and store it. POST {text, path} → {url}.
-// Teacher only. The file goes into the public rosin-audio bucket under the studio's folder, using the
+// Teacher only. The file goes into the public sostenuto-audio bucket under the studio's folder, using the
 // teacher's own Supabase session, so storage policies apply exactly as they would from the browser.
 import { whoAmI, readJson } from "./_auth.js";
 
@@ -26,9 +26,9 @@ export default async function handler(req, res) {
   const mp3 = Buffer.from(await tts.arrayBuffer());
 
   const url = process.env.SUPABASE_URL, key = process.env.SUPABASE_ANON_KEY;
-  const up = await fetch(`${url}/storage/v1/object/rosin-audio/${safePath}`, {
+  const up = await fetch(`${url}/storage/v1/object/sostenuto-audio/${safePath}`, {
     method: "POST", headers: { apikey: key, authorization: `Bearer ${who.token}`, "content-type": "audio/mpeg", "x-upsert": "true" }, body: mp3,
   });
   if (!up.ok) { const t = await up.text().catch(() => ""); return res.status(502).json({ error: "storage", message: `Storage ${up.status}: ${t.slice(0, 200)}` }); }
-  return res.status(200).json({ url: `${url}/storage/v1/object/public/rosin-audio/${safePath}`, chars: clean.length });
+  return res.status(200).json({ url: `${url}/storage/v1/object/public/sostenuto-audio/${safePath}`, chars: clean.length });
 }
