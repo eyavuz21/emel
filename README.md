@@ -2,7 +2,7 @@
 
 Couch to 5K for practising an instrument. Your teacher sets the week in thirty seconds; Rosin gets you to Thursday.
 
-**Live:** https://rosin.vercel.app
+**Live:** https://rosinapp.vercel.app
 
 ## The idea
 
