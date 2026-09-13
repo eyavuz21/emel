@@ -5,5 +5,6 @@ export default function handler(req, res) {
     supabaseUrl: process.env.SUPABASE_URL || null,
     supabaseAnonKey: process.env.SUPABASE_ANON_KEY || null,
     plan: Boolean(process.env.ANTHROPIC_API_KEY),
+    voice: Boolean(process.env.ELEVENLABS_API_KEY),
   });
 }

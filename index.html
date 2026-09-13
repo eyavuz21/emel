@@ -114,11 +114,24 @@ dialog::backdrop{background:rgba(30,26,22,.5)} dialog .in{padding:22px} dialog h
 .hero p{max-width:60ch; font-size:17px}
 .switch{font-size:12.5px; color:var(--muted); display:inline-flex; gap:8px; align-items:center}
 .switch input{width:auto}
+.rec{display:inline-flex; align-items:center; gap:8px}
+.rec .blink{width:10px; height:10px; border-radius:50%; background:var(--danger); animation:blink 1s infinite}
+@keyframes blink{50%{opacity:.2}}
+.script{font-family:"Instrument Serif", Georgia, serif; font-size:19px; line-height:1.45; padding:14px 16px; background:var(--tintA); border-radius:14px; border:1px solid var(--line)}
+.mic{width:auto; padding:8px 12px; font-size:13px}
+.demo-bar{position:sticky; top:0; z-index:6; background:var(--varnish); color:var(--paper); padding:8px 12px; border-radius:12px; margin-bottom:12px; display:flex; gap:8px; align-items:center; flex-wrap:wrap; font-size:13.5px}
+.demo-bar .seg{display:inline-flex; border-radius:999px; overflow:hidden; border:1px solid rgba(255,255,255,.25)}
+.demo-bar .seg button{background:transparent; color:var(--paper); border:none; padding:6px 12px; font-weight:600; font-size:13px}
+.demo-bar .seg button.on{background:var(--amber); color:var(--amber-ink)}
+.demo-bar .x{margin-left:auto; background:transparent; border:1px solid rgba(255,255,255,.35); color:var(--paper); border-radius:999px; padding:5px 10px; font-size:12.5px}
+canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid var(--line); display:block; margin:10px auto}
+@media (prefers-reduced-motion: reduce){ .rec .blink{animation:none} }
 @media (prefers-reduced-motion: reduce){ .toast{transition:none} }
 </style>
 </head>
 <body>
 <div class="wrap">
+  <div id="demoBar" hidden></div>
   <header class="top">
     <div class="brand"><h1>Rosin<i>.</i></h1><small>Couch to 5K, for practising an instrument.</small></div>
     <div class="auth" id="auth"></div>
@@ -134,7 +147,8 @@ dialog::backdrop{background:rgba(30,26,22,.5)} dialog .in{padding:22px} dialog h
       <div class="box a"><h3>Pupils</h3><p style="margin:6px 0 0">Sign in, enter your teacher's code, and your first week is waiting after your next lesson.</p></div>
       <div class="box b"><h3>Teachers</h3><p style="margin:6px 0 0">Sign in, create a studio, give pupils the code. After each lesson, thirty seconds of notes becomes their week.</p></div>
     </div>
-    <div class="row" style="margin-top:8px"><button class="btn" id="landSignin">Sign in with email</button><button class="btn quiet" id="landLocal">Try it on this device, no account</button></div>
+    <div class="row" style="margin-top:8px"><button class="btn" id="landSignin">Sign in with email</button><button class="btn quiet" id="landDemo">See how it works</button><button class="btn quiet" id="landLocal">Try it on this device, no account</button></div>
+    <p class="note">Two kinds of account, teacher and pupil. There is no parent login: a parent sets up and holds a young child's account with their own email, and the pupil chooses what to share, with a parent or anyone, as a card. Nobody else can see a pupil's week.</p>
     <p class="note" id="landNote"></p>
   </section>
 
@@ -149,7 +163,8 @@ dialog::backdrop{background:rgba(30,26,22,.5)} dialog .in{padding:22px} dialog h
         <button class="btn block" id="obCreate" style="margin-top:12px">Create my studio</button></div>
       <div class="card"><h3>I'm a pupil</h3>
         <label class="l" for="obCode">Teacher's code</label><input id="obCode" placeholder="e.g. A3F9C2" maxlength="6" style="text-transform:uppercase;letter-spacing:.2em">
-        <label class="l" for="obSName">Your name</label><input id="obSName" placeholder="Emre">
+        <label class="l" for="obSName">Pupil's name</label><input id="obSName" placeholder="Emre">
+        <p class="note">Under 13? A parent or guardian should be the one signed in here, with their own email. The account is theirs; the practice is the pupil's.</p>
         <button class="btn block" id="obJoin" style="margin-top:12px">Join</button></div>
     </div>
     <div class="status" id="obStatus"></div>
@@ -165,7 +180,7 @@ dialog::backdrop{background:rgba(30,26,22,.5)} dialog .in{padding:22px} dialog h
     <div class="caption"><div class="quote" id="caption"></div><div class="who" id="capWho"></div></div>
     <ol class="steps" id="steps"></ol>
     <div class="row" style="margin-top:12px"><button class="btn quiet sm" id="pause">Pause</button><button class="btn quiet sm" id="skip">Next step</button><button class="btn danger sm" id="quit">Stop</button>
-      <label class="switch"><input type="checkbox" id="speak"> Read aloud</label><label class="switch"><input type="checkbox" id="demo"> Demo speed</label></div>
+      <label class="switch"><input type="checkbox" id="speak" checked> Voice</label><label class="switch"><input type="checkbox" id="demo"> Demo speed</label></div>
   </section>
   <!-- STUDENT: DONE -->
   <section class="view" id="v-done">
@@ -182,6 +197,8 @@ dialog::backdrop{background:rgba(30,26,22,.5)} dialog .in{padding:22px} dialog h
   <section class="view" id="v-journey"></section>
   <!-- STUDENT: GOAL -->
   <section class="view" id="v-goal"></section>
+  <section class="view" id="v-voice"></section>
+  <section class="view" id="v-share"></section>
 
   <!-- TEACHER -->
   <section class="view" id="v-teacher"></section>
@@ -206,8 +223,9 @@ dialog::backdrop{background:rgba(30,26,22,.5)} dialog .in{padding:22px} dialog h
 
   // ------------------------------------------------------------ store: local or cloud
   const LKEY='rosin.local.v1';
-  let mode='none'; // 'local' | 'cloud'
-  let sb=null, me=null; // me: {role, name, studio, code, uid}
+  let mode='none'; // 'local' | 'cloud' | 'demo'
+  let sb=null, me=null, cfg=null; // me: {role, name, studio, code, studio_id, voice_ready, voice_id}
+  async function authHeaders(){ if(!sb) return {}; const {data:{session}}=await sb.auth.getSession(); return session?{authorization:'Bearer '+session.access_token}:{}; }
   let students=[]; // [{user_id, data}]
   let current=null; // selected student (teacher) or self (student): {user_id, data}
   let pushTimer=null;
@@ -219,10 +237,12 @@ dialog::backdrop{background:rgba(30,26,22,.5)} dialog .in{padding:22px} dialog h
   async function saveCurrent(){
     if(!current) return;
     if(mode==='local'){ const o=loadLocal()||{}; o.doc=current.data; saveLocal(o); return; }
+    if(mode==='demo'){ try{ localStorage.setItem('rosin.demo.v1', JSON.stringify(students)); }catch(e){} return; }
     clearTimeout(pushTimer); pushTimer=setTimeout(async()=>{ const {error}=await sb.rpc('rosin_save_student',{target:current.user_id, doc:current.data}); if(error){ console.warn(error); toast('Could not save. Check your connection.'); } }, 500);
   }
   async function refresh(){
     if(mode==='local'){ const o=loadLocal()||{}; if(!o.doc) o.doc=blankDoc(o.me?.name||'Me'); students=[{user_id:'local', data:o.doc}]; saveLocal(o); return; }
+    if(mode==='demo') return;
     const {data,error}=await sb.rpc('rosin_students_list'); if(error){ console.warn(error); return; }
     students=(data||[]).map(r=>({user_id:r.user_id, data:Object.assign(blankDoc(''), r.data||{})}));
   }
@@ -234,14 +254,15 @@ dialog::backdrop{background:rgba(30,26,22,.5)} dialog .in{padding:22px} dialog h
     if(!role){ t.hidden=true; t.innerHTML=''; return; }
     t.hidden=false;
     t.innerHTML = role==='student'
-      ? `<button data-v="today"><span>♩</span>Today</button><button data-v="journey"><span>♪</span>Journey</button><button data-v="goal"><span>♬</span>Goal</button>${mode==='local'?'<button data-v="teacher"><span>♯</span>Teacher</button>':''}`
+      ? `<button data-v="today"><span>♩</span>Today</button><button data-v="journey"><span>♪</span>Journey</button><button data-v="goal"><span>♬</span>Goal</button><button data-v="share"><span>♫</span>Share</button>${mode==='local'?'<button data-v="teacher"><span>♯</span>Teacher</button>':''}`
       : `<button data-v="teacher"><span>♯</span>Pupils</button>${mode==='local'?'<button data-v="today"><span>♩</span>Pupil view</button>':''}`;
-    $$('#tabs button').forEach(b=>b.onclick=()=>{ const v=b.dataset.v; if(v==='teacher') renderTeacher(); else if(v==='today') renderToday(); else if(v==='journey') renderJourney(); else if(v==='goal') renderGoal(); show(v); });
+    $$('#tabs button').forEach(b=>b.onclick=()=>{ const v=b.dataset.v; if(v==='teacher') renderTeacher(); else if(v==='today') renderToday(); else if(v==='journey') renderJourney(); else if(v==='goal') renderGoal(); else if(v==='share') renderShare(); show(v); });
   }
   function renderAuth(){
     const el=$('#auth');
     if(mode==='none'){ el.innerHTML=''; return; }
     if(mode==='local'){ el.innerHTML=`<span>On this device only</span> <button class="btn sm quiet" id="leaveLocal">Sign in instead</button>`; $('#leaveLocal').onclick=()=>{ if(sb) signInDialog(); else alert('Sign-in needs the live site.'); }; return; }
+    if(mode==='demo'){ el.innerHTML=`<button class="btn sm quiet" id="leaveDemo">Exit demo</button>`; $('#leaveDemo').onclick=()=>location.reload(); return; }
     el.innerHTML=`<span>${h(me.name||me.email||'')} · ${me.role==='teacher'?'teacher':'pupil'}${me.studio?' · '+h(me.studio):''}</span>${me.code?` <span class="pill on">code ${h(me.code)}</span>`:''} <button class="btn sm quiet" id="signout">Sign out</button>`;
     $('#signout').onclick=async()=>{ await sb.auth.signOut(); location.reload(); };
   }
@@ -286,28 +307,35 @@ dialog::backdrop{background:rgba(30,26,22,.5)} dialog .in{padding:22px} dialog h
   // ------------------------------------------------------------ session runner
   let si=0, stepI=0, left=0, total=0, timer=null, paused=false, sess=null;
   const ARC=276.5;
-  function speak(text){ if(!$('#speak').checked||!('speechSynthesis' in window)) return; try{ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text); const v=speechSynthesis.getVoices().find(x=>/en-GB/i.test(x.lang)); if(v) u.voice=v; u.rate=0.95; speechSynthesis.speak(u); }catch(e){} }
+  const player=new Audio();
+  function speak(text, url){
+    try{ player.pause(); }catch(e){}
+    if(!$('#speak').checked) return;
+    if(url){ try{ player.src=url; player.play().catch(()=>{}); return; }catch(e){} }
+    if(!('speechSynthesis' in window)) return;
+    try{ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text); const v=speechSynthesis.getVoices().find(x=>/en-GB/i.test(x.lang)); if(v) u.voice=v; u.rate=0.95; speechSynthesis.speak(u); }catch(e){}
+  }
   function stepInit(){
     const st=sess.steps[stepI]; total=$('#demo').checked?6:Math.max(10,Math.round((+st.minutes||1)*60)); left=total;
     $('#stepname').textContent=st.name; $('#caption').textContent='"'+st.caption+'"'; $('#capWho').textContent=doc().teacherName||'your teacher'; $('#stepof').textContent=`step ${stepI+1} of ${sess.steps.length}`;
     $('#steps').innerHTML=sess.steps.map((x,k)=>`<li class="${k<stepI?'done':k===stepI?'now':''}"><span>${h(x.name)}</span><span>${h(x.minutes)} min</span></li>`).join('');
-    speak(st.caption); tick();
+    speak(st.caption, st.audio); tick();
   }
   function tick(){ const real=$('#demo').checked?Math.round((+sess.steps[stepI].minutes||1)*60*(left/total)):left; $('#clock').textContent=`${Math.floor(real/60)}:${String(real%60).padStart(2,'0')}`; $('#arc').style.strokeDashoffset=ARC*(1-left/total); }
   function run(){ clearInterval(timer); timer=setInterval(()=>{ if(paused) return; left--; tick(); if(left<=0) nextStep(); },1000); }
   function nextStep(){ stepI++; if(stepI>=sess.steps.length){ finish(); return; } stepInit(); }
-  function startSession(i){ const w=week(); si=i; sess=w.sessions[i]; stepI=0; paused=false; $('#pause').textContent='Pause'; $('#sessTitle').textContent=sess.title; stepInit(); run(); show('session'); }
+  function startSession(i){ const w=week(); si=i; sess=w.sessions[i]; stepI=0; paused=false; $('#pause').textContent='Pause'; $('#sessTitle').textContent=sess.title; $('#speak').checked=true; stepInit(); run(); show('session'); }
   function finish(){
-    clearInterval(timer); try{ speechSynthesis.cancel(); }catch(e){}
+    clearInterval(timer); try{ speechSynthesis.cancel(); player.pause(); }catch(e){}
     const w=week(); w.done=w.done||[]; if(!w.done.some(x=>x.i===si)) w.done.push({i:si, at:new Date().toISOString(), feel:''});
     const t=doc().tokens||(doc().tokens={earned:0,redeemed:0}); t.earned=(t.earned||0)+1; if(doneCount(w)===w.sessions.length) t.earned+=2;
     saveCurrent();
     $('#doneTitle').textContent=`That's ${streak()} in a row.`; $('#doneSub').textContent=`${sess.steps.reduce((a,x)=>a+(+x.minutes||0),0)} minutes. ${doneCount(w)} of ${w.sessions.length} this week.${doneCount(w)===w.sessions.length?' Week complete: two bonus tokens.':''}`;
     $$('#feel button').forEach(b=>b.classList.remove('on')); $('#tailor').hidden=true; show('done');
   }
-  $('#pause').onclick=e=>{ paused=!paused; e.target.textContent=paused?'Resume':'Pause'; if(paused){ try{ speechSynthesis.pause(); }catch(x){} } else { try{ speechSynthesis.resume(); }catch(x){} } };
+  $('#pause').onclick=e=>{ paused=!paused; e.target.textContent=paused?'Resume':'Pause'; if(paused){ try{ speechSynthesis.pause(); player.pause(); }catch(x){} } else { try{ speechSynthesis.resume(); if(player.src&&player.currentTime>0&&!player.ended) player.play().catch(()=>{}); }catch(x){} } };
   $('#skip').onclick=()=>nextStep();
-  $('#quit').onclick=()=>{ clearInterval(timer); try{ speechSynthesis.cancel(); }catch(e){} renderToday(); };
+  $('#quit').onclick=()=>{ clearInterval(timer); try{ speechSynthesis.cancel(); player.pause(); }catch(e){} renderToday(); };
   $$('#feel button').forEach(b=>b.onclick=()=>{ $$('#feel button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); const w=week(); const d=(w.done||[]).find(x=>x.i===si); if(d) d.feel=b.dataset.f; saveCurrent();
     const t=$('#tailor'); t.hidden=false; t.innerHTML = b.dataset.f==='Tough'?'<b>Noted.</b> Tough days count double. Your teacher will see this before the lesson.':b.dataset.f==='OK'?'<b>Noted.</b> Steady is the point.':'<b>Lovely.</b> Don\'t practise it again tonight; sleep does the rest.'; });
   $('#doneBack').onclick=()=>renderJourney(true);
@@ -342,6 +370,36 @@ dialog::backdrop{background:rgba(30,26,22,.5)} dialog .in{padding:22px} dialog h
     if(showIt!==false) show('journey');
   }
 
+  // ------------------------------------------------------------ share card (the pupil decides, every time)
+  function renderShare(showIt){
+    if(!current) return; const v=$('#v-share'); const w=week(); const p=doc().profile; const tn=doc().teacherName||'your teacher';
+    v.innerHTML=`<div class="eyebrow">Share</div><h2 class="big">Your week, as a card.</h2>
+      <p>A picture of this week: sessions done, minutes, streak, and what ${h(tn)} said. Send it to a parent, a friend, anyone you choose. Nothing is shared unless you send it, and nothing else about you is in it.</p>
+      <canvas class="cardc" id="cardc" width="840" height="1000" aria-label="Your week card"></canvas>
+      <div class="row" style="justify-content:center"><button class="btn" id="shareBtn">Share the card</button><button class="btn quiet" id="dlBtn">Save the image</button></div>
+      <p class="note" style="text-align:center">${w?'':'There is no week to show yet, so the card is a preview.'}</p>`;
+    drawCard($('#cardc'));
+    $('#shareBtn').onclick=async()=>{ const c=$('#cardc'); c.toBlob(async blob=>{ const file=new File([blob],'rosin-week.png',{type:'image/png'}); if(navigator.canShare&&navigator.canShare({files:[file]})){ try{ await navigator.share({files:[file], title:'My practice week', text:'My week on Rosin'}); }catch(e){} } else { const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='rosin-week.png'; a.click(); toast('Saved. Share it from your photos.'); } },'image/png'); };
+    $('#dlBtn').onclick=()=>{ const c=$('#cardc'); c.toBlob(blob=>{ const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='rosin-week.png'; a.click(); },'image/png'); };
+    if(showIt!==false) show('share');
+  }
+  function drawCard(c){
+    const ctx=c.getContext('2d'); const W=c.width, H=c.height; const p=doc().profile; const w=week(); const tn=doc().teacherName||'your teacher';
+    const n=w?doneCount(w):0, tot=w?w.sessions.length:3; const mins=w?(w.done||[]).reduce((a,d)=>a+(w.sessions[d.i]?w.sessions[d.i].steps.reduce((x,y)=>x+(+y.minutes||0),0):0),0):0;
+    const wrap=(t,x,y,mw,lh,font,col)=>{ ctx.font=font; ctx.fillStyle=col; const words=String(t).split(' '); let line='', yy=y; for(const wd of words){ const test=line?line+' '+wd:wd; if(ctx.measureText(test).width>mw&&line){ ctx.fillText(line,x,yy); line=wd; yy+=lh; } else line=test; } if(line) ctx.fillText(line,x,yy); return yy+lh; };
+    ctx.fillStyle='#F7F3EA'; ctx.fillRect(0,0,W,H);
+    ctx.strokeStyle='#E6DECB'; ctx.lineWidth=2; for(let y=60;y<H;y+=42){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+    ctx.fillStyle='#5A2A1E'; ctx.font='italic 400 34px "Instrument Serif", Georgia, serif'; ctx.fillText('Rosin.',60,90);
+    ctx.fillStyle='#6F6659'; ctx.font='600 20px "Instrument Sans", system-ui, sans-serif'; ctx.fillText((p.name||'My')+"'s week"+(w?' · from '+fmt(w.lessonDate||w.createdAt):''),60,130);
+    ctx.fillStyle='#5A2A1E'; ctx.font='400 74px "Instrument Serif", Georgia, serif'; ctx.fillText(w&&n===tot?'Week complete.':(n+' of '+tot+' done.'),60,230);
+    const stats=[[String(n)+'/'+tot,'sessions'],[String(mins),'minutes'],[String(streak()),'streak']];
+    stats.forEach((st,i)=>{ const x=60+i*250; ctx.fillStyle='#FFFDF8'; ctx.strokeStyle='#DED5C2'; ctx.lineWidth=2; ctx.beginPath(); ctx.roundRect(x,270,220,150,22); ctx.fill(); ctx.stroke(); ctx.fillStyle='#C8792A'; ctx.font='400 66px "Instrument Serif", Georgia, serif'; ctx.fillText(st[0],x+24,350); ctx.fillStyle='#6F6659'; ctx.font='600 20px "Instrument Sans", system-ui, sans-serif'; ctx.fillText(st[1],x+24,392); });
+    let y=480;
+    if(w&&w.checklist&&w.checklist.length){ ctx.fillStyle='#6F6659'; ctx.font='600 18px "Instrument Sans", system-ui, sans-serif'; ctx.fillText('READY FOR THE LESSON',60,y); y+=36; for(let k=0;k<w.checklist.length&&k<4;k++){ const on=(w.ticks||[]).includes(k); ctx.fillStyle=on?'#C8792A':'#FFFDF8'; ctx.strokeStyle=on?'#C8792A':'#DED5C2'; ctx.beginPath(); ctx.roundRect(60,y-22,26,26,6); ctx.fill(); ctx.stroke(); y=wrap(w.checklist[k],100,y,680,30,'500 24px "Instrument Sans", system-ui, sans-serif',on?'#6F6659':'#1E1A16')+6; } y+=10; }
+    if(w&&(w.line||w.encouragement)){ y=wrap('"'+(w.line||w.encouragement)+'"',60,y+20,720,40,'italic 400 32px "Instrument Serif", Georgia, serif','#1E1A16'); ctx.fillStyle='#6F6659'; ctx.font='600 20px "Instrument Sans", system-ui, sans-serif'; ctx.fillText(tn,60,y+4); }
+    ctx.fillStyle='#6F6659'; ctx.font='500 18px "Instrument Sans", system-ui, sans-serif'; ctx.fillText('Three short sessions between lessons. Shared by the pupil.',60,H-50);
+  }
+
   // ------------------------------------------------------------ goal
   function weeksBetween(a,b){ return Math.round((new Date(b)-new Date(a))/(7*86400000)); }
   function renderGoal(showIt){
@@ -365,6 +423,53 @@ dialog::backdrop{background:rgba(30,26,22,.5)} dialog .in{padding:22px} dialog h
     if(showIt!==false) show('goal');
   }
 
+  // ------------------------------------------------------------ dictation (browser first, server fallback)
+  let rec=null, recChunks=[], recMime='audio/webm';
+  function pickMime(){ const c=['audio/webm;codecs=opus','audio/webm','audio/mp4','audio/ogg;codecs=opus']; return (window.MediaRecorder&&c.find(m=>MediaRecorder.isTypeSupported(m)))||''; }
+  async function recordStart(){ const stream=await navigator.mediaDevices.getUserMedia({audio:true}); recMime=pickMime()||'audio/webm'; rec=new MediaRecorder(stream, recMime?{mimeType:recMime}:undefined); recChunks=[]; rec.ondataavailable=e=>{ if(e.data.size) recChunks.push(e.data); }; rec.start(250); return rec; }
+  function recordStop(){ return new Promise(res=>{ if(!rec){ res(null); return; } rec.onstop=()=>{ const blob=new Blob(recChunks,{type:recMime.split(';')[0]}); rec.stream.getTracks().forEach(t=>t.stop()); rec=null; res(blob); }; rec.stop(); }); }
+  const toB64=blob=>new Promise(res=>{ const r=new FileReader(); r.onload=()=>res(String(r.result).split(',')[1]); r.readAsDataURL(blob); });
+  function dictate(targetId, btn){
+    const el=document.getElementById(targetId); const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+    if(btn.dataset.on){ // stop
+      btn.dataset.on=''; btn.textContent='Dictate';
+      if(btn._sr){ try{ btn._sr.stop(); }catch(e){} btn._sr=null; return; }
+      recordStop().then(async blob=>{ if(!blob) return; btn.textContent='Transcribing…'; try{ const r=await fetch('/api/transcribe',{method:'POST',headers:{'content-type':'application/json',...(await authHeaders())},body:JSON.stringify({audio:await toB64(blob), mime:blob.type})}); const j=await r.json(); if(!r.ok) throw new Error(j.message||'Could not transcribe'); el.value=(el.value?el.value.trim()+'\n':'')+(j.text||'').trim(); }catch(e){ alert(e.message); } finally{ btn.textContent='Dictate'; } });
+      return;
+    }
+    btn.dataset.on='1'; btn.textContent='Stop';
+    if(SR){ const sr=new SR(); sr.lang='en-GB'; sr.continuous=true; sr.interimResults=true; let base=el.value?el.value.trim()+' ':''; let final=''; sr.onresult=e=>{ let interim=''; for(let i=e.resultIndex;i<e.results.length;i++){ const t=e.results[i][0].transcript; if(e.results[i].isFinal) final+=t+' '; else interim+=t; } el.value=base+final+interim; }; sr.onerror=()=>{ btn.dataset.on=''; btn.textContent='Dictate'; }; sr.onend=()=>{ if(btn.dataset.on){ try{ sr.start(); }catch(e){} } }; btn._sr=sr; sr.start(); return; }
+    if(mode!=='cloud'||!cfg?.voice){ btn.dataset.on=''; btn.textContent='Dictate'; alert('Dictation needs Chrome or Safari, or the live site with voice configured.'); return; }
+    recordStart().catch(e=>{ btn.dataset.on=''; btn.textContent='Dictate'; alert('Microphone not available: '+e.message); });
+  }
+
+  // ------------------------------------------------------------ teacher's voice
+  const VOICE_SCRIPT="Hello, it's me. Before we start, rosin the bow and check the tuning. Long, slow bows on the open D; listen for the note to bloom, and don't press. Now the scale, one octave, unhurried: hear each note before you play it. When it starts to get messy, stop, breathe, and begin again from the bottom. Lovely. That's enough for today. Put the violin down gently, and I'll see you on Tuesday.";
+  function renderVoice(){
+    const v=$('#v-voice'); const has=!!me?.voice_ready;
+    v.innerHTML=`<button class="btn sm quiet" id="voiceBack">← Pupils</button>
+      <div class="eyebrow" style="margin-top:10px">Your voice</div><h2 class="big">${has?'Recorded.':'Pupils hear the week in your voice.'}</h2>
+      <p>${has?`Your voice is set${me.voice_name?' ('+h(me.voice_name)+')':''}. New weeks you publish are spoken in it. You can re-record or remove it at any time; removing it deletes the clone.`:'Read the passage below aloud, about thirty seconds, in the voice you use in a lesson. Rosin makes a clone of it and every caption you publish is spoken by it. Only text you have read and published is ever spoken; nothing is generated that you have not approved.'}</p>
+      ${cfg?.voice?'':'<div class="box c"><b>Voice is not configured on this deployment yet.</b> The captions will use the browser\'s built-in voice until it is.</div>'}
+      <div class="script" id="voiceScript">${h(VOICE_SCRIPT)}</div>
+      <div class="card" style="margin-top:12px">
+        <label class="switch" style="font-size:14.5px;color:var(--ink)"><input type="checkbox" id="consent"> I'm recording my own voice and I agree to Rosin cloning it to speak captions I publish. I can delete it whenever I like.</label>
+        <div class="row" style="margin-top:12px"><button class="btn" id="recStart" ${cfg?.voice?'':'disabled'}>Record</button><button class="btn quiet" id="recStop" disabled>Stop</button><span class="rec" id="recInd" hidden><span class="blink"></span><span id="recTime">0:00</span></span></div>
+        <audio id="recPlay" controls hidden style="width:100%;margin-top:10px"></audio>
+        <div class="row" style="margin-top:10px"><button class="btn" id="voiceUse" disabled>Use this voice</button>${has?'<button class="btn danger" id="voiceDel">Remove my voice</button>':''}</div>
+        <div class="status" id="voiceStatus"></div></div>`;
+    $('#voiceBack').onclick=()=>{ renderTeacher(); };
+    let blob=null, t0=0, tmr=null;
+    $('#recStart').onclick=async()=>{ if(!$('#consent').checked){ $('#voiceStatus').textContent='Tick the consent box first.'; return; } try{ await recordStart(); }catch(e){ $('#voiceStatus').textContent='Microphone not available: '+e.message; return; } $('#recStart').disabled=true; $('#recStop').disabled=false; $('#recInd').hidden=false; t0=Date.now(); tmr=setInterval(()=>{ const s=Math.round((Date.now()-t0)/1000); $('#recTime').textContent=`${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`; },500); };
+    $('#recStop').onclick=async()=>{ clearInterval(tmr); blob=await recordStop(); $('#recStart').disabled=false; $('#recStop').disabled=true; $('#recInd').hidden=true; const a=$('#recPlay'); a.src=URL.createObjectURL(blob); a.hidden=false; const secs=(Date.now()-t0)/1000; $('#voiceUse').disabled=secs<20; $('#voiceStatus').textContent=secs<20?'That was under twenty seconds. Read the whole passage.':'Listen back. If it sounds like you, use it.'; };
+    $('#voiceUse').onclick=async()=>{ if(!blob) return; const st=$('#voiceStatus'); st.textContent='Making your voice… (about 20 seconds)'; $('#voiceUse').disabled=true;
+      try{ const r=await fetch('/api/voice',{method:'POST',headers:{'content-type':'application/json',...(await authHeaders())},body:JSON.stringify({audio:await toB64(blob), mime:blob.type, name:me.name||'Teacher'})}); const j=await r.json(); if(!r.ok) throw new Error(j.message||'Could not create the voice');
+        const {error}=await sb.rpc('rosin_set_voice',{vid:j.voice_id, vname:me.name||'Teacher'}); if(error) throw error; me.voice_ready=true; me.voice_id=j.voice_id; me.voice_name=me.name||'Teacher'; toast('Your voice is set.'); renderVoice(); }
+      catch(e){ st.textContent=e.message; $('#voiceUse').disabled=false; } };
+    const del=$('#voiceDel'); if(del) del.onclick=async()=>{ if(!confirm('Remove your voice? The clone is deleted and new weeks use the built-in voice.')) return; try{ await fetch('/api/voice',{method:'DELETE',headers:{'content-type':'application/json',...(await authHeaders())},body:JSON.stringify({voice_id:me.voice_id})}); const {error}=await sb.rpc('rosin_clear_voice'); if(error) throw error; me.voice_ready=false; me.voice_id=null; toast('Voice removed.'); renderVoice(); }catch(e){ alert(e.message); } };
+    show('voice');
+  }
+
   // ------------------------------------------------------------ teacher
   function renderTeacher(){
     const v=$('#v-teacher');
@@ -372,8 +477,10 @@ dialog::backdrop{background:rgba(30,26,22,.5)} dialog .in{padding:22px} dialog h
       return `<div class="student" data-sid="${h(s.user_id)}"><div><div class="n">${h(d.profile?.name||'Pupil')}</div><div class="m">${h(d.profile?.instrument||'')} · ${h(d.profile?.level||'')}${w?` · this week ${doneCount(w)}/${w.sessions.length}`:' · no week set'}${flags?` · <b>${flags} flagged</b>`:''}</div></div><span class="pill">open</span></div>`; }).join('');
     v.innerHTML=`<div class="eyebrow">${h(me?.studio||'Your studio')}${me?.code?` · code <b>${h(me.code)}</b>`:''}</div><h2 class="big">${students.length?'Your pupils.':'No pupils yet.'}</h2>
       ${me?.code?`<div class="box b"><b>Give pupils this code:</b> <span class="pill on" style="font-size:16px;letter-spacing:.2em">${h(me.code)}</span><div class="note">They sign in, choose "I'm a pupil", enter it, and they're in your studio.</div></div>`:''}
+      ${mode==='cloud'?`<div class="box ${me?.voice_ready?'b':'c'}" id="voiceCard" style="cursor:pointer"><b>Your voice: ${me?.voice_ready?'recorded':'not recorded yet'}.</b> <span class="note" style="margin:0">${me?.voice_ready?'New weeks are spoken in it. Tap to re-record or remove.':'Record thirty seconds and pupils hear their sessions in your voice. Tap to set it up.'}</span></div>`:''}
       <div class="card">${list||'<div class="note" style="margin:0">Pupils appear here when they join with your code.</div>'}</div>`;
     $$('[data-sid]').forEach(el=>el.onclick=()=>{ current=students.find(s=>s.user_id===el.dataset.sid); renderTStudent(); show('tstudent'); });
+    const vc=$('#voiceCard'); if(vc) vc.onclick=renderVoice;
     show('teacher');
   }
   let preview=null;
@@ -396,9 +503,9 @@ dialog::backdrop{background:rgba(30,26,22,.5)} dialog .in{padding:22px} dialog h
         </div><button class="btn sm" id="pSave" style="margin-top:10px">Save profile</button></div>
       <div class="card"><h3>After today's lesson</h3>
         <div class="grid2"><div><label class="l" for="nDate">Lesson date</label><input type="date" id="nDate" value="${today()}"></div><div><label class="l" for="nNext">Next lesson</label><input type="date" id="nNext" value="${addDays(today(),7)}"></div></div>
-        <label class="l" for="nWorked">What we worked on</label><textarea id="nWorked" placeholder="D major scale, bow contact point near the bridge, first phrase of Twinkle variation A. Tone is opening up; rushes the scale."></textarea>
-        <label class="l" for="nNextL">For next lesson, one per line</label><textarea id="nNextL" placeholder="Scale from memory, two octaves&#10;First phrase in tune&#10;Bow nearer the bridge on long notes"></textarea>
-        <label class="l" for="nLine">One line for the week</label><input id="nLine" placeholder="Lovely tone today. Don't rush the scale.">
+        <label class="l" for="nWorked">What we worked on <button type="button" class="btn quiet mic" data-dictate="nWorked">Dictate</button></label><textarea id="nWorked" placeholder="D major scale, bow contact point near the bridge, first phrase of Twinkle variation A. Tone is opening up; rushes the scale."></textarea>
+        <label class="l" for="nNextL">For next lesson, one per line <button type="button" class="btn quiet mic" data-dictate="nNextL">Dictate</button></label><textarea id="nNextL" placeholder="Scale from memory, two octaves&#10;First phrase in tune&#10;Bow nearer the bridge on long notes"></textarea>
+        <label class="l" for="nLine">One line for the week <button type="button" class="btn quiet mic" data-dictate="nLine">Dictate</button></label><input id="nLine" placeholder="Lovely tone today. Don't rush the scale.">
         <div class="row" style="margin-top:10px"><button class="btn" id="gen">Write this week's sessions</button><span class="status" id="genStatus" style="margin:0"></span></div>
         <div class="note">Thirty seconds here becomes ${h(p.sessionsPerWeek||3)} guided sessions, a checklist and a journey for ${h(p.name||'the pupil')}. You review before it goes to them.</div></div>
       <div id="previewBox"></div>`;
@@ -407,6 +514,7 @@ dialog::backdrop{background:rgba(30,26,22,.5)} dialog .in{padding:22px} dialog h
     $$('[data-res]').forEach(b=>b.onclick=()=>{ const f=flags.find(x=>x.id===b.dataset.res); if(f) f.resolved=true; saveCurrent(); renderTStudent(); });
     const aw=$('#award'); if(aw) aw.onclick=()=>{ d.tokens=d.tokens||{earned:0,redeemed:0}; d.tokens.redeemed=(d.tokens.redeemed||0)+6; saveCurrent(); renderTStudent(); toast('Reward marked as given.'); };
     $('#gen').onclick=generateWeek;
+    $$('[data-dictate]').forEach(b=>b.onclick=()=>dictate(b.dataset.dictate,b));
     if(preview) renderPreview();
   }
   async function generateWeek(){
@@ -438,10 +546,39 @@ dialog::backdrop{background:rgba(30,26,22,.5)} dialog .in{padding:22px} dialog h
       <div class="s"><b>Checklist for ${h(fmt(note.nextLesson))}</b><ul class="check">${out.checklist.map(c=>`<li><i></i><span>${h(c)}</span></li>`).join('')}</ul></div>
       <div class="s"><div class="quote" style="font-size:17px">"${h(out.encouragement)}"</div></div>
       <div class="row" style="margin-top:12px"><button class="btn" id="publish">Publish to ${h(current.data.profile.name||'the pupil')}</button><button class="btn quiet" id="regen">Regenerate</button><button class="btn quiet" id="discard">Discard</button></div></div>`;
-    $('#publish').onclick=()=>{ const d=current.data; d.notes.push({id:uid(), ...note}); d.weeks.push({id:uid(), createdAt:today(), lessonDate:note.date, nextLesson:note.nextLesson, workedOn:note.workedOn, line:note.line, sessions:out.sessions, checklist:out.checklist, encouragement:out.encouragement, done:[], ticks:[]}); d.teacherName=d.teacherName||me?.name||''; preview=null; saveCurrent(); toast('Published. It\'s waiting on their Today screen.'); renderTStudent(); };
+    $('#publish').onclick=async()=>{ const d=current.data; const btn=$('#publish'); btn.disabled=true;
+      if(mode==='cloud'&&me?.voice_ready&&cfg?.voice){
+        const jobs=[]; out.sessions.forEach((s,i)=>{ jobs.push([s,'introAudio',s.intro,`s${i}-intro`]); s.steps.forEach((st,j)=>jobs.push([st,'audio',st.caption,`s${i}-${j}`])); });
+        const wk=uid(); let k=0;
+        for(const [obj,key,text,tag] of jobs){ k++; btn.textContent=`Recording ${k} of ${jobs.length}…`; try{ const r=await fetch('/api/speak',{method:'POST',headers:{'content-type':'application/json',...(await authHeaders())},body:JSON.stringify({text, path:`${me.studio_id}/${current.user_id}/${wk}/${tag}.mp3`})}); const j=await r.json(); if(r.ok&&j.url) obj[key]=j.url; }catch(e){} }
+      }
+      d.notes.push({id:uid(), ...note}); d.weeks.push({id:uid(), createdAt:today(), lessonDate:note.date, nextLesson:note.nextLesson, workedOn:note.workedOn, line:note.line, sessions:out.sessions, checklist:out.checklist, encouragement:out.encouragement, done:[], ticks:[]}); d.teacherName=d.teacherName||me?.name||''; preview=null; saveCurrent(); toast('Published. It\'s waiting on their Today screen.'); renderTStudent(); };
     $('#regen').onclick=()=>{ preview=null; renderTStudent(); $('#nWorked').value=note.workedOn; $('#nNextL').value=note.forNext.join('\n'); $('#nLine').value=note.line; $('#nDate').value=note.date; $('#nNext').value=note.nextLesson; generateWeek(); };
     $('#discard').onclick=()=>{ preview=null; renderTStudent(); };
   }
+
+  // ------------------------------------------------------------ demo: see how it works, no account, nothing leaves the device
+  function demoSeed(){
+    const W=(title,intro,steps)=>({title,intro,steps:steps.map(([name,minutes,caption])=>({name,minutes,caption}))});
+    const emre={profile:{name:'Emre',instrument:'violin',level:'beginner',goalLabel:'Grade 1 exam',goalDate:addDays(today(),150),sessionsPerWeek:3,minutes:18},teacherName:'Melisande',notes:[],flags:[{id:uid(),text:'G string squeaks on down bows',at:new Date().toISOString(),resolved:false},{id:uid(),text:'Got the third-finger F sharp in tune three times in a row',at:new Date().toISOString(),resolved:false}],tokens:{earned:4,redeemed:0},
+      weeks:[{id:uid(),createdAt:addDays(today(),-3),lessonDate:addDays(today(),-3),nextLesson:addDays(today(),4),workedOn:'D major scale, bow contact point nearer the bridge, first phrase of Twinkle variation A. Rushes the scale.',line:"Lovely tone today. Don't rush the scale.",encouragement:'Three short sessions and the lesson takes care of itself.',
+        sessions:[W('Slow and wide','Everything at half the speed you think it needs, especially the scale.',[['Warm-up',3,'Long slow bows on the open D. Listen for the note to bloom.'],['D major, one note per breath',5,'Full bow on each note and a long pause at the top. The rushing happens between the notes.'],['Twinkle, first phrase',5,'Three times, then stop before it gets messy.'],['Scale again, nearer the bridge',4,"Same scale, bow a finger's width closer to the bridge. Brighter, not louder."],['Wind down',1,'One last open D, as beautiful as you can. Stop there.']]),
+          W('Contact point','The bridge end of the string is where today lives.',[['Warm-up',3,'Open strings, long bows, eyes on the contact point.'],['Scale from memory',5,'Music away. Say the note names aloud as you play.'],['Twinkle',5,'Phrase one, in tune, twice. If the F sharp is low, stop and find it.'],['Contact point drill',4,'Slide the bow toward the bridge until the sound brightens, then hold it there.'],['Wind down',1,'Stop.']]),
+          W('As if it were the lesson','Short, tidy steps. Play each thing once, properly.',[['Warm-up',3,'Two long bows per string.'],['Scale, once',4,'One go only. Steady, not fast.'],['Twinkle, once',5,"As you'll play it for me on Tuesday."],['Checklist run',5,'Tick what you can show.'],['Wind down',1,'Done. Sleep on it.']])],
+        checklist:['D major scale from memory','First phrase of Twinkle in tune, with a high F sharp','Bow nearer the bridge on long notes'],done:[{i:0,at:addDays(today(),-2)+'T18:00:00Z',feel:'Good'}],ticks:[0]}]};
+    const aisha={profile:{name:'Aisha',instrument:'cello',level:'grade 3',goalLabel:'School concert',goalDate:addDays(today(),60),sessionsPerWeek:3,minutes:20},teacherName:'Melisande',notes:[],flags:[],tokens:{earned:9,redeemed:6},
+      weeks:[{id:uid(),createdAt:addDays(today(),-6),lessonDate:addDays(today(),-6),nextLesson:addDays(today(),1),workedOn:'C major two octaves, thumb position, first page of the Squire.',line:'Keep the left hand soft.',encouragement:'Nearly there.',sessions:[W('Even bows','Same length of bow for every note.',[['Warm-up',3,'Open strings.'],['C major',6,'Two octaves, evenly.'],['Squire, page one',7,'Without stopping.'],['Scale, faster',3,'One notch up.'],['Wind down',1,'Stop.']]),W('Thumb','Find the thumb position in one movement.',[['Warm-up',3,'Open strings.'],['Thumb position',6,'A string, thumb soft.'],['Squire',7,'Page one.'],['Scale',3,'From memory.'],['Wind down',1,'Stop.']]),W('Run-through','Once through, as on the day.',[['Warm-up',3,'Open strings.'],['Squire, whole page',10,'No stopping.'],['Trouble spots',6,'Only the bars that went wrong.'],['Wind down',1,'Stop.']])],checklist:['C major with even bowing','Page one without stopping'],done:[{i:0,at:addDays(today(),-5)+'T17:00:00Z',feel:'OK'},{i:1,at:addDays(today(),-3)+'T17:00:00Z',feel:'Good'},{i:2,at:addDays(today(),-1)+'T17:00:00Z',feel:'Good'}],ticks:[0,1]}]};
+    const tom={profile:{name:'Tom',instrument:'violin',level:'returning adult',goalLabel:'',goalDate:'',sessionsPerWeek:2,minutes:15},teacherName:'Melisande',notes:[],flags:[],tokens:{earned:0,redeemed:0},weeks:[]};
+    return [{user_id:'demo-emre',data:emre},{user_id:'demo-aisha',data:aisha},{user_id:'demo-tom',data:tom}];
+  }
+  let demoRole='pupil';
+  function enterDemo(){
+    mode='demo'; me={role:'teacher', name:'Melisande', studio:"Melisande's pupils", code:'DEMO01', studio_id:'demo', voice_ready:false};
+    let saved=null; try{ saved=JSON.parse(localStorage.getItem('rosin.demo.v1')||'null'); }catch(e){} students=saved||demoSeed(); current=students[0];
+    renderAuth(); renderDemoBar(); setDemoRole('pupil');
+  }
+  function renderDemoBar(){ const b=$('#demoBar'); b.className='demo-bar'; b.hidden=false; b.innerHTML=`<span><b>Demo.</b> Nothing here is saved to an account. Switch sides:</span><span class="seg"><button data-r="pupil" class="${demoRole==='pupil'?'on':''}">Pupil</button><button data-r="teacher" class="${demoRole==='teacher'?'on':''}">Teacher</button><button data-r="share" class="${demoRole==='share'?'on':''}">Parent's view</button></span><button class="x" id="demoReset">Reset demo</button>`; $$('#demoBar [data-r]').forEach(x=>x.onclick=()=>setDemoRole(x.dataset.r)); $('#demoReset').onclick=()=>{ try{ localStorage.removeItem('rosin.demo.v1'); }catch(e){} students=demoSeed(); current=students[0]; setDemoRole(demoRole); }; }
+  function setDemoRole(r){ demoRole=r; renderDemoBar(); if(r==='teacher'){ setTabs('teacher'); renderTeacher(); } else if(r==='share'){ current=students[0]; setTabs('student'); renderShare(); } else { current=students[0]; setTabs('student'); renderToday(); } }
 
   // ------------------------------------------------------------ boot
   function enterLocal(){
@@ -466,12 +603,13 @@ dialog::backdrop{background:rgba(30,26,22,.5)} dialog .in{padding:22px} dialog h
   }
   $('#landSignin').onclick=()=>{ if(sb) signInDialog(); else alert('Sign-in needs the live site with accounts configured. You can still try it on this device.'); };
   $('#landLocal').onclick=enterLocal;
-  $('#obCreate').onclick=async()=>{ const st=$('#obStatus'); st.textContent='Creating…'; const {data,error}=await sb.rpc('rosin_create_studio',{studio_name:$('#obStudio').value.trim(), teacher_name:$('#obTName').value.trim()}); if(error){ st.textContent=error.message; return; } st.textContent=''; toast('Studio created. Your code is '+data+'.'); await enterCloud(); };
+  $('#landDemo').onclick=enterDemo;
+  $('#obCreate').onclick=async()=>{ const st=$('#obStatus'); st.textContent='Creating…'; const {data,error}=await sb.rpc('rosin_create_studio',{studio_name:$('#obStudio').value.trim(), teacher_name:$('#obTName').value.trim()}); if(error){ st.textContent=error.message; return; } st.textContent=''; toast('Studio created. Your code is '+data+'.'); await enterCloud(); if(cfg?.voice) renderVoice(); };
   $('#obJoin').onclick=async()=>{ const st=$('#obStatus'); st.textContent='Joining…'; const {data,error}=await sb.rpc('rosin_join_studio',{join_code:$('#obCode').value.trim(), student_name:$('#obSName').value.trim()}); if(error){ st.textContent=error.message; return; } st.textContent=''; toast('Welcome to '+data+'.'); await enterCloud(); };
 
   (async()=>{
     if(!location.protocol.startsWith('http')){ $('#landNote').textContent='Opened as a file: accounts are off, but everything else works on this device.'; return; }
-    let cfg=null; try{ cfg=await (await fetch('/api/config')).json(); }catch(e){}
+    try{ cfg=await (await fetch('/api/config')).json(); }catch(e){}
     if(!cfg||!cfg.supabaseUrl||!cfg.supabaseAnonKey){ $('#landNote').textContent='Accounts are not configured on this deployment yet. Try it on this device instead.'; return; }
     await new Promise((res,rej)=>{ const sc=document.createElement('script'); sc.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js'; sc.onload=res; sc.onerror=rej; document.head.appendChild(sc); }).catch(()=>null);
     if(!window.supabase) return;

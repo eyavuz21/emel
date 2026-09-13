@@ -126,3 +126,68 @@ grant execute on function public.rosin_students_list() to authenticated;
 grant execute on function public.rosin_save_student(uuid, jsonb) to authenticated;
 grant execute on function public.rosin_my_studio() to authenticated;
 grant execute on function public.rosin_my_role() to authenticated;
+
+-- ---------------------------------------------------------------------------------------------
+-- v0.2: the teacher's voice. A studio can hold one cloned voice (ElevenLabs voice id), created from
+-- a sample the teacher records with explicit consent, and deletable by the teacher at any time.
+-- Synthesised captions are stored as audio files in a public bucket under the studio's folder.
+
+alter table public.rosin_studios add column if not exists voice_id text;
+alter table public.rosin_studios add column if not exists voice_name text;
+alter table public.rosin_studios add column if not exists voice_consent_at timestamptz;
+
+create or replace function public.rosin_set_voice(vid text, vname text) returns void
+language plpgsql security definer set search_path = public, extensions as $$
+begin
+  if auth.uid() is null then raise exception 'Sign in first'; end if;
+  if public.rosin_my_role() <> 'teacher' then raise exception 'Only the teacher can set the voice'; end if;
+  update public.rosin_studios set voice_id = vid, voice_name = vname, voice_consent_at = now() where id = public.rosin_my_studio();
+end $$;
+
+create or replace function public.rosin_clear_voice() returns text
+language plpgsql security definer set search_path = public, extensions as $$
+declare old text;
+begin
+  if auth.uid() is null then raise exception 'Sign in first'; end if;
+  if public.rosin_my_role() <> 'teacher' then raise exception 'Only the teacher can remove the voice'; end if;
+  select voice_id into old from public.rosin_studios where id = public.rosin_my_studio();
+  update public.rosin_studios set voice_id = null, voice_name = null, voice_consent_at = null where id = public.rosin_my_studio();
+  return old;
+end $$;
+
+-- rosin_me now also reports the studio id and whether a voice exists (the id itself only to the teacher).
+create or replace function public.rosin_me() returns jsonb
+language plpgsql security definer set search_path = public, extensions as $$
+declare m record; s record;
+begin
+  if auth.uid() is null then return null; end if;
+  select * into m from public.rosin_members where user_id = auth.uid();
+  if m is null then return null; end if;
+  select * into s from public.rosin_studios where id = m.studio_id;
+  return jsonb_build_object(
+    'role', m.role, 'name', m.name, 'studio', s.name, 'studio_id', s.id,
+    'code', case when m.role = 'teacher' then s.code else null end,
+    'voice_ready', s.voice_id is not null,
+    'voice_id', case when m.role = 'teacher' then s.voice_id else null end,
+    'voice_name', s.voice_name);
+end $$;
+
+revoke execute on function public.rosin_set_voice(text, text) from public, anon;
+revoke execute on function public.rosin_clear_voice() from public, anon;
+grant execute on function public.rosin_set_voice(text, text) to authenticated;
+grant execute on function public.rosin_clear_voice() to authenticated;
+
+-- Audio bucket: anyone can play a caption; only signed-in members of a studio can write under that studio's folder.
+insert into storage.buckets (id, name, public) values ('rosin-audio', 'rosin-audio', true) on conflict (id) do nothing;
+
+drop policy if exists "rosin audio: public read" on storage.objects;
+create policy "rosin audio: public read" on storage.objects for select using (bucket_id = 'rosin-audio');
+drop policy if exists "rosin audio: members write" on storage.objects;
+create policy "rosin audio: members write" on storage.objects for insert to authenticated
+  with check (bucket_id = 'rosin-audio' and (storage.foldername(name))[1] = public.rosin_my_studio()::text);
+drop policy if exists "rosin audio: members update" on storage.objects;
+create policy "rosin audio: members update" on storage.objects for update to authenticated
+  using (bucket_id = 'rosin-audio' and (storage.foldername(name))[1] = public.rosin_my_studio()::text);
+drop policy if exists "rosin audio: members delete" on storage.objects;
+create policy "rosin audio: members delete" on storage.objects for delete to authenticated
+  using (bucket_id = 'rosin-audio' and (storage.foldername(name))[1] = public.rosin_my_studio()::text);
