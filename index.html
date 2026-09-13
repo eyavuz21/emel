@@ -1,0 +1,486 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rosin</title>
+<meta name="description" content="Couch to 5K for practising an instrument. Your teacher sets the week; Rosin gets you to Thursday.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 64 64%27%3E%3Crect width=%2764%27 height=%2764%27 rx=%2716%27 fill=%27%23C8792A%27/%3E%3Ctext x=%2732%27 y=%2746%27 font-family=%27Georgia,serif%27 font-size=%2740%27 text-anchor=%27middle%27 fill=%27%23FFF7EA%27%3ER%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --paper:#F7F3EA; --stave:#E6DECB; --card:#FFFDF8; --ink:#1E1A16; --muted:#6F6659; --line:#DED5C2;
+  --amber:#C8792A; --amber-ink:#FFF7EA; --varnish:#5A2A1E; --sage:#5E7F63; --gold:#B8892E; --danger:#A8412E;
+  --tintA:#EFE6D3; --tintB:#E4EAE0; --tintC:#F3E3D3; --shadow:0 12px 30px rgba(60,40,20,.12);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#1B1714; --stave:#2A241F; --card:#241E1A; --ink:#F3ECE0; --muted:#B4A996; --line:#3A322B;
+    --amber:#E08A3A; --amber-ink:#1B1714; --varnish:#E9B58F; --sage:#8DB58F; --gold:#D9A94A; --danger:#E0745F;
+    --tintA:#2A241C; --tintB:#212A22; --tintC:#2E2320; --shadow:0 12px 30px rgba(0,0,0,.45);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#1B1714; --stave:#2A241F; --card:#241E1A; --ink:#F3ECE0; --muted:#B4A996; --line:#3A322B;
+  --amber:#E08A3A; --amber-ink:#1B1714; --varnish:#E9B58F; --sage:#8DB58F; --gold:#D9A94A; --danger:#E0745F;
+  --tintA:#2A241C; --tintB:#212A22; --tintC:#2E2320; --shadow:0 12px 30px rgba(0,0,0,.45);
+  color-scheme: dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--paper) repeating-linear-gradient(0deg, transparent 0 34px, var(--stave) 34px 35px); color:var(--ink); font-family:"Instrument Sans", system-ui, sans-serif; font-size:16px; line-height:1.5; min-height:100vh}
+h1,h2,h3,.serif{font-family:"Instrument Serif", Georgia, serif; font-weight:400; letter-spacing:0; margin:0; text-wrap:balance}
+a{color:var(--amber)}
+button{font:inherit; cursor:pointer}
+input,select,textarea{font:inherit; color:var(--ink); background:var(--card); border:1px solid var(--line); border-radius:12px; padding:10px 12px; width:100%}
+input:focus,select:focus,textarea:focus,button:focus-visible{outline:3px solid var(--amber); outline-offset:2px}
+textarea{min-height:90px; resize:vertical}
+label.l{display:block; font-size:11.5px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin:10px 0 4px}
+.wrap{max-width:860px; margin:0 auto; padding:18px 18px 90px}
+header.top{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:6px 0 14px; border-bottom:1px solid var(--line); margin-bottom:16px}
+.brand h1{font-size:34px; line-height:1; color:var(--varnish)} .brand h1 i{color:var(--amber)}
+.brand small{display:block; font-family:"Instrument Serif", Georgia, serif; font-style:italic; color:var(--muted); font-size:15px}
+.auth{display:flex; gap:8px; align-items:center; flex-wrap:wrap; font-size:13px; color:var(--muted)}
+.btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; border:none; border-radius:999px; padding:12px 20px; font-weight:600; background:var(--amber); color:var(--amber-ink); font-size:15px}
+.btn.block{width:100%; padding:14px 22px; font-size:16px}
+.btn.quiet{background:var(--card); color:var(--ink); border:1px solid var(--line)}
+.btn.sm{padding:8px 12px; font-size:13.5px}
+.btn.danger{background:transparent; color:var(--danger); border:1px solid var(--line)}
+.btn[disabled]{opacity:.5; cursor:not-allowed}
+.eyebrow{font-size:11.5px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+.big{font-size:36px; line-height:1.05; margin:2px 0 12px; color:var(--varnish)}
+.card{background:var(--card); border:1px solid var(--line); border-radius:18px; padding:16px 18px; margin-bottom:12px}
+.card h3{font-size:22px; margin-bottom:6px}
+.box{padding:16px 18px; border-radius:14px; border:1px solid var(--line); margin-bottom:12px}
+.box.a{background:var(--tintA)} .box.b{background:var(--tintB)} .box.c{background:var(--tintC)}
+.quote{font-family:"Instrument Serif", Georgia, serif; font-style:italic; font-size:20px; line-height:1.3}
+.who{font-size:12.5px; color:var(--muted); margin-top:6px}
+.row{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
+.grid2{display:grid; grid-template-columns:1fr 1fr; gap:10px} @media (max-width:640px){ .grid2{grid-template-columns:1fr} }
+.note{font-size:13px; color:var(--muted); margin-top:8px}
+.tabs{position:fixed; left:0; right:0; bottom:0; display:flex; background:var(--card); border-top:1px solid var(--line); padding:8px 8px 14px; z-index:5}
+.tabs button{flex:1; background:none; border:none; font-size:12px; font-weight:600; color:var(--muted); padding:6px 2px; border-radius:10px}
+.tabs button.on{color:var(--amber)}
+.tabs button span{display:block; font-family:"Instrument Serif", Georgia, serif; font-size:22px; line-height:1; margin-bottom:3px}
+.view{display:none} .view.on{display:block}
+.dots{display:inline-flex; gap:8px; align-items:center; vertical-align:middle}
+.dot{width:14px; height:14px; border-radius:50%; border:2px solid var(--line)} .dot.done{background:var(--amber); border-color:var(--amber)} .dot.now{border-color:var(--amber)}
+.streak{display:flex; justify-content:space-between; align-items:baseline}
+.streak .n{font-family:"Instrument Serif", Georgia, serif; font-size:48px; line-height:1; color:var(--amber)}
+.forgive{font-size:13px; color:var(--sage); font-weight:600; margin-top:4px}
+.ring{width:210px; height:210px; margin:6px auto 10px; position:relative}
+.ring svg{width:100%; height:100%; transform:rotate(-90deg)}
+.ring .t{position:absolute; inset:0; display:grid; place-items:center; text-align:center}
+.ring .t b{font-family:"Instrument Serif", Georgia, serif; font-weight:400; font-size:50px; line-height:1; display:block; color:var(--varnish)}
+.ring .t span{font-size:12px; color:var(--muted); letter-spacing:.06em; text-transform:uppercase}
+.steps{list-style:none; margin:10px 0 0; padding:0}
+.steps li{display:flex; justify-content:space-between; padding:8px 0; border-top:1px solid var(--line); color:var(--muted); font-size:14.5px}
+.steps li.now{color:var(--ink); font-weight:600} .steps li.done{text-decoration:line-through; opacity:.6}
+.caption{min-height:80px; padding:14px 16px; border-radius:14px; background:var(--card); border:1px solid var(--line); margin-top:10px}
+.feel{display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin:12px 0}
+.feel button{padding:14px 6px; border-radius:14px; border:1px solid var(--line); background:var(--card); font-weight:600; color:var(--ink)}
+.feel button.on{border-color:var(--amber); background:var(--amber); color:var(--amber-ink)}
+.path{list-style:none; margin:8px 0 0; padding:0 0 0 16px; border-left:2px dashed var(--line)}
+.path li{position:relative; padding:6px 0 12px 18px}
+.path li::before{content:""; position:absolute; left:-24px; top:11px; width:14px; height:14px; border-radius:50%; background:var(--paper); border:2px solid var(--line)}
+.path li.done::before{background:var(--amber); border-color:var(--amber)} .path li.now::before{border-color:var(--amber); box-shadow:0 0 0 5px rgba(200,121,42,.18)} .path li.lesson::before{border-radius:3px; background:var(--varnish); border-color:var(--varnish)}
+.path .t{font-weight:600} .path .d{font-size:13px; color:var(--muted)}
+.check{list-style:none; margin:6px 0 0; padding:0}
+.check li{display:flex; gap:10px; align-items:flex-start; padding:6px 0; cursor:pointer}
+.check li i{width:18px; height:18px; border-radius:5px; border:1.5px solid var(--line); flex:none; margin-top:3px; background:var(--card)}
+.check li.on i{background:var(--amber); border-color:var(--amber)} .check li.on{color:var(--muted); text-decoration:line-through}
+.tokens{display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-top:6px}
+.tok{width:18px; height:18px; border-radius:50%; background:var(--stave); border:1.5px solid var(--line)} .tok.on{background:var(--gold); border-color:var(--gold)}
+.flag{display:flex; justify-content:space-between; gap:10px; padding:8px 0; border-top:1px solid var(--line); font-size:14.5px}
+.flag.res{color:var(--muted); text-decoration:line-through}
+.pill{display:inline-block; font-size:11.5px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; padding:3px 9px; border-radius:999px; background:var(--stave); color:var(--muted)}
+.pill.on{background:var(--amber); color:var(--amber-ink)}
+.student{display:grid; grid-template-columns:1fr auto; gap:10px; align-items:center; padding:12px 0; border-top:1px solid var(--line); cursor:pointer}
+.student .n{font-weight:600; font-size:17px} .student .m{font-size:13px; color:var(--muted)}
+.status{font-size:13.5px; color:var(--muted); min-height:1.4em; margin-top:8px}
+.toast{position:fixed; left:50%; bottom:78px; transform:translateX(-50%); background:var(--varnish); color:var(--paper); padding:10px 16px; border-radius:999px; font-weight:600; box-shadow:var(--shadow); opacity:0; pointer-events:none; transition:opacity .2s; z-index:9}
+.toast.show{opacity:1}
+dialog{border:none; border-radius:22px; padding:0; width:min(560px,92vw); background:var(--card); color:var(--ink); box-shadow:var(--shadow)}
+dialog::backdrop{background:rgba(30,26,22,.5)} dialog .in{padding:22px} dialog h2{font-size:26px; margin-bottom:10px}
+.dlgrow{display:flex; gap:8px; justify-content:flex-end; margin-top:14px}
+.session-preview .s{border-top:1px solid var(--line); padding:10px 0}
+.session-preview .s b{font-family:"Instrument Serif", Georgia, serif; font-weight:400; font-size:20px}
+.session-preview ol{margin:4px 0 0; padding-left:18px; font-size:14px; color:var(--muted)}
+.hero{padding:10px 0 6px}
+.hero h2{font-size:44px; line-height:1.02; color:var(--varnish); margin-bottom:10px}
+.hero p{max-width:60ch; font-size:17px}
+.switch{font-size:12.5px; color:var(--muted); display:inline-flex; gap:8px; align-items:center}
+.switch input{width:auto}
+@media (prefers-reduced-motion: reduce){ .toast{transition:none} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><h1>Rosin<i>.</i></h1><small>Couch to 5K, for practising an instrument.</small></div>
+    <div class="auth" id="auth"></div>
+  </header>
+
+  <!-- LANDING -->
+  <section class="view on" id="v-landing">
+    <div class="hero">
+      <h2>Your teacher sets the week. Rosin gets you to Thursday.</h2>
+      <p>Three short guided sessions between lessons, in your teacher's words. A checklist for the next lesson, a journey to get there, a place to flag the thing that squeaked, and a streak that forgives a missed day. Nothing listens to you play and scores you. It does the harder thing: it gets you to turn up.</p>
+    </div>
+    <div class="grid2">
+      <div class="box a"><h3>Pupils</h3><p style="margin:6px 0 0">Sign in, enter your teacher's code, and your first week is waiting after your next lesson.</p></div>
+      <div class="box b"><h3>Teachers</h3><p style="margin:6px 0 0">Sign in, create a studio, give pupils the code. After each lesson, thirty seconds of notes becomes their week.</p></div>
+    </div>
+    <div class="row" style="margin-top:8px"><button class="btn" id="landSignin">Sign in with email</button><button class="btn quiet" id="landLocal">Try it on this device, no account</button></div>
+    <p class="note" id="landNote"></p>
+  </section>
+
+  <!-- ONBOARD -->
+  <section class="view" id="v-onboard">
+    <div class="eyebrow">Welcome</div>
+    <h2 class="big">Are you teaching or learning?</h2>
+    <div class="grid2">
+      <div class="card"><h3>I teach</h3>
+        <label class="l" for="obStudio">Studio name</label><input id="obStudio" placeholder="e.g. Melisande's pupils">
+        <label class="l" for="obTName">Your name, as pupils see it</label><input id="obTName" placeholder="Melisande">
+        <button class="btn block" id="obCreate" style="margin-top:12px">Create my studio</button></div>
+      <div class="card"><h3>I'm a pupil</h3>
+        <label class="l" for="obCode">Teacher's code</label><input id="obCode" placeholder="e.g. A3F9C2" maxlength="6" style="text-transform:uppercase;letter-spacing:.2em">
+        <label class="l" for="obSName">Your name</label><input id="obSName" placeholder="Emre">
+        <button class="btn block" id="obJoin" style="margin-top:12px">Join</button></div>
+    </div>
+    <div class="status" id="obStatus"></div>
+  </section>
+
+  <!-- STUDENT: TODAY -->
+  <section class="view" id="v-today"></section>
+  <!-- STUDENT: SESSION -->
+  <section class="view" id="v-session">
+    <div class="eyebrow">Session · <span id="stepname"></span></div>
+    <h2 class="big" id="sessTitle" style="font-size:28px"></h2>
+    <div class="ring"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" fill="none" stroke="var(--line)" stroke-width="6"/><circle id="arc" cx="50" cy="50" r="44" fill="none" stroke="var(--amber)" stroke-width="6" stroke-linecap="round" stroke-dasharray="276.5" stroke-dashoffset="0"/></svg><div class="t"><div><b id="clock">0:00</b><span id="stepof"></span></div></div></div>
+    <div class="caption"><div class="quote" id="caption"></div><div class="who" id="capWho"></div></div>
+    <ol class="steps" id="steps"></ol>
+    <div class="row" style="margin-top:12px"><button class="btn quiet sm" id="pause">Pause</button><button class="btn quiet sm" id="skip">Next step</button><button class="btn danger sm" id="quit">Stop</button>
+      <label class="switch"><input type="checkbox" id="speak"> Read aloud</label><label class="switch"><input type="checkbox" id="demo"> Demo speed</label></div>
+  </section>
+  <!-- STUDENT: DONE -->
+  <section class="view" id="v-done">
+    <div class="eyebrow">Session complete</div>
+    <h2 class="big" id="doneTitle"></h2>
+    <p id="doneSub" style="margin:0 0 6px"></p>
+    <div class="eyebrow" style="margin-top:12px">How did it feel?</div>
+    <div class="feel" id="feel"><button data-f="Tough">Tough</button><button data-f="OK">OK</button><button data-f="Good">Good</button></div>
+    <div class="card" id="tailor" hidden></div>
+    <button class="btn block" id="doneBack">Done for today</button>
+    <p class="note" style="text-align:center">Sleep on it. That's when the bow arm learns.</p>
+  </section>
+  <!-- STUDENT: JOURNEY -->
+  <section class="view" id="v-journey"></section>
+  <!-- STUDENT: GOAL -->
+  <section class="view" id="v-goal"></section>
+
+  <!-- TEACHER -->
+  <section class="view" id="v-teacher"></section>
+  <section class="view" id="v-tstudent"></section>
+
+  <nav class="tabs" id="tabs" hidden></nav>
+</div>
+<dialog id="dlg"><div class="in" id="dlgIn"></div></dialog>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+  'use strict';
+  const $=s=>document.querySelector(s); const $$=s=>[...document.querySelectorAll(s)];
+  const h=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const uid=()=>Math.random().toString(36).slice(2,10);
+  const today=()=>new Date().toISOString().slice(0,10);
+  const addDays=(d,n)=>{ const x=new Date(d); x.setDate(x.getDate()+n); return x.toISOString().slice(0,10); };
+  const fmt=d=>{ if(!d) return ''; const [y,m,dd]=d.split('-'); return new Date(+y,+m-1,+dd).toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'}); };
+  const fmtL=d=>{ if(!d) return ''; const [y,m,dd]=d.split('-'); return new Date(+y,+m-1,+dd).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}); };
+  function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('show'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),2000); }
+
+  // ------------------------------------------------------------ store: local or cloud
+  const LKEY='rosin.local.v1';
+  let mode='none'; // 'local' | 'cloud'
+  let sb=null, me=null; // me: {role, name, studio, code, uid}
+  let students=[]; // [{user_id, data}]
+  let current=null; // selected student (teacher) or self (student): {user_id, data}
+  let pushTimer=null;
+
+  function blankDoc(name){ return {profile:{name:name||'', instrument:'violin', level:'beginner', goalLabel:'', goalDate:'', sessionsPerWeek:3, minutes:18}, notes:[], weeks:[], flags:[], tokens:{earned:0, redeemed:0}, teacherName:''}; }
+  function loadLocal(){ try{ const s=localStorage.getItem(LKEY); if(s) return JSON.parse(s); }catch(e){} return null; }
+  function saveLocal(o){ try{ localStorage.setItem(LKEY, JSON.stringify(o)); }catch(e){} }
+
+  async function saveCurrent(){
+    if(!current) return;
+    if(mode==='local'){ const o=loadLocal()||{}; o.doc=current.data; saveLocal(o); return; }
+    clearTimeout(pushTimer); pushTimer=setTimeout(async()=>{ const {error}=await sb.rpc('rosin_save_student',{target:current.user_id, doc:current.data}); if(error){ console.warn(error); toast('Could not save. Check your connection.'); } }, 500);
+  }
+  async function refresh(){
+    if(mode==='local'){ const o=loadLocal()||{}; if(!o.doc) o.doc=blankDoc(o.me?.name||'Me'); students=[{user_id:'local', data:o.doc}]; saveLocal(o); return; }
+    const {data,error}=await sb.rpc('rosin_students_list'); if(error){ console.warn(error); return; }
+    students=(data||[]).map(r=>({user_id:r.user_id, data:Object.assign(blankDoc(''), r.data||{})}));
+  }
+
+  // ------------------------------------------------------------ routing
+  function show(v){ $$('.view').forEach(x=>x.classList.toggle('on', x.id==='v-'+v)); $$('#tabs button').forEach(b=>b.classList.toggle('on', b.dataset.v===v)); window.scrollTo({top:0}); }
+  function setTabs(role){
+    const t=$('#tabs');
+    if(!role){ t.hidden=true; t.innerHTML=''; return; }
+    t.hidden=false;
+    t.innerHTML = role==='student'
+      ? `<button data-v="today"><span>♩</span>Today</button><button data-v="journey"><span>♪</span>Journey</button><button data-v="goal"><span>♬</span>Goal</button>${mode==='local'?'<button data-v="teacher"><span>♯</span>Teacher</button>':''}`
+      : `<button data-v="teacher"><span>♯</span>Pupils</button>${mode==='local'?'<button data-v="today"><span>♩</span>Pupil view</button>':''}`;
+    $$('#tabs button').forEach(b=>b.onclick=()=>{ const v=b.dataset.v; if(v==='teacher') renderTeacher(); else if(v==='today') renderToday(); else if(v==='journey') renderJourney(); else if(v==='goal') renderGoal(); show(v); });
+  }
+  function renderAuth(){
+    const el=$('#auth');
+    if(mode==='none'){ el.innerHTML=''; return; }
+    if(mode==='local'){ el.innerHTML=`<span>On this device only</span> <button class="btn sm quiet" id="leaveLocal">Sign in instead</button>`; $('#leaveLocal').onclick=()=>{ if(sb) signInDialog(); else alert('Sign-in needs the live site.'); }; return; }
+    el.innerHTML=`<span>${h(me.name||me.email||'')} · ${me.role==='teacher'?'teacher':'pupil'}${me.studio?' · '+h(me.studio):''}</span>${me.code?` <span class="pill on">code ${h(me.code)}</span>`:''} <button class="btn sm quiet" id="signout">Sign out</button>`;
+    $('#signout').onclick=async()=>{ await sb.auth.signOut(); location.reload(); };
+  }
+
+  // ------------------------------------------------------------ student helpers
+  const doc=()=>current.data;
+  const week=()=>doc().weeks.length?doc().weeks[doc().weeks.length-1]:null;
+  function doneCount(w){ return w?(w.done||[]).length:0; }
+  function nextIndex(w){ if(!w) return -1; const d=new Set((w.done||[]).map(x=>x.i)); for(let i=0;i<w.sessions.length;i++) if(!d.has(i)) return i; return -1; }
+  function streak(){ // consecutive completed sessions, newest backwards; a fully-missed week breaks it, a partial current week doesn't
+    let n=0; const ws=doc().weeks;
+    for(let k=ws.length-1;k>=0;k--){ const w=ws[k]; const d=(w.done||[]).slice().sort((a,b)=>a.i-b.i); if(k<ws.length-1 && d.length<w.sessions.length) { n+=d.length; break; } n+=d.length; }
+    return n;
+  }
+  function tokensView(){ const t=doc().tokens||{earned:0,redeemed:0}; const avail=Math.max(0,(t.earned||0)-(t.redeemed||0)); return {avail, toNext: Math.max(0, 6-(avail%6||0))}; }
+
+  function renderToday(){
+    if(!current) return;
+    const w=week(); const p=doc().profile; const v=$('#v-today');
+    const tn=doc().teacherName||'your teacher';
+    if(!w){
+      v.innerHTML=`<div class="eyebrow">${h(p.name||'')}</div><h2 class="big">No week yet.</h2>
+        <div class="card"><div class="quote">"Your first week appears here after your next lesson, once ${h(tn)} has written it."</div></div>
+        ${mode==='local'?'<div class="card"><h3>Trying it on your own?</h3><p>Open the <b>Teacher</b> tab, write a lesson note as if you were the teacher, and generate a week. Then come back here.</p></div>':''}`;
+      show('today'); return;
+    }
+    const i=nextIndex(w); const n=doneCount(w); const s=i>=0?w.sessions[i]:null;
+    const lastDone=(w.done||[]).slice(-1)[0];
+    v.innerHTML=`
+      <div class="eyebrow">${h(fmt(today()))} · week of ${h(fmt(w.createdAt))} · session ${Math.min(n+1,w.sessions.length)} of ${w.sessions.length}</div>
+      <h2 class="big">${s?h(s.title):'Week complete.'}</h2>
+      <div class="card"><div class="quote">"${h(s?s.intro:(w.encouragement||'Rest until the lesson. You did the work.'))}"</div><div class="who">${h(tn)}</div></div>
+      ${s?`<button class="btn block" id="start">Start · ${s.steps.reduce((a,x)=>a+(+x.minutes||0),0)} min</button>`:`<button class="btn block quiet" disabled>All ${w.sessions.length} sessions done. Next lesson ${h(fmt(w.nextLesson))}.</button>`}
+      <div class="card" style="margin-top:12px"><div class="streak"><span class="n">${streak()}</span><small>session streak</small></div>
+        <div class="forgive">One rest day a week is built in. A missed day pauses the streak; only a whole missed week breaks it.</div>
+        <div class="row" style="margin-top:10px"><span class="eyebrow">This week</span><span class="dots">${w.sessions.map((_,k)=>`<i class="dot ${k<n?'done':k===n?'now':''}"></i>`).join('')}</span></div></div>
+      ${lastDone?`<div class="card"><h3>Last time</h3><div>${h(fmt(lastDone.at.slice(0,10)))} · you said <b>${h(lastDone.feel||'')}</b>${w.line?`. ${h(w.line)}`:''}</div></div>`:(w.line?`<div class="card"><h3>From ${h(tn)}</h3><div class="quote" style="font-size:18px">"${h(w.line)}"</div></div>`:'')}`;
+    const b=$('#start'); if(b) b.onclick=()=>startSession(i);
+    show('today');
+  }
+
+  // ------------------------------------------------------------ session runner
+  let si=0, stepI=0, left=0, total=0, timer=null, paused=false, sess=null;
+  const ARC=276.5;
+  function speak(text){ if(!$('#speak').checked||!('speechSynthesis' in window)) return; try{ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text); const v=speechSynthesis.getVoices().find(x=>/en-GB/i.test(x.lang)); if(v) u.voice=v; u.rate=0.95; speechSynthesis.speak(u); }catch(e){} }
+  function stepInit(){
+    const st=sess.steps[stepI]; total=$('#demo').checked?6:Math.max(10,Math.round((+st.minutes||1)*60)); left=total;
+    $('#stepname').textContent=st.name; $('#caption').textContent='"'+st.caption+'"'; $('#capWho').textContent=doc().teacherName||'your teacher'; $('#stepof').textContent=`step ${stepI+1} of ${sess.steps.length}`;
+    $('#steps').innerHTML=sess.steps.map((x,k)=>`<li class="${k<stepI?'done':k===stepI?'now':''}"><span>${h(x.name)}</span><span>${h(x.minutes)} min</span></li>`).join('');
+    speak(st.caption); tick();
+  }
+  function tick(){ const real=$('#demo').checked?Math.round((+sess.steps[stepI].minutes||1)*60*(left/total)):left; $('#clock').textContent=`${Math.floor(real/60)}:${String(real%60).padStart(2,'0')}`; $('#arc').style.strokeDashoffset=ARC*(1-left/total); }
+  function run(){ clearInterval(timer); timer=setInterval(()=>{ if(paused) return; left--; tick(); if(left<=0) nextStep(); },1000); }
+  function nextStep(){ stepI++; if(stepI>=sess.steps.length){ finish(); return; } stepInit(); }
+  function startSession(i){ const w=week(); si=i; sess=w.sessions[i]; stepI=0; paused=false; $('#pause').textContent='Pause'; $('#sessTitle').textContent=sess.title; stepInit(); run(); show('session'); }
+  function finish(){
+    clearInterval(timer); try{ speechSynthesis.cancel(); }catch(e){}
+    const w=week(); w.done=w.done||[]; if(!w.done.some(x=>x.i===si)) w.done.push({i:si, at:new Date().toISOString(), feel:''});
+    const t=doc().tokens||(doc().tokens={earned:0,redeemed:0}); t.earned=(t.earned||0)+1; if(doneCount(w)===w.sessions.length) t.earned+=2;
+    saveCurrent();
+    $('#doneTitle').textContent=`That's ${streak()} in a row.`; $('#doneSub').textContent=`${sess.steps.reduce((a,x)=>a+(+x.minutes||0),0)} minutes. ${doneCount(w)} of ${w.sessions.length} this week.${doneCount(w)===w.sessions.length?' Week complete: two bonus tokens.':''}`;
+    $$('#feel button').forEach(b=>b.classList.remove('on')); $('#tailor').hidden=true; show('done');
+  }
+  $('#pause').onclick=e=>{ paused=!paused; e.target.textContent=paused?'Resume':'Pause'; if(paused){ try{ speechSynthesis.pause(); }catch(x){} } else { try{ speechSynthesis.resume(); }catch(x){} } };
+  $('#skip').onclick=()=>nextStep();
+  $('#quit').onclick=()=>{ clearInterval(timer); try{ speechSynthesis.cancel(); }catch(e){} renderToday(); };
+  $$('#feel button').forEach(b=>b.onclick=()=>{ $$('#feel button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); const w=week(); const d=(w.done||[]).find(x=>x.i===si); if(d) d.feel=b.dataset.f; saveCurrent();
+    const t=$('#tailor'); t.hidden=false; t.innerHTML = b.dataset.f==='Tough'?'<b>Noted.</b> Tough days count double. Your teacher will see this before the lesson.':b.dataset.f==='OK'?'<b>Noted.</b> Steady is the point.':'<b>Lovely.</b> Don\'t practise it again tonight; sleep does the rest.'; });
+  $('#doneBack').onclick=()=>renderJourney(true);
+
+  // ------------------------------------------------------------ journey
+  function renderJourney(showIt){
+    if(!current) return; const w=week(); const v=$('#v-journey'); const p=doc().profile; const tn=doc().teacherName||'your teacher';
+    if(!w){ v.innerHTML=`<div class="eyebrow">Journey</div><h2 class="big">Nothing to walk yet.</h2><div class="card">The path from one lesson to the next appears once ${h(tn)} has set your week.</div>`; if(showIt!==false) show('journey'); return; }
+    const n=doneCount(w); const d=new Set((w.done||[]).map(x=>x.i)); const tk=tokensView();
+    const flags=doc().flags||[];
+    v.innerHTML=`
+      <div class="eyebrow">Journey to ${h(fmt(w.nextLesson))}</div>
+      <h2 class="big">${w.sessions.length} stops, then ${h(tn)}.</h2>
+      <ul class="path">
+        <li class="lesson"><div class="t">Lesson · ${h(fmt(w.lessonDate||w.createdAt))}</div><div class="d">${h((w.workedOn||'').slice(0,90))}</div></li>
+        ${w.sessions.map((s,k)=>`<li class="${d.has(k)?'done':k===nextIndex(w)?'now':''}"><div class="t">${h(s.title)}${d.has(k)?' ✓':''}</div><div class="d">${h(s.steps.map(x=>x.name).slice(1,3).join(' · '))}</div></li>`).join('')}
+        <li class="lesson"><div class="t">Next lesson · ${h(fmt(w.nextLesson))}</div><div class="d">Play it for ${h(tn)}.</div></li>
+      </ul>
+      <div class="card"><h3>Prepare for the lesson</h3>
+        <ul class="check" id="prep">${(w.checklist||[]).map((c,k)=>`<li class="${(w.ticks||[]).includes(k)?'on':''}" data-k="${k}"><i></i><span>${h(c)}</span></li>`).join('')||'<li><i></i><span style="color:var(--muted)">No checklist this week</span></li>'}</ul>
+        <div class="note">Set by ${h(tn)}. Tick each one when you could show it in the lesson.</div></div>
+      <div class="card"><h3>For the next lesson</h3>
+        <div id="flags">${flags.filter(f=>!f.resolved).map(f=>`<div class="flag"><span>${h(f.text)}</span><button class="btn sm quiet" data-unflag="${f.id}" aria-label="Remove">×</button></div>`).join('')||'<div class="note" style="margin:0">Nothing flagged. Type it the moment it happens: a squeak, a question, a breakthrough.</div>'}</div>
+        <form id="flagForm" class="row" style="margin-top:8px"><input id="flagText" placeholder="e.g. G string squeaks on down bows" style="flex:1"><button class="btn sm" type="submit">Flag it</button></form>
+        <div class="note">${h(tn)} sees these before the lesson starts.</div></div>
+      <div class="card"><h3>Tokens</h3>
+        <div class="tokens">${Array.from({length:6},(_,k)=>`<i class="tok ${k<(tk.avail%6||(tk.avail>=6?6:0))?'on':''}"></i>`).join('')}<span class="note" style="margin:0 0 0 6px">${tk.avail} available${tk.avail>=6?' · ask '+h(tn)+' for your reward':' · '+tk.toNext+' to the next reward'}</span></div>
+        <div class="note">One token per session, two more for a full week. Six is a small reward your teacher, parent or school has put up. Earned for showing up, not for talent.</div></div>`;
+    $$('#prep li[data-k]').forEach(li=>li.onclick=()=>{ w.ticks=w.ticks||[]; const k=+li.dataset.k; w.ticks=w.ticks.includes(k)?w.ticks.filter(x=>x!==k):[...w.ticks,k]; saveCurrent(); renderJourney(false); });
+    $('#flagForm').onsubmit=e=>{ e.preventDefault(); const t=$('#flagText').value.trim(); if(!t) return; doc().flags=doc().flags||[]; doc().flags.push({id:uid(), text:t, at:new Date().toISOString(), resolved:false}); saveCurrent(); renderJourney(false); toast('Flagged for the lesson.'); };
+    $$('[data-unflag]').forEach(b=>b.onclick=()=>{ doc().flags=doc().flags.filter(f=>f.id!==b.dataset.unflag); saveCurrent(); renderJourney(false); });
+    if(showIt!==false) show('journey');
+  }
+
+  // ------------------------------------------------------------ goal
+  function weeksBetween(a,b){ return Math.round((new Date(b)-new Date(a))/(7*86400000)); }
+  function renderGoal(showIt){
+    if(!current) return; const p=doc().profile; const v=$('#v-goal');
+    const has=!!p.goalDate; const left=has?weeksBetween(today(),p.goalDate):null;
+    const totalW=has?Math.max(4,left+doc().weeks.length):null; const doneW=doc().weeks.length;
+    const phases=[['Foundations',.35,'Sound, rhythm, first patterns'],['Repertoire',.35,'The pieces, one at a time'],['Polish',.2,'Dynamics, phrasing, playing through'],['Mock exam',.07,'A full run for your teacher, then a parent'],['Exam',.03,'You\'re ready. Sleep.']];
+    let rows='', w=1, cur='Foundations';
+    if(has){ let acc=0; for(const [n,f] of phases){ acc+=f; if(doneW/totalW<=acc){ cur=n; break; } }
+      for(const [n,f,sub] of phases){ const c=Math.max(1,Math.round(totalW*f)); const a=w, b=Math.min(totalW,w+c-1); w=b+1; const k=b<doneW?'done':a<=doneW+1?'now':''; rows+=`<li class="${k}"><div class="t">${n} <span class="pill ${k==='now'?'on':''}">${k==='done'?'done':k==='now'?'now':'weeks '+a+'–'+b}</span></div><div class="d">${sub}</div></li>`; } }
+    v.innerHTML=`
+      <div class="eyebrow">Your goal</div>
+      <h2 class="big">${has?h(p.goalLabel||'Your goal')+' · '+h(fmtL(p.goalDate))+'.':'No date set yet.'}</h2>
+      ${has?`<div class="card"><div class="row" style="justify-content:space-between"><b>${left} weeks to go</b><span class="eyebrow">week ${doneW+1} · ${cur}</span></div>
+        <div style="height:8px;border-radius:4px;background:var(--stave);margin:8px 0 4px"><div style="width:${Math.min(100,Math.round(100*doneW/totalW))}%;height:8px;border-radius:4px;background:var(--amber)"></div></div></div>
+        <ul class="path">${rows}</ul>`:'<div class="card">Your teacher sets the exam or performance date, even roughly, and the road appears here. You can change it too, below.</div>'}
+      <div class="card"><h3>Set or change the goal</h3>
+        <div class="grid2"><div><label class="l" for="gLabel">What it is</label><input id="gLabel" placeholder="e.g. Grade 3 exam, school concert" value="${h(p.goalLabel||'')}"></div><div><label class="l" for="gDate">Roughly when</label><input type="date" id="gDate" value="${h(p.goalDate||'')}"></div></div>
+        <button class="btn sm" id="gSave" style="margin-top:10px">Save goal</button></div>`;
+    $('#gSave').onclick=()=>{ p.goalLabel=$('#gLabel').value.trim(); p.goalDate=$('#gDate').value; saveCurrent(); renderGoal(false); toast('Goal saved.'); };
+    if(showIt!==false) show('goal');
+  }
+
+  // ------------------------------------------------------------ teacher
+  function renderTeacher(){
+    const v=$('#v-teacher');
+    const list=students.map(s=>{ const d=s.data; const w=d.weeks&&d.weeks.length?d.weeks[d.weeks.length-1]:null; const flags=(d.flags||[]).filter(f=>!f.resolved).length;
+      return `<div class="student" data-sid="${h(s.user_id)}"><div><div class="n">${h(d.profile?.name||'Pupil')}</div><div class="m">${h(d.profile?.instrument||'')} · ${h(d.profile?.level||'')}${w?` · this week ${doneCount(w)}/${w.sessions.length}`:' · no week set'}${flags?` · <b>${flags} flagged</b>`:''}</div></div><span class="pill">open</span></div>`; }).join('');
+    v.innerHTML=`<div class="eyebrow">${h(me?.studio||'Your studio')}${me?.code?` · code <b>${h(me.code)}</b>`:''}</div><h2 class="big">${students.length?'Your pupils.':'No pupils yet.'}</h2>
+      ${me?.code?`<div class="box b"><b>Give pupils this code:</b> <span class="pill on" style="font-size:16px;letter-spacing:.2em">${h(me.code)}</span><div class="note">They sign in, choose "I'm a pupil", enter it, and they're in your studio.</div></div>`:''}
+      <div class="card">${list||'<div class="note" style="margin:0">Pupils appear here when they join with your code.</div>'}</div>`;
+    $$('[data-sid]').forEach(el=>el.onclick=()=>{ current=students.find(s=>s.user_id===el.dataset.sid); renderTStudent(); show('tstudent'); });
+    show('teacher');
+  }
+  let preview=null;
+  function renderTStudent(){
+    const v=$('#v-tstudent'); const d=current.data; const p=d.profile; const w=d.weeks.length?d.weeks[d.weeks.length-1]:null; const flags=(d.flags||[]);
+    v.innerHTML=`
+      <button class="btn sm quiet" id="backT">← Pupils</button>
+      <div class="eyebrow" style="margin-top:10px">Pupil</div><h2 class="big">${h(p.name||'Pupil')}</h2>
+      ${flags.filter(f=>!f.resolved).length?`<div class="box c"><h3>Flagged for the next lesson</h3>${flags.filter(f=>!f.resolved).map(f=>`<div class="flag"><span>${h(f.text)} <span class="note" style="margin:0">· ${h(fmt(f.at.slice(0,10)))}</span></span><button class="btn sm quiet" data-res="${f.id}">Done</button></div>`).join('')}</div>`:''}
+      ${w?`<div class="card"><h3>This week</h3><div class="row"><span class="dots">${w.sessions.map((_,k)=>`<i class="dot ${(w.done||[]).some(x=>x.i===k)?'done':''}"></i>`).join('')}</span><span class="note" style="margin:0">${doneCount(w)} of ${w.sessions.length} done · ${(w.done||[]).map(x=>x.feel).filter(Boolean).join(', ')||'no feelings logged yet'} · next lesson ${h(fmt(w.nextLesson))}</span></div>
+        <div class="note">Tokens: ${(d.tokens?.earned||0)-(d.tokens?.redeemed||0)} available. ${((d.tokens?.earned||0)-(d.tokens?.redeemed||0))>=6?'<button class="btn sm" id="award">Mark reward given</button>':''}</div></div>`:''}
+      <div class="card"><h3>Profile</h3>
+        <div class="grid2">
+          <div><label class="l" for="pInst">Instrument</label><input id="pInst" value="${h(p.instrument||'violin')}"></div>
+          <div><label class="l" for="pLevel">Level</label><input id="pLevel" value="${h(p.level||'beginner')}" placeholder="beginner, grade 3, returning adult…"></div>
+          <div><label class="l" for="pGoal">Goal</label><input id="pGoal" value="${h(p.goalLabel||'')}" placeholder="Grade 3 exam"></div>
+          <div><label class="l" for="pGoalDate">Goal date (rough)</label><input type="date" id="pGoalDate" value="${h(p.goalDate||'')}"></div>
+          <div><label class="l" for="pSpw">Sessions a week</label><input type="number" id="pSpw" min="2" max="5" value="${h(p.sessionsPerWeek||3)}"></div>
+          <div><label class="l" for="pMin">Minutes a session</label><input type="number" id="pMin" min="10" max="45" value="${h(p.minutes||18)}"></div>
+        </div><button class="btn sm" id="pSave" style="margin-top:10px">Save profile</button></div>
+      <div class="card"><h3>After today's lesson</h3>
+        <div class="grid2"><div><label class="l" for="nDate">Lesson date</label><input type="date" id="nDate" value="${today()}"></div><div><label class="l" for="nNext">Next lesson</label><input type="date" id="nNext" value="${addDays(today(),7)}"></div></div>
+        <label class="l" for="nWorked">What we worked on</label><textarea id="nWorked" placeholder="D major scale, bow contact point near the bridge, first phrase of Twinkle variation A. Tone is opening up; rushes the scale."></textarea>
+        <label class="l" for="nNextL">For next lesson, one per line</label><textarea id="nNextL" placeholder="Scale from memory, two octaves&#10;First phrase in tune&#10;Bow nearer the bridge on long notes"></textarea>
+        <label class="l" for="nLine">One line for the week</label><input id="nLine" placeholder="Lovely tone today. Don't rush the scale.">
+        <div class="row" style="margin-top:10px"><button class="btn" id="gen">Write this week's sessions</button><span class="status" id="genStatus" style="margin:0"></span></div>
+        <div class="note">Thirty seconds here becomes ${h(p.sessionsPerWeek||3)} guided sessions, a checklist and a journey for ${h(p.name||'the pupil')}. You review before it goes to them.</div></div>
+      <div id="previewBox"></div>`;
+    $('#backT').onclick=()=>renderTeacher();
+    $('#pSave').onclick=()=>{ p.instrument=$('#pInst').value.trim()||'violin'; p.level=$('#pLevel').value.trim()||'beginner'; p.goalLabel=$('#pGoal').value.trim(); p.goalDate=$('#pGoalDate').value; p.sessionsPerWeek=+$('#pSpw').value||3; p.minutes=+$('#pMin').value||18; saveCurrent(); toast('Profile saved.'); };
+    $$('[data-res]').forEach(b=>b.onclick=()=>{ const f=flags.find(x=>x.id===b.dataset.res); if(f) f.resolved=true; saveCurrent(); renderTStudent(); });
+    const aw=$('#award'); if(aw) aw.onclick=()=>{ d.tokens=d.tokens||{earned:0,redeemed:0}; d.tokens.redeemed=(d.tokens.redeemed||0)+6; saveCurrent(); renderTStudent(); toast('Reward marked as given.'); };
+    $('#gen').onclick=generateWeek;
+    if(preview) renderPreview();
+  }
+  async function generateWeek(){
+    const d=current.data; const p=d.profile; const st=$('#genStatus'); const btn=$('#gen');
+    const note={date:$('#nDate').value||today(), nextLesson:$('#nNext').value||addDays(today(),7), workedOn:$('#nWorked').value.trim(), forNext:$('#nNextL').value.split('\n').map(x=>x.trim()).filter(Boolean), line:$('#nLine').value.trim()};
+    if(!note.workedOn&&!note.forNext.length){ st.textContent='Add what you worked on, or what to prepare.'; return; }
+    btn.disabled=true; st.textContent='Writing the week…';
+    const weeksToGoal=p.goalDate?weeksBetween(today(),p.goalDate):null;
+    try{
+      let out;
+      if(location.protocol.startsWith('http')){
+        const r=await fetch('/api/plan',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({profile:p, note, teacherName:d.teacherName||me?.name||'your teacher', weeksToGoal})});
+        if(!r.ok){ let e={}; try{ e=await r.json(); }catch(x){} throw new Error(e.message||('HTTP '+r.status)); }
+        out=await r.json();
+      } else { out=offlinePlan(p, note); }
+      preview={note, out}; st.textContent=''; renderPreview(); document.getElementById('previewBox').scrollIntoView({behavior:'smooth'});
+    }catch(e){ st.textContent=e.message||'Could not write the week. Try again.'; }
+    finally{ btn.disabled=false; }
+  }
+  function offlinePlan(p, note){ // used only when the page is opened as a file, so the flow can still be tried
+    const items=note.forNext.length?note.forNext:['the thing we worked on']; const per=Math.max(3,Math.round((p.minutes||18)/5));
+    const mk=(t,i)=>({title:t, intro:`Session ${i}. ${note.line||'Slow and in tune beats fast and nearly.'}`, steps:[{name:'Warm-up',minutes:3,caption:'Long, slow bows on the open strings. Listen for the note to bloom.'},{name:items[0],minutes:per,caption:`${items[0]}, slowly. Hear it before you play it.`},{name:'The piece',minutes:per,caption:'First phrase only, three times. Stop before it gets messy.'},{name:items[1]||items[0]+' again',minutes:per,caption:`Back to ${(items[1]||items[0]).toLowerCase()}, one notch faster than before.`},{name:'Wind down',minutes:1,caption:'One last open string, as beautiful as you can. Stop there.'}]});
+    return {sessions:Array.from({length:p.sessionsPerWeek||3},(_,i)=>mk(['Foundations','Building','Ready for the lesson'][i]||'Session',i+1)), checklist:items, encouragement:'Three short sessions beat one long one. Turn up.'};
+  }
+  function renderPreview(){
+    const box=$('#previewBox'); const {note,out}=preview;
+    box.innerHTML=`<div class="box a session-preview"><h3>Preview: ${h(current.data.profile.name||'the pupil')}'s week</h3><div class="note">Read it as the pupil will hear it. Regenerate if it's off; publish when it's right.</div>
+      ${out.sessions.map((s,i)=>`<div class="s"><b>${i+1}. ${h(s.title)}</b> <span class="note" style="margin:0">· ${s.steps.reduce((a,x)=>a+(+x.minutes||0),0)} min</span><div class="quote" style="font-size:16px;margin:4px 0">"${h(s.intro)}"</div><ol>${s.steps.map(x=>`<li><b>${h(x.name)}</b> (${h(x.minutes)} min): ${h(x.caption)}</li>`).join('')}</ol></div>`).join('')}
+      <div class="s"><b>Checklist for ${h(fmt(note.nextLesson))}</b><ul class="check">${out.checklist.map(c=>`<li><i></i><span>${h(c)}</span></li>`).join('')}</ul></div>
+      <div class="s"><div class="quote" style="font-size:17px">"${h(out.encouragement)}"</div></div>
+      <div class="row" style="margin-top:12px"><button class="btn" id="publish">Publish to ${h(current.data.profile.name||'the pupil')}</button><button class="btn quiet" id="regen">Regenerate</button><button class="btn quiet" id="discard">Discard</button></div></div>`;
+    $('#publish').onclick=()=>{ const d=current.data; d.notes.push({id:uid(), ...note}); d.weeks.push({id:uid(), createdAt:today(), lessonDate:note.date, nextLesson:note.nextLesson, workedOn:note.workedOn, line:note.line, sessions:out.sessions, checklist:out.checklist, encouragement:out.encouragement, done:[], ticks:[]}); d.teacherName=d.teacherName||me?.name||''; preview=null; saveCurrent(); toast('Published. It\'s waiting on their Today screen.'); renderTStudent(); };
+    $('#regen').onclick=()=>{ preview=null; renderTStudent(); $('#nWorked').value=note.workedOn; $('#nNextL').value=note.forNext.join('\n'); $('#nLine').value=note.line; $('#nDate').value=note.date; $('#nNext').value=note.nextLesson; generateWeek(); };
+    $('#discard').onclick=()=>{ preview=null; renderTStudent(); };
+  }
+
+  // ------------------------------------------------------------ boot
+  function enterLocal(){
+    mode='local'; let o=loadLocal(); if(!o){ o={me:{role:'student', name:'Me'}, doc:blankDoc('Me')}; saveLocal(o); }
+    me={role:'student', name:o.me.name, studio:'This device', code:null}; students=[{user_id:'local', data:Object.assign(blankDoc('Me'), o.doc)}]; current=students[0]; current.data.teacherName=current.data.teacherName||'your teacher';
+    renderAuth(); setTabs('student'); renderToday();
+  }
+  async function enterCloud(){
+    const {data:meta,error}=await sb.rpc('rosin_me'); if(error){ console.warn(error); }
+    if(!meta){ renderAuth(); show('onboard'); return; }
+    me={...meta, email:sbUser.email}; mode='cloud'; await refresh();
+    renderAuth();
+    if(me.role==='teacher'){ setTabs('teacher'); renderTeacher(); }
+    else { current=students.find(s=>s.user_id===sbUser.id)||students[0]; if(current){ if(!current.data.profile.name) current.data.profile.name=me.name||''; current.data.teacherName=current.data.teacherName||''; } setTabs('student'); renderToday(); }
+  }
+  let sbUser=null;
+  function signInDialog(){
+    const d=$('#dlg'); $('#dlgIn').innerHTML=`<h2>Sign in</h2><p class="note" style="margin:0 0 10px">We email you a link. No password.</p><form id="siForm"><label class="l" for="siEmail">Email</label><input type="email" id="siEmail" required placeholder="you@example.com"><div class="dlgrow"><button type="button" class="btn quiet" id="siCancel">Cancel</button><button class="btn" type="submit">Email me a link</button></div></form>`;
+    $('#siCancel').onclick=()=>d.close();
+    $('#siForm').onsubmit=async e=>{ e.preventDefault(); const email=$('#siEmail').value.trim(); const {error}=await sb.auth.signInWithOtp({email, options:{emailRedirectTo: location.origin+location.pathname}}); if(error){ alert(error.message); return; } $('#dlgIn').innerHTML=`<h2>Check your email</h2><p>We sent a sign-in link to <b>${h(email)}</b>. Open it on this device.</p><div class="dlgrow"><button class="btn" id="siOk">OK</button></div>`; $('#siOk').onclick=()=>d.close(); };
+    d.showModal();
+  }
+  $('#landSignin').onclick=()=>{ if(sb) signInDialog(); else alert('Sign-in needs the live site with accounts configured. You can still try it on this device.'); };
+  $('#landLocal').onclick=enterLocal;
+  $('#obCreate').onclick=async()=>{ const st=$('#obStatus'); st.textContent='Creating…'; const {data,error}=await sb.rpc('rosin_create_studio',{studio_name:$('#obStudio').value.trim(), teacher_name:$('#obTName').value.trim()}); if(error){ st.textContent=error.message; return; } st.textContent=''; toast('Studio created. Your code is '+data+'.'); await enterCloud(); };
+  $('#obJoin').onclick=async()=>{ const st=$('#obStatus'); st.textContent='Joining…'; const {data,error}=await sb.rpc('rosin_join_studio',{join_code:$('#obCode').value.trim(), student_name:$('#obSName').value.trim()}); if(error){ st.textContent=error.message; return; } st.textContent=''; toast('Welcome to '+data+'.'); await enterCloud(); };
+
+  (async()=>{
+    if(!location.protocol.startsWith('http')){ $('#landNote').textContent='Opened as a file: accounts are off, but everything else works on this device.'; return; }
+    let cfg=null; try{ cfg=await (await fetch('/api/config')).json(); }catch(e){}
+    if(!cfg||!cfg.supabaseUrl||!cfg.supabaseAnonKey){ $('#landNote').textContent='Accounts are not configured on this deployment yet. Try it on this device instead.'; return; }
+    await new Promise((res,rej)=>{ const sc=document.createElement('script'); sc.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js'; sc.onload=res; sc.onerror=rej; document.head.appendChild(sc); }).catch(()=>null);
+    if(!window.supabase) return;
+    sb=window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey);
+    const {data:{session}}=await sb.auth.getSession(); sbUser=session?.user||null;
+    sb.auth.onAuthStateChange(async(_e,sess)=>{ const was=!!sbUser; sbUser=sess?.user||null; if(sbUser&&!was){ $('#dlg').close(); await enterCloud(); } });
+    if(sbUser) await enterCloud();
+  })();
+})();
+</script>
+</body>
+</html>

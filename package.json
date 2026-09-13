@@ -1,0 +1,10 @@
+{
+  "name": "rosin",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Couch to 5K for practising an instrument. A teacher sets each week in thirty seconds; the student gets guided sessions, a journey to the next lesson, and a reason to turn up on Thursday.",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.125.0"
+  }
+}
