@@ -1,3 +1,7 @@
 node_modules
 .vercel
 .env*
+
+# personal notes kept in this folder, not for the public repo
+WhatsApp-*.md
+Pitch-Deck-*.md

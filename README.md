@@ -4,7 +4,7 @@
 
 **Moving towards your goal.** Couch to 5K for practising an instrument, on your own with a teacher or as part of a choir or orchestra. Your teacher sets the week in thirty seconds; Mosso gets you to Thursday.
 
-**Live:** https://mossoapp.vercel.app (the old sostenutoapp.vercel.app address still works)
+**Live:** https://mossoapp.vercel.app
 
 ## The idea
 
