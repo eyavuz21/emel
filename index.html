@@ -765,6 +765,10 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
     sb.auth.onAuthStateChange(async(_e,sess)=>{ const was=!!sbUser; sbUser=sess?.user||null; if(sbUser&&!was){ $('#dlg').close(); await enterCloud(); } });
     if(sbUser) await enterCloud();
   })();
+  // deep link into the demo: ?demo=pupil|teacher|group|lessons|journey|goal|share (nothing is saved)
+  (function(){ const q=new URLSearchParams(location.search).get('demo'); if(!q) return; enterDemo();
+    const v=q.toLowerCase(); const wait=ms=>new Promise(r=>setTimeout(r,ms));
+    wait(50).then(()=>{ if(v==='teacher'){ setDemoRole('teacher'); } else if(v==='group'){ setDemoRole('teacher'); renderGroup(); } else if(v==='share'){ setDemoRole('share'); } else { setDemoRole('pupil'); if(v==='lessons') renderLessons(); else if(v==='journey') renderJourney(); else if(v==='goal') renderGoal(); } }); })();
 })();
 </script>
 </body>
