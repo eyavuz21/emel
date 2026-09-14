@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 200" width="780" height="200" role="img" aria-label="Mosso: a musical note running towards a finish line">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 200" width="780" height="200" role="img" aria-label="Emel: a musical note running towards a finish line">
   <defs>
     <clipPath id="flagclip"><rect x="0" y="0" width="70" height="90" rx="4"/></clipPath>
   </defs>
@@ -39,6 +39,6 @@
   <!-- ground line -->
   <line x1="60" y1="190" x2="330" y2="190" stroke="#C8792A" stroke-width="5" stroke-linecap="round"/>
   <!-- wordmark -->
-  <text x="420" y="118" font-family="'Instrument Serif', Georgia, 'Times New Roman', serif" font-size="92" fill="#5A2A1E">Mosso<tspan fill="#C8792A">.</tspan></text>
+  <text x="420" y="118" font-family="'Instrument Serif', Georgia, 'Times New Roman', serif" font-size="92" fill="#5A2A1E">Emel<tspan fill="#C8792A">.</tspan></text>
   <text x="422" y="158" font-family="'Instrument Serif', Georgia, 'Times New Roman', serif" font-style="italic" font-size="26" fill="#6F6659">Moving towards your goal.</text>
 </svg>

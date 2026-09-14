@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Mosso</title>
-<meta name="description" content="Moving towards your goal. Couch to 5K for practising an instrument, in a choir or in an orchestra. Your teacher sets the week; Mosso gets you to Thursday.">
+<title>Emel</title>
+<meta name="description" content="Moving towards your goal. Couch to 5K for practising an instrument, in a choir or in an orchestra. Your teacher sets the week; Emel gets you to Thursday.">
 <link rel="icon" type="image/svg+xml" href="icon-tile.svg"><link rel="apple-touch-icon" href="icon-tile.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@400;500;600;700&display=swap">
@@ -133,14 +133,14 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
 <div class="wrap">
   <div id="demoBar" hidden></div>
   <header class="top">
-    <div class="brand"><img src="mark.svg" alt=""><div><h1>Mosso<i>.</i></h1><small>Moving towards your goal.</small></div></div>
+    <div class="brand"><img src="mark.svg" alt=""><div><h1>Emel<i>.</i></h1><small>Moving towards your goal.</small></div></div>
     <div class="auth" id="auth"></div>
   </header>
 
   <!-- LANDING -->
   <section class="view on" id="v-landing">
     <div class="hero">
-      <h2>Your teacher sets the week. Mosso gets you to Thursday.</h2>
+      <h2>Your teacher sets the week. Emel gets you to Thursday.</h2>
       <p>Three short guided sessions between lessons, in your teacher's words. A checklist for the next lesson, a journey to get there, a place to flag the thing that squeaked, and a streak that forgives a missed day. Book and move lessons in the same place. Nothing listens to you play and scores you. It does the harder thing: it gets you to turn up.</p>
       <p class="note">Couch to 5K, for practising an instrument. It works for one pupil and one teacher, and for a whole choir or orchestra: the conductor sets the work for everyone, and each member gets their own week for their part.</p>
     </div>
@@ -225,7 +225,7 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
   function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('show'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),2000); }
 
   // ------------------------------------------------------------ store: local or cloud
-  const LKEY='mosso.local.v1'; const LKEY_OLDS=['sostenuto.local.v1','rosin.local.v1'];
+  const LKEY='emel.local.v1'; const LKEY_OLDS=['mosso.local.v1','sostenuto.local.v1','rosin.local.v1'];
   let mode='none'; // 'local' | 'cloud' | 'demo'
   let sb=null, me=null, cfg=null; // me: {role, name, studio, code, studio_id, voice_ready, voice_id}
   async function authHeaders(){ if(!sb) return {}; const {data:{session}}=await sb.auth.getSession(); return session?{authorization:'Bearer '+session.access_token}:{}; }
@@ -402,8 +402,8 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
       <div class="row" style="justify-content:center"><button class="btn" id="shareBtn">Share the card</button><button class="btn quiet" id="dlBtn">Save the image</button></div>
       <p class="note" style="text-align:center">${w?'':'There is no week to show yet, so the card is a preview.'}</p>`;
     drawCard($('#cardc'));
-    $('#shareBtn').onclick=async()=>{ const c=$('#cardc'); c.toBlob(async blob=>{ const file=new File([blob],'mosso-week.png',{type:'image/png'}); if(navigator.canShare&&navigator.canShare({files:[file]})){ try{ await navigator.share({files:[file], title:'My practice week', text:'My week on Mosso'}); }catch(e){} } else { const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='mosso-week.png'; a.click(); toast('Saved. Share it from your photos.'); } },'image/png'); };
-    $('#dlBtn').onclick=()=>{ const c=$('#cardc'); c.toBlob(blob=>{ const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='mosso-week.png'; a.click(); },'image/png'); };
+    $('#shareBtn').onclick=async()=>{ const c=$('#cardc'); c.toBlob(async blob=>{ const file=new File([blob],'emel-week.png',{type:'image/png'}); if(navigator.canShare&&navigator.canShare({files:[file]})){ try{ await navigator.share({files:[file], title:'My practice week', text:'My week on Emel'}); }catch(e){} } else { const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='emel-week.png'; a.click(); toast('Saved. Share it from your photos.'); } },'image/png'); };
+    $('#dlBtn').onclick=()=>{ const c=$('#cardc'); c.toBlob(blob=>{ const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='emel-week.png'; a.click(); },'image/png'); };
     if(showIt!==false) show('share');
   }
   function drawCard(c){
@@ -412,7 +412,7 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
     const wrap=(t,x,y,mw,lh,font,col)=>{ ctx.font=font; ctx.fillStyle=col; const words=String(t).split(' '); let line='', yy=y; for(const wd of words){ const test=line?line+' '+wd:wd; if(ctx.measureText(test).width>mw&&line){ ctx.fillText(line,x,yy); line=wd; yy+=lh; } else line=test; } if(line) ctx.fillText(line,x,yy); return yy+lh; };
     ctx.fillStyle='#F7F3EA'; ctx.fillRect(0,0,W,H);
     ctx.strokeStyle='#E6DECB'; ctx.lineWidth=2; for(let y=60;y<H;y+=42){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
-    ctx.fillStyle='#5A2A1E'; ctx.font='italic 400 34px "Instrument Serif", Georgia, serif'; ctx.fillText('Mosso.',60,90);
+    ctx.fillStyle='#5A2A1E'; ctx.font='italic 400 34px "Instrument Serif", Georgia, serif'; ctx.fillText('Emel.',60,90);
     ctx.fillStyle='#6F6659'; ctx.font='600 20px "Instrument Sans", system-ui, sans-serif'; ctx.fillText((p.name||'My')+"'s week"+(w?' · from '+fmt(w.lessonDate||w.createdAt):''),60,130);
     ctx.fillStyle='#5A2A1E'; ctx.font='400 74px "Instrument Serif", Georgia, serif'; ctx.fillText(w&&n===tot?'Week complete.':(n+' of '+tot+' done.'),60,230);
     const stats=[[String(n)+'/'+tot,'sessions'],[String(mins),'minutes'],[String(streak()),'streak']];
@@ -515,11 +515,11 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
     const v=$('#v-voice'); const has=!!me?.voice_ready;
     v.innerHTML=`<button class="btn sm quiet" id="voiceBack">← Pupils</button>
       <div class="eyebrow" style="margin-top:10px">Your voice</div><h2 class="big">${has?'Recorded.':'Pupils hear the week in your voice.'}</h2>
-      <p>${has?`Your voice is set${me.voice_name?' ('+h(me.voice_name)+')':''}. New weeks you publish are spoken in it. You can re-record or remove it at any time; removing it deletes the clone.`:'Read the passage below aloud, about thirty seconds, in the voice you use in a lesson. Mosso makes a clone of it and every caption you publish is spoken by it. Only text you have read and published is ever spoken; nothing is generated that you have not approved.'}</p>
+      <p>${has?`Your voice is set${me.voice_name?' ('+h(me.voice_name)+')':''}. New weeks you publish are spoken in it. You can re-record or remove it at any time; removing it deletes the clone.`:'Read the passage below aloud, about thirty seconds, in the voice you use in a lesson. Emel makes a clone of it and every caption you publish is spoken by it. Only text you have read and published is ever spoken; nothing is generated that you have not approved.'}</p>
       ${cfg?.voice?'':'<div class="box c"><b>Voice is not configured on this deployment yet.</b> The captions will use the browser\'s built-in voice until it is.</div>'}
       <div class="script" id="voiceScript">${h(VOICE_SCRIPT)}</div>
       <div class="card" style="margin-top:12px">
-        <label class="switch" style="font-size:14.5px;color:var(--ink)"><input type="checkbox" id="consent"> I'm recording my own voice and I agree to Mosso cloning it to speak captions I publish. I can delete it whenever I like.</label>
+        <label class="switch" style="font-size:14.5px;color:var(--ink)"><input type="checkbox" id="consent"> I'm recording my own voice and I agree to Emel cloning it to speak captions I publish. I can delete it whenever I like.</label>
         <div class="row" style="margin-top:12px"><button class="btn" id="recStart" ${cfg?.voice?'':'disabled'}>Record</button><button class="btn quiet" id="recStop" disabled>Stop</button><span class="rec" id="recInd" hidden><span class="blink"></span><span id="recTime">0:00</span></span></div>
         <audio id="recPlay" controls hidden style="width:100%;margin-top:10px"></audio>
         <div class="row" style="margin-top:10px"><button class="btn" id="voiceUse" disabled>Use this voice</button>${has?'<button class="btn danger" id="voiceDel">Remove my voice</button>':''}</div>
