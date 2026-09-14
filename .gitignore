@@ -5,3 +5,7 @@ node_modules
 # personal notes kept in this folder, not for the public repo
 WhatsApp-*.md
 Pitch-Deck-*.md
+
+# private planning docs kept alongside the app
+Mosso-Accelerator-Answers.*
+Mosso-Plan-And-Mockup.*
