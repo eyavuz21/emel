@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 200" width="780" height="200" role="img" aria-label="Mosso: a musical note running towards a finish line">
+  <defs>
+    <clipPath id="flagclip"><rect x="0" y="0" width="70" height="90" rx="4"/></clipPath>
+  </defs>
+  <!-- motion lines -->
+  <g stroke="#C8792A" stroke-width="7" stroke-linecap="round" opacity=".55">
+    <line x1="22" y1="112" x2="78" y2="112"/>
+    <line x1="8" y1="134" x2="62" y2="134"/>
+    <line x1="30" y1="156" x2="70" y2="156"/>
+  </g>
+  <!-- the note: head leaning forward, stem, flag streaming back -->
+  <g transform="translate(150 140) rotate(-6)">
+    <!-- stem -->
+    <rect x="30" y="-118" width="11" height="128" rx="5" fill="#5A2A1E"/>
+    <!-- flag (quaver tail) streaming backwards, drawn as a curve -->
+    <path d="M41 -118 C 78 -108, 92 -78, 70 -46 C 84 -74, 66 -92, 41 -96 Z" fill="#5A2A1E"/>
+    <!-- note head -->
+    <ellipse cx="18" cy="6" rx="30" ry="21" transform="rotate(-24 18 6)" fill="#5A2A1E"/>
+    <!-- legs, mid-stride -->
+    <path d="M6 22 L -30 44 L -22 58" fill="none" stroke="#5A2A1E" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M30 24 L 52 48 L 76 44" fill="none" stroke="#5A2A1E" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <!-- finish line: a chequered flag on a pole, ahead of the note -->
+  <g transform="translate(300 40)">
+    <rect x="0" y="0" width="7" height="150" rx="3" fill="#5A2A1E"/>
+    <g transform="translate(7 2)" clip-path="url(#flagclip)">
+      <rect width="70" height="90" fill="#FFF7EA"/>
+      <g fill="#5A2A1E">
+        <rect x="0" y="0" width="14" height="15"/><rect x="28" y="0" width="14" height="15"/><rect x="56" y="0" width="14" height="15"/>
+        <rect x="14" y="15" width="14" height="15"/><rect x="42" y="15" width="14" height="15"/>
+        <rect x="0" y="30" width="14" height="15"/><rect x="28" y="30" width="14" height="15"/><rect x="56" y="30" width="14" height="15"/>
+        <rect x="14" y="45" width="14" height="15"/><rect x="42" y="45" width="14" height="15"/>
+        <rect x="0" y="60" width="14" height="15"/><rect x="28" y="60" width="14" height="15"/><rect x="56" y="60" width="14" height="15"/>
+        <rect x="14" y="75" width="14" height="15"/><rect x="42" y="75" width="14" height="15"/>
+      </g>
+      <rect width="70" height="90" fill="none" stroke="#5A2A1E" stroke-width="3"/>
+    </g>
+  </g>
+  <!-- ground line -->
+  <line x1="60" y1="190" x2="330" y2="190" stroke="#C8792A" stroke-width="5" stroke-linecap="round"/>
+  <!-- wordmark -->
+  <text x="420" y="118" font-family="'Instrument Serif', Georgia, 'Times New Roman', serif" font-size="92" fill="#5A2A1E">Mosso<tspan fill="#C8792A">.</tspan></text>
+  <text x="422" y="158" font-family="'Instrument Serif', Georgia, 'Times New Roman', serif" font-style="italic" font-size="26" fill="#6F6659">Moving towards your goal.</text>
+</svg>

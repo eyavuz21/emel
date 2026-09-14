@@ -1,4 +1,4 @@
-// Turns a teacher's thirty-second lesson note into the student's week: three guided sessions
+// Mosso: turns a teacher's thirty-second lesson note (or a conductor's rehearsal note) into the pupil's week: three guided sessions
 // (steps, minutes, what the teacher's voice says) and a checklist for the next lesson.
 import Anthropic from "@anthropic-ai/sdk";
 
@@ -39,7 +39,7 @@ export default async function handler(req, res) {
   if (req.method !== "POST") { res.setHeader("Allow", "GET, POST"); return res.status(405).json({ error: "method_not_allowed" }); }
   if (!process.env.ANTHROPIC_API_KEY) return res.status(503).json({ error: "not_configured", message: "ANTHROPIC_API_KEY is not set on this deployment." });
 
-  const { profile = {}, note = {}, teacherName = "your teacher", weeksToGoal = null } = req.body || {};
+  const { profile = {}, note = {}, teacherName = "your teacher", weeksToGoal = null, group = null } = req.body || {};
   const sessions = Math.min(5, Math.max(2, Number(profile.sessionsPerWeek) || 3));
   const minutes = Math.min(45, Math.max(10, Number(profile.minutes) || 18));
   const workedOn = String(note.workedOn || "").slice(0, 2000);
@@ -47,12 +47,21 @@ export default async function handler(req, res) {
   const line = String(note.line || "").slice(0, 400);
   if (!workedOn && !forNext.length) return res.status(400).json({ error: "bad_request", message: "Add what you worked on or what to prepare." });
 
-  const prompt = `You write practice sessions for a music teacher's pupil, in the teacher's voice. British English. Warm, specific, unhurried, never gushing.
+  const isGroup = group && typeof group === "object";
+  const gName = isGroup ? String(group.name || "the group").slice(0, 120) : "";
+  const gParts = isGroup && Array.isArray(group.parts) ? group.parts.map(String).slice(0, 12) : [];
+  const prompt = isGroup ? `You write individual practice sessions for every member of a choir or orchestra, in the conductor's voice, after a rehearsal. British English. Warm, specific, unhurried, never gushing.
+
+Group: ${gName}.${gParts.length ? ` Parts receiving this week: ${gParts.join(", ")}.` : ""} Each member practises alone at home on their own part, between rehearsals. Write for "you" and "your part" so the same sessions make sense to a soprano, a second violin or a cellist. Sessions for an ensemble are about: learning the notes and rhythms of your part slowly, counting entries and rests, words from memory for singers, listening to a recording while following the score, marking the score, singing or playing along with the recording at speed, and being ready to hold your line against the others. Level: mixed.
+Conductor: ${teacherName}.
+
+The conductor's note after this week's rehearsal:` : `You write practice sessions for a music teacher's pupil, in the teacher's voice. British English. Warm, specific, unhurried, never gushing.
 
 Pupil: ${profile.name || "the pupil"}. Instrument: ${profile.instrument || "violin"}. Level: ${profile.level || "beginner"}.${profile.goalLabel ? ` Goal: ${profile.goalLabel}${weeksToGoal !== null ? `, about ${weeksToGoal} weeks away` : ""}.` : ""}
 Teacher: ${teacherName}.
 
-The teacher's note after this week's lesson:
+The teacher's note after this week's lesson:`
+  + `
 What we worked on: ${workedOn || "(not given)"}
 For next lesson: ${forNext.length ? forNext.map((x) => "- " + x).join("\n") : "(not given)"}
 One line for the week: ${line || "(none)"}
@@ -63,7 +72,7 @@ Each step's caption is what the teacher says at the start of that step, one or t
 
 Also write a checklist of 3 to 5 short items the pupil should be able to show at the next lesson, drawn from "For next lesson", and one sentence of encouragement for the week that a real teacher would say.
 
-Respond with JSON only.`;
+Respond with JSON only.`.replace(/the pupil/g, isGroup ? "each member" : "the pupil").replace(/the lesson/g, isGroup ? "the rehearsal" : "the lesson").replace(/next lesson/g, isGroup ? "next rehearsal" : "next lesson");
 
   const client = new Anthropic();
   try {

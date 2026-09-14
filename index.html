@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Sostenuto</title>
-<meta name="description" content="Couch to 5K for practising an instrument. Your teacher sets the week; Sostenuto gets you to Thursday.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 64 64%27%3E%3Crect width=%2764%27 height=%2764%27 rx=%2716%27 fill=%27%23C8792A%27/%3E%3Ctext x=%2732%27 y=%2746%27 font-family=%27Georgia,serif%27 font-size=%2740%27 text-anchor=%27middle%27 fill=%27%23FFF7EA%27%3ES%3C/text%3E%3C/svg%3E">
+<title>Mosso</title>
+<meta name="description" content="Moving towards your goal. Couch to 5K for practising an instrument, in a choir or in an orchestra. Your teacher sets the week; Mosso gets you to Thursday.">
+<link rel="icon" type="image/svg+xml" href="icon-tile.svg"><link rel="apple-touch-icon" href="icon-tile.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@400;500;600;700&display=swap">
 <style>
@@ -41,7 +41,7 @@ textarea{min-height:90px; resize:vertical}
 label.l{display:block; font-size:11.5px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin:10px 0 4px}
 .wrap{max-width:860px; margin:0 auto; padding:18px 18px 90px}
 header.top{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:6px 0 14px; border-bottom:1px solid var(--line); margin-bottom:16px}
-.brand h1{font-size:34px; line-height:1; color:var(--varnish)} .brand h1 i{color:var(--amber)}
+.brand{display:flex; align-items:center; gap:12px} .brand img{width:52px; height:52px; flex:none} .brand h1{font-size:34px; line-height:1; color:var(--varnish)} .brand h1 i{color:var(--amber)}
 .brand small{display:block; font-family:"Instrument Serif", Georgia, serif; font-style:italic; color:var(--muted); font-size:15px}
 .auth{display:flex; gap:8px; align-items:center; flex-wrap:wrap; font-size:13px; color:var(--muted)}
 .btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; border:none; border-radius:999px; padding:12px 20px; font-weight:600; background:var(--amber); color:var(--amber-ink); font-size:15px}
@@ -133,19 +133,20 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
 <div class="wrap">
   <div id="demoBar" hidden></div>
   <header class="top">
-    <div class="brand"><h1>Sostenuto<i>.</i></h1><small>Couch to 5K, for practising an instrument.</small></div>
+    <div class="brand"><img src="mark.svg" alt=""><div><h1>Mosso<i>.</i></h1><small>Moving towards your goal.</small></div></div>
     <div class="auth" id="auth"></div>
   </header>
 
   <!-- LANDING -->
   <section class="view on" id="v-landing">
     <div class="hero">
-      <h2>Your teacher sets the week. Sostenuto gets you to Thursday.</h2>
-      <p>Three short guided sessions between lessons, in your teacher's words. A checklist for the next lesson, a journey to get there, a place to flag the thing that squeaked, and a streak that forgives a missed day. Nothing listens to you play and scores you. It does the harder thing: it gets you to turn up.</p>
+      <h2>Your teacher sets the week. Mosso gets you to Thursday.</h2>
+      <p>Three short guided sessions between lessons, in your teacher's words. A checklist for the next lesson, a journey to get there, a place to flag the thing that squeaked, and a streak that forgives a missed day. Book and move lessons in the same place. Nothing listens to you play and scores you. It does the harder thing: it gets you to turn up.</p>
+      <p class="note">Couch to 5K, for practising an instrument. It works for one pupil and one teacher, and for a whole choir or orchestra: the conductor sets the work for everyone, and each member gets their own week for their part.</p>
     </div>
     <div class="grid2">
       <div class="box a"><h3>Pupils</h3><p style="margin:6px 0 0">Sign in, enter your teacher's code, and your first week is waiting after your next lesson.</p></div>
-      <div class="box b"><h3>Teachers</h3><p style="margin:6px 0 0">Sign in, create a studio, give pupils the code. After each lesson, thirty seconds of notes becomes their week.</p></div>
+      <div class="box b"><h3>Teachers and conductors</h3><p style="margin:6px 0 0">Sign in, create a studio or a group, give people the code. After each lesson or rehearsal, thirty seconds of notes becomes their week.</p></div>
     </div>
     <div class="row" style="margin-top:8px"><button class="btn" id="landSignin">Sign in with email</button><button class="btn quiet" id="landDemo">See how it works</button><button class="btn quiet" id="landLocal">Try it on this device, no account</button></div>
     <p class="note">Two kinds of account, teacher and pupil. There is no parent login: a parent sets up and holds a young child's account with their own email, and the pupil chooses what to share, with a parent or anyone, as a card. Nobody else can see a pupil's week.</p>
@@ -158,12 +159,12 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
     <h2 class="big">Are you teaching or learning?</h2>
     <div class="grid2">
       <div class="card"><h3>I teach</h3>
-        <label class="l" for="obStudio">Studio name</label><input id="obStudio" placeholder="e.g. Melisande's pupils">
+        <label class="l" for="obStudio">Studio or group name</label><input id="obStudio" placeholder="e.g. Melisande's pupils, or Barnet Youth Choir">
         <label class="l" for="obTName">Your name, as pupils see it</label><input id="obTName" placeholder="Melisande">
         <button class="btn block" id="obCreate" style="margin-top:12px">Create my studio</button></div>
       <div class="card"><h3>I'm a pupil</h3>
         <label class="l" for="obCode">Teacher's code</label><input id="obCode" placeholder="e.g. A3F9C2" maxlength="6" style="text-transform:uppercase;letter-spacing:.2em">
-        <label class="l" for="obSName">Pupil's name</label><input id="obSName" placeholder="Emre">
+        <label class="l" for="obSName">Pupil's name</label><input id="obSName" placeholder="Emre"><p class="note">In a choir or orchestra? Your part (alto, second violin) can be set once you are in.</p>
         <p class="note">Under 13? A parent or guardian should be the one signed in here, with their own email. The account is theirs; the practice is the pupil's.</p>
         <button class="btn block" id="obJoin" style="margin-top:12px">Join</button></div>
     </div>
@@ -199,10 +200,12 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
   <section class="view" id="v-goal"></section>
   <section class="view" id="v-voice"></section>
   <section class="view" id="v-share"></section>
+  <section class="view" id="v-lessons"></section>
 
   <!-- TEACHER -->
   <section class="view" id="v-teacher"></section>
   <section class="view" id="v-tstudent"></section>
+  <section class="view" id="v-group"></section>
 
   <nav class="tabs" id="tabs" hidden></nav>
 </div>
@@ -222,7 +225,7 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
   function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('show'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),2000); }
 
   // ------------------------------------------------------------ store: local or cloud
-  const LKEY='sostenuto.local.v1'; const LKEY_OLD='rosin.local.v1';
+  const LKEY='mosso.local.v1'; const LKEY_OLDS=['sostenuto.local.v1','rosin.local.v1'];
   let mode='none'; // 'local' | 'cloud' | 'demo'
   let sb=null, me=null, cfg=null; // me: {role, name, studio, code, studio_id, voice_ready, voice_id}
   async function authHeaders(){ if(!sb) return {}; const {data:{session}}=await sb.auth.getSession(); return session?{authorization:'Bearer '+session.access_token}:{}; }
@@ -230,10 +233,15 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
   let current=null; // selected student (teacher) or self (student): {user_id, data}
   let pushTimer=null;
 
-  function blankDoc(name){ return {profile:{name:name||'', instrument:'violin', level:'beginner', goalLabel:'', goalDate:'', sessionsPerWeek:3, minutes:18}, notes:[], weeks:[], flags:[], tokens:{earned:0, redeemed:0}, teacherName:''}; }
-  function loadLocal(){ try{ let s=localStorage.getItem(LKEY); if(!s){ s=localStorage.getItem(LKEY_OLD); if(s){ localStorage.setItem(LKEY,s); localStorage.removeItem(LKEY_OLD); } } if(s) return JSON.parse(s); }catch(e){} return null; }
+  function blankDoc(name){ return {profile:{name:name||'', instrument:'violin', part:'', level:'beginner', goalLabel:'', goalDate:'', sessionsPerWeek:3, minutes:18}, notes:[], weeks:[], flags:[], extras:[], lessons:[], tokens:{earned:0, redeemed:0}, teacherName:''}; }
+  function loadLocal(){ try{ let s=localStorage.getItem(LKEY); if(!s){ for(const k of LKEY_OLDS){ s=localStorage.getItem(k); if(s){ localStorage.setItem(LKEY,s); localStorage.removeItem(k); break; } } } if(s) return JSON.parse(s); }catch(e){} return null; }
   function saveLocal(o){ try{ localStorage.setItem(LKEY, JSON.stringify(o)); }catch(e){} }
 
+  async function saveStudent(st){
+    if(mode==='local'){ const o=loadLocal()||{}; o.doc=st.data; saveLocal(o); return; }
+    if(mode==='demo'){ try{ localStorage.setItem('sostenuto.demo.v1', JSON.stringify(students)); }catch(e){} return; }
+    const {error}=await sb.rpc('sostenuto_save_student',{target:st.user_id, doc:st.data}); if(error){ console.warn(error); throw error; }
+  }
   async function saveCurrent(){
     if(!current) return;
     if(mode==='local'){ const o=loadLocal()||{}; o.doc=current.data; saveLocal(o); return; }
@@ -254,9 +262,9 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
     if(!role){ t.hidden=true; t.innerHTML=''; return; }
     t.hidden=false;
     t.innerHTML = role==='student'
-      ? `<button data-v="today"><span>♩</span>Today</button><button data-v="journey"><span>♪</span>Journey</button><button data-v="goal"><span>♬</span>Goal</button><button data-v="share"><span>♫</span>Share</button>${mode==='local'?'<button data-v="teacher"><span>♯</span>Teacher</button>':''}`
-      : `<button data-v="teacher"><span>♯</span>Pupils</button>${mode==='local'?'<button data-v="today"><span>♩</span>Pupil view</button>':''}`;
-    $$('#tabs button').forEach(b=>b.onclick=()=>{ const v=b.dataset.v; if(v==='teacher') renderTeacher(); else if(v==='today') renderToday(); else if(v==='journey') renderJourney(); else if(v==='goal') renderGoal(); else if(v==='share') renderShare(); show(v); });
+      ? `<button data-v="today"><span>♩</span>Today</button><button data-v="journey"><span>♪</span>Journey</button><button data-v="lessons"><span>♭</span>Lessons</button><button data-v="goal"><span>♬</span>Goal</button><button data-v="share"><span>♫</span>Share</button>${mode==='local'?'<button data-v="teacher"><span>♯</span>Teacher</button>':''}`
+      : `<button data-v="teacher"><span>♯</span>Pupils</button><button data-v="group"><span>𝄞</span>Group</button>${mode==='local'?'<button data-v="today"><span>♩</span>Pupil view</button>':''}`;
+    $$('#tabs button').forEach(b=>b.onclick=()=>{ const v=b.dataset.v; if(v==='teacher') renderTeacher(); else if(v==='group') renderGroup(); else if(v==='today') renderToday(); else if(v==='journey') renderJourney(); else if(v==='lessons') renderLessons(); else if(v==='goal') renderGoal(); else if(v==='share') renderShare(); show(v); });
   }
   function renderAuth(){
     const el=$('#auth');
@@ -277,6 +285,13 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
     for(let k=ws.length-1;k>=0;k--){ const w=ws[k]; const d=(w.done||[]).slice().sort((a,b)=>a.i-b.i); if(k<ws.length-1 && d.length<w.sessions.length) { n+=d.length; break; } n+=d.length; }
     return n;
   }
+  // lessons: [{id, at:'YYYY-MM-DDTHH:MM', minutes, kind:'lesson'|'rehearsal', status:'booked'|'requested'|'cancelled', by:'teacher'|'pupil', note, seen}]
+  const lessons=()=>(doc().lessons=doc().lessons||[]);
+  const nowIso=()=>{ const d=new Date(); d.setSeconds(0,0); return new Date(d-d.getTimezoneOffset()*60000).toISOString().slice(0,16); };
+  const upcoming=(st)=>((st||doc()).lessons||[]).filter(l=>l.status==='booked'&&l.at>=nowIso()).sort((a,b)=>a.at.localeCompare(b.at));
+  const fmtAt=a=>{ if(!a) return ''; const [d,t]=a.split('T'); return fmt(d)+(t?' · '+t:''); };
+  const extras=()=>(doc().extras=doc().extras||[]);
+  const openExtras=()=>extras().filter(x=>!x.done);
   function tokensView(){ const t=doc().tokens||{earned:0,redeemed:0}; const avail=Math.max(0,(t.earned||0)-(t.redeemed||0)); return {avail, toNext: Math.max(0, 6-(avail%6||0))}; }
 
   function renderToday(){
@@ -286,14 +301,18 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
     if(!w){
       v.innerHTML=`<div class="eyebrow">${h(p.name||'')}</div><h2 class="big">No week yet.</h2>
         <div class="card"><div class="quote">"Your first week appears here after your next lesson, once ${h(tn)} has written it."</div></div>
+        ${openExtras().length?`<div class="box c"><h3>From ${h(tn)}</h3>${openExtras().map(x=>`<div class="flag"><span>${h(x.text)}</span><button class="btn sm quiet" data-xdone="${x.id}">Done</button></div>`).join('')}</div>`:''}
         ${mode==='local'?'<div class="card"><h3>Trying it on your own?</h3><p>Open the <b>Teacher</b> tab, write a lesson note as if you were the teacher, and generate a week. Then come back here.</p></div>':''}`;
+      $$('[data-xdone]').forEach(x=>x.onclick=()=>{ const e=extras().find(y=>y.id===x.dataset.xdone); if(e){ e.done=true; } saveCurrent(); renderToday(); });
+      const up0=upcoming()[0]; if(up0){ v.insertAdjacentHTML('beforeend',`<div class="card"><h3>Next ${h(up0.kind||'lesson')}</h3><div>${h(fmtAt(up0.at))}</div></div>`); }
       show('today'); return;
     }
     const i=nextIndex(w); const n=doneCount(w); const s=i>=0?w.sessions[i]:null;
     const lastDone=(w.done||[]).slice(-1)[0];
     v.innerHTML=`
-      <div class="eyebrow">${h(fmt(today()))} · week of ${h(fmt(w.createdAt))} · session ${Math.min(n+1,w.sessions.length)} of ${w.sessions.length}</div>
+      <div class="eyebrow">${h(fmt(today()))} · week of ${h(fmt(w.createdAt))} · session ${Math.min(n+1,w.sessions.length)} of ${w.sessions.length}${w.group?' · group week ('+h(w.group.name||'everyone')+')'+(p.part?' · your part: '+h(p.part):''):''}</div>
       <h2 class="big">${s?h(s.title):'Week complete.'}</h2>
+      ${openExtras().length?`<div class="box c"><h3>New from ${h(tn)}</h3>${openExtras().map(x=>`<div class="flag"><span>${h(x.text)} <span class="note" style="margin:0">· ${h(fmt(x.at.slice(0,10)))}</span></span><button class="btn sm quiet" data-xdone="${x.id}">Done</button></div>`).join('')}</div>`:''}
       <div class="card"><div class="quote">"${h(s?s.intro:(w.encouragement||'Rest until the lesson. You did the work.'))}"</div><div class="who">${h(tn)}</div></div>
       ${s?`<button class="btn block" id="start">Start · ${s.steps.reduce((a,x)=>a+(+x.minutes||0),0)} min</button>`:`<button class="btn block quiet" disabled>All ${w.sessions.length} sessions done. Next lesson ${h(fmt(w.nextLesson))}.</button>`}
       <div class="card" style="margin-top:12px"><div class="streak"><span class="n">${streak()}</span><small>session streak</small></div>
@@ -301,6 +320,8 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
         <div class="row" style="margin-top:10px"><span class="eyebrow">This week</span><span class="dots">${w.sessions.map((_,k)=>`<i class="dot ${k<n?'done':k===n?'now':''}"></i>`).join('')}</span></div></div>
       ${lastDone?`<div class="card"><h3>Last time</h3><div>${h(fmt(lastDone.at.slice(0,10)))} · you said <b>${h(lastDone.feel||'')}</b>${w.line?`. ${h(w.line)}`:''}</div></div>`:(w.line?`<div class="card"><h3>From ${h(tn)}</h3><div class="quote" style="font-size:18px">"${h(w.line)}"</div></div>`:'')}`;
     const b=$('#start'); if(b) b.onclick=()=>startSession(i);
+    $$('[data-xdone]').forEach(x=>x.onclick=()=>{ const e=extras().find(y=>y.id===x.dataset.xdone); if(e){ e.done=true; e.doneAt=new Date().toISOString(); } saveCurrent(); renderToday(); toast('Done. Nice.'); });
+    const up=upcoming()[0]; if(up){ v.insertAdjacentHTML('beforeend',`<div class="card"><h3>Next ${h(up.kind||'lesson')}</h3><div class="row" style="justify-content:space-between"><span>${h(fmtAt(up.at))}${up.minutes?' · '+h(up.minutes)+' min':''}</span><button class="btn sm quiet" id="toLessons">Change</button></div></div>`); $('#toLessons').onclick=()=>renderLessons(); }
     show('today');
   }
 
@@ -356,6 +377,7 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
       </ul>
       <div class="card"><h3>Prepare for the lesson</h3>
         <ul class="check" id="prep">${(w.checklist||[]).map((c,k)=>`<li class="${(w.ticks||[]).includes(k)?'on':''}" data-k="${k}"><i></i><span>${h(c)}</span></li>`).join('')||'<li><i></i><span style="color:var(--muted)">No checklist this week</span></li>'}</ul>
+        ${extras().filter(x=>x.at>=w.createdAt).length?`<div class="eyebrow" style="margin-top:10px">Added during the week</div><ul class="check">${extras().filter(x=>x.at>=w.createdAt).map(x=>`<li class="${x.done?'on':''}" data-x="${x.id}"><i></i><span>${h(x.text)}</span></li>`).join('')}</ul>`:''}
         <div class="note">Set by ${h(tn)}. Tick each one when you could show it in the lesson.</div></div>
       <div class="card"><h3>For the next lesson</h3>
         <div id="flags">${flags.filter(f=>!f.resolved).map(f=>`<div class="flag"><span>${h(f.text)}</span><button class="btn sm quiet" data-unflag="${f.id}" aria-label="Remove">×</button></div>`).join('')||'<div class="note" style="margin:0">Nothing flagged. Type it the moment it happens: a squeak, a question, a breakthrough.</div>'}</div>
@@ -365,6 +387,7 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
         <div class="tokens">${Array.from({length:6},(_,k)=>`<i class="tok ${k<(tk.avail%6||(tk.avail>=6?6:0))?'on':''}"></i>`).join('')}<span class="note" style="margin:0 0 0 6px">${tk.avail} available${tk.avail>=6?' · ask '+h(tn)+' for your reward':' · '+tk.toNext+' to the next reward'}</span></div>
         <div class="note">One token per session, two more for a full week. Six is a small reward your teacher, parent or school has put up. Earned for showing up, not for talent.</div></div>`;
     $$('#prep li[data-k]').forEach(li=>li.onclick=()=>{ w.ticks=w.ticks||[]; const k=+li.dataset.k; w.ticks=w.ticks.includes(k)?w.ticks.filter(x=>x!==k):[...w.ticks,k]; saveCurrent(); renderJourney(false); });
+    $$('li[data-x]').forEach(li=>li.onclick=()=>{ const e=extras().find(y=>y.id===li.dataset.x); if(e) e.done=!e.done; saveCurrent(); renderJourney(false); });
     $('#flagForm').onsubmit=e=>{ e.preventDefault(); const t=$('#flagText').value.trim(); if(!t) return; doc().flags=doc().flags||[]; doc().flags.push({id:uid(), text:t, at:new Date().toISOString(), resolved:false}); saveCurrent(); renderJourney(false); toast('Flagged for the lesson.'); };
     $$('[data-unflag]').forEach(b=>b.onclick=()=>{ doc().flags=doc().flags.filter(f=>f.id!==b.dataset.unflag); saveCurrent(); renderJourney(false); });
     if(showIt!==false) show('journey');
@@ -379,8 +402,8 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
       <div class="row" style="justify-content:center"><button class="btn" id="shareBtn">Share the card</button><button class="btn quiet" id="dlBtn">Save the image</button></div>
       <p class="note" style="text-align:center">${w?'':'There is no week to show yet, so the card is a preview.'}</p>`;
     drawCard($('#cardc'));
-    $('#shareBtn').onclick=async()=>{ const c=$('#cardc'); c.toBlob(async blob=>{ const file=new File([blob],'sostenuto-week.png',{type:'image/png'}); if(navigator.canShare&&navigator.canShare({files:[file]})){ try{ await navigator.share({files:[file], title:'My practice week', text:'My week on Sostenuto'}); }catch(e){} } else { const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='sostenuto-week.png'; a.click(); toast('Saved. Share it from your photos.'); } },'image/png'); };
-    $('#dlBtn').onclick=()=>{ const c=$('#cardc'); c.toBlob(blob=>{ const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='sostenuto-week.png'; a.click(); },'image/png'); };
+    $('#shareBtn').onclick=async()=>{ const c=$('#cardc'); c.toBlob(async blob=>{ const file=new File([blob],'mosso-week.png',{type:'image/png'}); if(navigator.canShare&&navigator.canShare({files:[file]})){ try{ await navigator.share({files:[file], title:'My practice week', text:'My week on Mosso'}); }catch(e){} } else { const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='mosso-week.png'; a.click(); toast('Saved. Share it from your photos.'); } },'image/png'); };
+    $('#dlBtn').onclick=()=>{ const c=$('#cardc'); c.toBlob(blob=>{ const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='mosso-week.png'; a.click(); },'image/png'); };
     if(showIt!==false) show('share');
   }
   function drawCard(c){
@@ -389,7 +412,7 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
     const wrap=(t,x,y,mw,lh,font,col)=>{ ctx.font=font; ctx.fillStyle=col; const words=String(t).split(' '); let line='', yy=y; for(const wd of words){ const test=line?line+' '+wd:wd; if(ctx.measureText(test).width>mw&&line){ ctx.fillText(line,x,yy); line=wd; yy+=lh; } else line=test; } if(line) ctx.fillText(line,x,yy); return yy+lh; };
     ctx.fillStyle='#F7F3EA'; ctx.fillRect(0,0,W,H);
     ctx.strokeStyle='#E6DECB'; ctx.lineWidth=2; for(let y=60;y<H;y+=42){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
-    ctx.fillStyle='#5A2A1E'; ctx.font='italic 400 34px "Instrument Serif", Georgia, serif'; ctx.fillText('Sostenuto.',60,90);
+    ctx.fillStyle='#5A2A1E'; ctx.font='italic 400 34px "Instrument Serif", Georgia, serif'; ctx.fillText('Mosso.',60,90);
     ctx.fillStyle='#6F6659'; ctx.font='600 20px "Instrument Sans", system-ui, sans-serif'; ctx.fillText((p.name||'My')+"'s week"+(w?' · from '+fmt(w.lessonDate||w.createdAt):''),60,130);
     ctx.fillStyle='#5A2A1E'; ctx.font='400 74px "Instrument Serif", Georgia, serif'; ctx.fillText(w&&n===tot?'Week complete.':(n+' of '+tot+' done.'),60,230);
     const stats=[[String(n)+'/'+tot,'sessions'],[String(mins),'minutes'],[String(streak()),'streak']];
@@ -418,9 +441,52 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
         <ul class="path">${rows}</ul>`:'<div class="card">Your teacher sets the exam or performance date, even roughly, and the road appears here. You can change it too, below.</div>'}
       <div class="card"><h3>Set or change the goal</h3>
         <div class="grid2"><div><label class="l" for="gLabel">What it is</label><input id="gLabel" placeholder="e.g. Grade 3 exam, school concert" value="${h(p.goalLabel||'')}"></div><div><label class="l" for="gDate">Roughly when</label><input type="date" id="gDate" value="${h(p.goalDate||'')}"></div></div>
-        <button class="btn sm" id="gSave" style="margin-top:10px">Save goal</button></div>`;
-    $('#gSave').onclick=()=>{ p.goalLabel=$('#gLabel').value.trim(); p.goalDate=$('#gDate').value; saveCurrent(); renderGoal(false); toast('Goal saved.'); };
+        <label class="l" for="gPart">Your part or section, if you sing or play in a group</label><input id="gPart" placeholder="e.g. Alto, Second violin, Cello" value="${h(p.part||'')}">
+        <button class="btn sm" id="gSave" style="margin-top:10px">Save</button></div>`;
+    $('#gSave').onclick=()=>{ p.goalLabel=$('#gLabel').value.trim(); p.goalDate=$('#gDate').value; p.part=$('#gPart').value.trim(); saveCurrent(); renderGoal(false); toast('Saved.'); };
     if(showIt!==false) show('goal');
+  }
+
+  // ------------------------------------------------------------ lessons (book, move, cancel, request)
+  function renderLessons(showIt){
+    if(!current) return; const v=$('#v-lessons'); const tn=doc().teacherName||'your teacher'; const ls=lessons();
+    const up=ls.filter(l=>l.status==='booked'&&l.at>=nowIso()).sort((a,b)=>a.at.localeCompare(b.at));
+    const req=ls.filter(l=>l.status==='requested').sort((a,b)=>a.at.localeCompare(b.at));
+    const past=ls.filter(l=>l.status==='cancelled'||(l.status==='booked'&&l.at<nowIso())).sort((a,b)=>b.at.localeCompare(a.at)).slice(0,5);
+    const dflt=addDays(today(),7)+'T16:00';
+    v.innerHTML=`<div class="eyebrow">Lessons</div><h2 class="big">${up.length?'Next: '+h(fmtAt(up[0].at))+'.':'Nothing booked.'}</h2>
+      <div class="card"><h3>Coming up</h3>${up.map(l=>`<div class="flag"><span><b>${h(fmtAt(l.at))}</b> · ${h(l.kind||'lesson')}${l.minutes?' · '+h(l.minutes)+' min':''}${l.note?' · '+h(l.note):''}</span><button class="btn sm quiet" data-cancel="${l.id}">Can't make it</button></div>`).join('')||'<div class="note" style="margin:0">'+h(tn)+' books lessons here, and you can ask for one below.</div>'}</div>
+      ${req.length?`<div class="box c"><h3>Waiting for ${h(tn)}</h3>${req.map(l=>`<div class="flag"><span>${h(fmtAt(l.at))}${l.note?' · '+h(l.note):''}</span><button class="btn sm quiet" data-withdraw="${l.id}">Withdraw</button></div>`).join('')}</div>`:''}
+      <div class="card"><h3>Ask for a lesson</h3>
+        <div class="grid2"><div><label class="l" for="rqAt">When</label><input type="datetime-local" id="rqAt" value="${dflt}"></div><div><label class="l" for="rqNote">Anything to add</label><input id="rqNote" placeholder="e.g. before the concert, 30 minutes is fine"></div></div>
+        <button class="btn sm" id="rqSend" style="margin-top:10px">Send the request</button>
+        <div class="note">${h(tn)} confirms it and it appears above. Cancel a lesson here and ${h(tn)} is told straight away, with your reason.</div></div>
+      ${past.length?`<div class="card"><h3>Earlier</h3>${past.map(l=>`<div class="note" style="margin:4px 0">${h(fmtAt(l.at))} · ${l.status==='cancelled'?'cancelled'+(l.note?' ('+h(l.note)+')':''):'done'}</div>`).join('')}</div>`:''}`;
+    $$('[data-cancel]').forEach(b=>b.onclick=()=>{ const l=ls.find(x=>x.id===b.dataset.cancel); const why=prompt('Tell '+tn+' why, in a few words (optional):','')||''; if(why===null) return; l.status='cancelled'; l.by='pupil'; l.note=why.trim(); l.seen=false; l.cancelledAt=new Date().toISOString(); doc().flags=doc().flags||[]; doc().flags.push({id:uid(), text:'Cancelled the '+(l.kind||'lesson')+' on '+fmtAt(l.at)+(why?': '+why:''), at:new Date().toISOString(), resolved:false, kind:'lesson'}); saveCurrent(); renderLessons(false); toast(tn+' has been told.'); });
+    $$('[data-withdraw]').forEach(b=>b.onclick=()=>{ doc().lessons=ls.filter(x=>x.id!==b.dataset.withdraw); saveCurrent(); renderLessons(false); });
+    $('#rqSend').onclick=()=>{ const at=$('#rqAt').value; if(!at){ toast('Pick a time.'); return; } ls.push({id:uid(), at, minutes:30, kind:'lesson', status:'requested', by:'pupil', note:$('#rqNote').value.trim(), seen:false, createdAt:new Date().toISOString()}); saveCurrent(); renderLessons(false); toast('Sent to '+tn+'.'); };
+    if(showIt!==false) show('lessons');
+  }
+  function bookFor(st, at, minutes, kind, note){ st.data.lessons=st.data.lessons||[]; st.data.lessons.push({id:uid(), at, minutes:+minutes||30, kind:kind||'lesson', status:'booked', by:'teacher', note:note||'', seen:true, createdAt:new Date().toISOString()}); const w=st.data.weeks&&st.data.weeks.length?st.data.weeks[st.data.weeks.length-1]:null; if(w&&(!w.nextLesson||w.nextLesson<today())) w.nextLesson=at.slice(0,10); }
+  function lessonCardTeacher(st){ // teacher's lessons card for one pupil
+    const ls=st.data.lessons=st.data.lessons||[]; const up=ls.filter(l=>l.status==='booked'&&l.at>=nowIso()).sort((a,b)=>a.at.localeCompare(b.at)); const req=ls.filter(l=>l.status==='requested'); const canc=ls.filter(l=>l.status==='cancelled'&&!l.seen);
+    const dflt=(up[0]?addDays(up[0].at.slice(0,10),7)+'T'+up[0].at.slice(11,16):addDays(today(),7)+'T16:00');
+    return `<div class="card" id="lessonsCard"><h3>Lessons</h3>
+      ${canc.length?`<div class="box c" style="margin-bottom:10px"><b>Cancelled by the pupil:</b> ${canc.map(l=>`<div class="flag"><span>${h(fmtAt(l.at))}${l.note?' · "'+h(l.note)+'"':''}</span><button class="btn sm quiet" data-lseen="${l.id}">OK</button></div>`).join('')}</div>`:''}
+      ${req.length?`<div class="box b" style="margin-bottom:10px"><b>Requested:</b> ${req.map(l=>`<div class="flag"><span>${h(fmtAt(l.at))}${l.note?' · "'+h(l.note)+'"':''}</span><span><button class="btn sm" data-lok="${l.id}">Confirm</button> <button class="btn sm quiet" data-lno="${l.id}">Decline</button></span></div>`).join('')}</div>`:''}
+      ${up.map(l=>`<div class="flag"><span><b>${h(fmtAt(l.at))}</b> · ${h(l.kind||'lesson')} · ${h(l.minutes||30)} min${l.note?' · '+h(l.note):''}</span><button class="btn sm quiet" data-lcancel="${l.id}">Cancel</button></div>`).join('')||'<div class="note" style="margin:0 0 8px">No lesson booked.</div>'}
+      <div class="grid2"><div><label class="l" for="bkAt">Book a lesson</label><input type="datetime-local" id="bkAt" value="${dflt}"></div><div><label class="l" for="bkMin">Minutes</label><input type="number" id="bkMin" min="15" max="120" step="15" value="30"></div></div>
+      <div class="row" style="margin-top:10px"><button class="btn sm" id="bkOne">Book it</button><button class="btn sm quiet" id="bkWeekly">Book weekly for 6 weeks</button></div>
+      <div class="note">The pupil sees it on their Today screen and in Lessons. If they cancel, you are told here with their reason.</div></div>`;
+  }
+  function wireLessonCard(st, rerender){
+    const ls=st.data.lessons;
+    $$('[data-lseen]').forEach(b=>b.onclick=()=>{ const l=ls.find(x=>x.id===b.dataset.lseen); if(l) l.seen=true; saveCurrent(); rerender(); });
+    $$('[data-lok]').forEach(b=>b.onclick=()=>{ const l=ls.find(x=>x.id===b.dataset.lok); if(l){ l.status='booked'; l.seen=true; } saveCurrent(); rerender(); toast('Confirmed. They can see it.'); });
+    $$('[data-lno]').forEach(b=>b.onclick=()=>{ const l=ls.find(x=>x.id===b.dataset.lno); if(l){ l.status='cancelled'; l.by='teacher'; l.note='Not possible at that time'; } saveCurrent(); rerender(); });
+    $$('[data-lcancel]').forEach(b=>b.onclick=()=>{ if(!confirm('Cancel this lesson? The pupil will see it.')) return; const l=ls.find(x=>x.id===b.dataset.lcancel); if(l){ l.status='cancelled'; l.by='teacher'; l.seen=true; } saveCurrent(); rerender(); });
+    $('#bkOne').onclick=()=>{ const at=$('#bkAt').value; if(!at){ toast('Pick a time.'); return; } bookFor(st, at, $('#bkMin').value, 'lesson'); saveCurrent(); rerender(); toast('Booked.'); };
+    $('#bkWeekly').onclick=()=>{ const at=$('#bkAt').value; if(!at){ toast('Pick a time.'); return; } for(let k=0;k<6;k++) bookFor(st, addDays(at.slice(0,10),7*k)+'T'+at.slice(11,16), $('#bkMin').value, 'lesson'); saveCurrent(); rerender(); toast('Six lessons booked.'); };
   }
 
   // ------------------------------------------------------------ dictation (browser first, server fallback)
@@ -449,11 +515,11 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
     const v=$('#v-voice'); const has=!!me?.voice_ready;
     v.innerHTML=`<button class="btn sm quiet" id="voiceBack">← Pupils</button>
       <div class="eyebrow" style="margin-top:10px">Your voice</div><h2 class="big">${has?'Recorded.':'Pupils hear the week in your voice.'}</h2>
-      <p>${has?`Your voice is set${me.voice_name?' ('+h(me.voice_name)+')':''}. New weeks you publish are spoken in it. You can re-record or remove it at any time; removing it deletes the clone.`:'Read the passage below aloud, about thirty seconds, in the voice you use in a lesson. Sostenuto makes a clone of it and every caption you publish is spoken by it. Only text you have read and published is ever spoken; nothing is generated that you have not approved.'}</p>
+      <p>${has?`Your voice is set${me.voice_name?' ('+h(me.voice_name)+')':''}. New weeks you publish are spoken in it. You can re-record or remove it at any time; removing it deletes the clone.`:'Read the passage below aloud, about thirty seconds, in the voice you use in a lesson. Mosso makes a clone of it and every caption you publish is spoken by it. Only text you have read and published is ever spoken; nothing is generated that you have not approved.'}</p>
       ${cfg?.voice?'':'<div class="box c"><b>Voice is not configured on this deployment yet.</b> The captions will use the browser\'s built-in voice until it is.</div>'}
       <div class="script" id="voiceScript">${h(VOICE_SCRIPT)}</div>
       <div class="card" style="margin-top:12px">
-        <label class="switch" style="font-size:14.5px;color:var(--ink)"><input type="checkbox" id="consent"> I'm recording my own voice and I agree to Sostenuto cloning it to speak captions I publish. I can delete it whenever I like.</label>
+        <label class="switch" style="font-size:14.5px;color:var(--ink)"><input type="checkbox" id="consent"> I'm recording my own voice and I agree to Mosso cloning it to speak captions I publish. I can delete it whenever I like.</label>
         <div class="row" style="margin-top:12px"><button class="btn" id="recStart" ${cfg?.voice?'':'disabled'}>Record</button><button class="btn quiet" id="recStop" disabled>Stop</button><span class="rec" id="recInd" hidden><span class="blink"></span><span id="recTime">0:00</span></span></div>
         <audio id="recPlay" controls hidden style="width:100%;margin-top:10px"></audio>
         <div class="row" style="margin-top:10px"><button class="btn" id="voiceUse" disabled>Use this voice</button>${has?'<button class="btn danger" id="voiceDel">Remove my voice</button>':''}</div>
@@ -475,12 +541,16 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
     const v=$('#v-teacher');
     const list=students.map(s=>{ const d=s.data; const w=d.weeks&&d.weeks.length?d.weeks[d.weeks.length-1]:null; const flags=(d.flags||[]).filter(f=>!f.resolved).length;
       return `<div class="student" data-sid="${h(s.user_id)}"><div><div class="n">${h(d.profile?.name||'Pupil')}</div><div class="m">${h(d.profile?.instrument||'')} · ${h(d.profile?.level||'')}${w?` · this week ${doneCount(w)}/${w.sessions.length}`:' · no week set'}${flags?` · <b>${flags} flagged</b>`:''}</div></div><span class="pill">open</span></div>`; }).join('');
+    const attn=[]; students.forEach(s=>{ const ls=s.data.lessons||[]; const nm=s.data.profile?.name||'Pupil'; ls.filter(l=>l.status==='requested').forEach(l=>attn.push(`<b>${h(nm)}</b> asked for a lesson on ${h(fmtAt(l.at))}`)); ls.filter(l=>l.status==='cancelled'&&!l.seen).forEach(l=>attn.push(`<b>${h(nm)}</b> cancelled ${h(fmtAt(l.at))}${l.note?': "'+h(l.note)+'"':''}`)); });
     v.innerHTML=`<div class="eyebrow">${h(me?.studio||'Your studio')}${me?.code?` · code <b>${h(me.code)}</b>`:''}</div><h2 class="big">${students.length?'Your pupils.':'No pupils yet.'}</h2>
+      ${attn.length?`<div class="box c"><h3>Needs you</h3>${attn.map(a=>`<div style="margin:4px 0">${a}</div>`).join('')}<div class="note">Open the pupil to confirm or reply.</div></div>`:''}
+      ${students.length>1?`<div class="box a" id="groupCard" style="cursor:pointer"><b>Whole group.</b> <span class="note" style="margin:0">Set one week for everyone, add a task to all, or book a rehearsal. For choirs, orchestras and ensembles. Tap to open.</span></div>`:''}
       ${me?.code?`<div class="box b"><b>Give pupils this code:</b> <span class="pill on" style="font-size:16px;letter-spacing:.2em">${h(me.code)}</span><div class="note">They sign in, choose "I'm a pupil", enter it, and they're in your studio.</div></div>`:''}
       ${mode==='cloud'?`<div class="box ${me?.voice_ready?'b':'c'}" id="voiceCard" style="cursor:pointer"><b>Your voice: ${me?.voice_ready?'recorded':'not recorded yet'}.</b> <span class="note" style="margin:0">${me?.voice_ready?'New weeks are spoken in it. Tap to re-record or remove.':'Record thirty seconds and pupils hear their sessions in your voice. Tap to set it up.'}</span></div>`:''}
       <div class="card">${list||'<div class="note" style="margin:0">Pupils appear here when they join with your code.</div>'}</div>`;
     $$('[data-sid]').forEach(el=>el.onclick=()=>{ current=students.find(s=>s.user_id===el.dataset.sid); renderTStudent(); show('tstudent'); });
     const vc=$('#voiceCard'); if(vc) vc.onclick=renderVoice;
+    const gc=$('#groupCard'); if(gc) gc.onclick=renderGroup;
     show('teacher');
   }
   let preview=null;
@@ -496,13 +566,19 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
         <div class="grid2">
           <div><label class="l" for="pInst">Instrument</label><input id="pInst" value="${h(p.instrument||'violin')}"></div>
           <div><label class="l" for="pLevel">Level</label><input id="pLevel" value="${h(p.level||'beginner')}" placeholder="beginner, grade 3, returning adult…"></div>
+          <div><label class="l" for="pPart">Part or section (groups)</label><input id="pPart" value="${h(p.part||'')}" placeholder="Alto, Second violin…"></div>
           <div><label class="l" for="pGoal">Goal</label><input id="pGoal" value="${h(p.goalLabel||'')}" placeholder="Grade 3 exam"></div>
           <div><label class="l" for="pGoalDate">Goal date (rough)</label><input type="date" id="pGoalDate" value="${h(p.goalDate||'')}"></div>
           <div><label class="l" for="pSpw">Sessions a week</label><input type="number" id="pSpw" min="2" max="5" value="${h(p.sessionsPerWeek||3)}"></div>
           <div><label class="l" for="pMin">Minutes a session</label><input type="number" id="pMin" min="10" max="45" value="${h(p.minutes||18)}"></div>
         </div><button class="btn sm" id="pSave" style="margin-top:10px">Save profile</button></div>
+      ${lessonCardTeacher(current)}
+      <div class="card"><h3>Add a task this week</h3>
+        <div class="row"><input id="xText" placeholder="e.g. Listen to the Bach three times before Thursday" style="flex:1"><button type="button" class="btn quiet mic" data-dictate="xText">Dictate</button><button class="btn sm" id="xAdd">Add</button></div>
+        ${(d.extras||[]).filter(x=>!x.done).length?`<div style="margin-top:8px">${(d.extras||[]).filter(x=>!x.done).map(x=>`<div class="flag"><span>${h(x.text)} <span class="note" style="margin:0">· ${h(fmt(x.at.slice(0,10)))}</span></span><button class="btn sm quiet" data-xrm="${x.id}">Remove</button></div>`).join('')}</div>`:''}
+        <div class="note">Something you thought of after the lesson. It appears on ${h(p.name||'the pupil')}'s Today screen and in their checklist, without rewriting the week.</div></div>
       <div class="card"><h3>After today's lesson</h3>
-        <div class="grid2"><div><label class="l" for="nDate">Lesson date</label><input type="date" id="nDate" value="${today()}"></div><div><label class="l" for="nNext">Next lesson</label><input type="date" id="nNext" value="${addDays(today(),7)}"></div></div>
+        <div class="grid2"><div><label class="l" for="nDate">Lesson date</label><input type="date" id="nDate" value="${today()}"></div><div><label class="l" for="nNext">Next lesson</label><input type="date" id="nNext" value="${(upcoming(current.data)[0]?upcoming(current.data)[0].at.slice(0,10):addDays(today(),7))}"></div></div>
         <label class="l" for="nWorked">What we worked on <button type="button" class="btn quiet mic" data-dictate="nWorked">Dictate</button></label><textarea id="nWorked" placeholder="D major scale, bow contact point near the bridge, first phrase of Twinkle variation A. Tone is opening up; rushes the scale."></textarea>
         <label class="l" for="nNextL">For next lesson, one per line <button type="button" class="btn quiet mic" data-dictate="nNextL">Dictate</button></label><textarea id="nNextL" placeholder="Scale from memory, two octaves&#10;First phrase in tune&#10;Bow nearer the bridge on long notes"></textarea>
         <label class="l" for="nLine">One line for the week <button type="button" class="btn quiet mic" data-dictate="nLine">Dictate</button></label><input id="nLine" placeholder="Lovely tone today. Don't rush the scale.">
@@ -510,7 +586,10 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
         <div class="note">Thirty seconds here becomes ${h(p.sessionsPerWeek||3)} guided sessions, a checklist and a journey for ${h(p.name||'the pupil')}. You review before it goes to them.</div></div>
       <div id="previewBox"></div>`;
     $('#backT').onclick=()=>renderTeacher();
-    $('#pSave').onclick=()=>{ p.instrument=$('#pInst').value.trim()||'violin'; p.level=$('#pLevel').value.trim()||'beginner'; p.goalLabel=$('#pGoal').value.trim(); p.goalDate=$('#pGoalDate').value; p.sessionsPerWeek=+$('#pSpw').value||3; p.minutes=+$('#pMin').value||18; saveCurrent(); toast('Profile saved.'); };
+    wireLessonCard(current, renderTStudent);
+    $('#xAdd').onclick=()=>{ const t=$('#xText').value.trim(); if(!t) return; d.extras=d.extras||[]; d.extras.push({id:uid(), text:t, at:new Date().toISOString(), done:false, by:me?.name||''}); saveCurrent(); renderTStudent(); toast('Added to their week.'); };
+    $$('[data-xrm]').forEach(b=>b.onclick=()=>{ d.extras=(d.extras||[]).filter(x=>x.id!==b.dataset.xrm); saveCurrent(); renderTStudent(); });
+    $('#pSave').onclick=()=>{ p.instrument=$('#pInst').value.trim()||'violin'; p.part=$('#pPart').value.trim(); p.level=$('#pLevel').value.trim()||'beginner'; p.goalLabel=$('#pGoal').value.trim(); p.goalDate=$('#pGoalDate').value; p.sessionsPerWeek=+$('#pSpw').value||3; p.minutes=+$('#pMin').value||18; saveCurrent(); toast('Profile saved.'); };
     $$('[data-res]').forEach(b=>b.onclick=()=>{ const f=flags.find(x=>x.id===b.dataset.res); if(f) f.resolved=true; saveCurrent(); renderTStudent(); });
     const aw=$('#award'); if(aw) aw.onclick=()=>{ d.tokens=d.tokens||{earned:0,redeemed:0}; d.tokens.redeemed=(d.tokens.redeemed||0)+6; saveCurrent(); renderTStudent(); toast('Reward marked as given.'); };
     $('#gen').onclick=generateWeek;
@@ -546,29 +625,97 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
       <div class="s"><b>Checklist for ${h(fmt(note.nextLesson))}</b><ul class="check">${out.checklist.map(c=>`<li><i></i><span>${h(c)}</span></li>`).join('')}</ul></div>
       <div class="s"><div class="quote" style="font-size:17px">"${h(out.encouragement)}"</div></div>
       <div class="row" style="margin-top:12px"><button class="btn" id="publish">Publish to ${h(current.data.profile.name||'the pupil')}</button><button class="btn quiet" id="regen">Regenerate</button><button class="btn quiet" id="discard">Discard</button></div></div>`;
-    $('#publish').onclick=async()=>{ const d=current.data; const btn=$('#publish'); btn.disabled=true;
-      if(mode==='cloud'&&me?.voice_ready&&cfg?.voice){
-        const jobs=[]; out.sessions.forEach((s,i)=>{ jobs.push([s,'introAudio',s.intro,`s${i}-intro`]); s.steps.forEach((st,j)=>jobs.push([st,'audio',st.caption,`s${i}-${j}`])); });
-        const wk=uid(); let k=0;
-        for(const [obj,key,text,tag] of jobs){ k++; btn.textContent=`Recording ${k} of ${jobs.length}…`; try{ const r=await fetch('/api/speak',{method:'POST',headers:{'content-type':'application/json',...(await authHeaders())},body:JSON.stringify({text, path:`${me.studio_id}/${current.user_id}/${wk}/${tag}.mp3`})}); const j=await r.json(); if(r.ok&&j.url) obj[key]=j.url; }catch(e){} }
-      }
-      d.notes.push({id:uid(), ...note}); d.weeks.push({id:uid(), createdAt:today(), lessonDate:note.date, nextLesson:note.nextLesson, workedOn:note.workedOn, line:note.line, sessions:out.sessions, checklist:out.checklist, encouragement:out.encouragement, done:[], ticks:[]}); d.teacherName=d.teacherName||me?.name||''; preview=null; saveCurrent(); toast('Published. It\'s waiting on their Today screen.'); renderTStudent(); };
+    $('#publish').onclick=async()=>{ const btn=$('#publish'); btn.disabled=true; await synthesise(out, btn, current.user_id); await publishWeek([current], note, out, null); preview=null; toast('Published. It\'s waiting on their Today screen.'); renderTStudent(); };
     $('#regen').onclick=()=>{ preview=null; renderTStudent(); $('#nWorked').value=note.workedOn; $('#nNextL').value=note.forNext.join('\n'); $('#nLine').value=note.line; $('#nDate').value=note.date; $('#nNext').value=note.nextLesson; generateWeek(); };
     $('#discard').onclick=()=>{ preview=null; renderTStudent(); };
+  }
+
+  async function synthesise(out, btn, folder){ // teacher's voice for every caption, once; the URLs are then shared by every pupil the week goes to
+    if(!(mode==='cloud'&&me?.voice_ready&&cfg?.voice)) return;
+    const jobs=[]; out.sessions.forEach((s,i)=>{ jobs.push([s,'introAudio',s.intro,`s${i}-intro`]); s.steps.forEach((st,j)=>jobs.push([st,'audio',st.caption,`s${i}-${j}`])); });
+    const wk=uid(); let k=0;
+    for(const [obj,key,text,tag] of jobs){ k++; if(btn) btn.textContent=`Recording ${k} of ${jobs.length}…`; try{ const r=await fetch('/api/speak',{method:'POST',headers:{'content-type':'application/json',...(await authHeaders())},body:JSON.stringify({text, path:`${me.studio_id}/${folder}/${wk}/${tag}.mp3`})}); const j=await r.json(); if(r.ok&&j.url) obj[key]=j.url; }catch(e){} }
+  }
+  async function publishWeek(targets, note, out, group){
+    for(const st of targets){ const d=st.data; d.notes=d.notes||[]; d.weeks=d.weeks||[]; d.notes.push({id:uid(), ...note, group:!!group});
+      d.weeks.push({id:uid(), createdAt:today(), lessonDate:note.date, nextLesson:note.nextLesson, workedOn:note.workedOn, line:note.line, sessions:JSON.parse(JSON.stringify(out.sessions)), checklist:out.checklist.slice(), encouragement:out.encouragement, done:[], ticks:[], group:group||undefined});
+      d.teacherName=d.teacherName||me?.name||''; try{ await saveStudent(st); }catch(e){} }
+  }
+
+  // ------------------------------------------------------------ group: one note for the whole choir or orchestra
+  let gpreview=null;
+  function partsOf(){ return [...new Set(students.map(s=>(s.data.profile?.part||'').trim()).filter(Boolean))]; }
+  function groupTargets(){ const sel=$$('#gParts input:checked').map(x=>x.value); if(!sel.length||sel.includes('*')) return students.slice(); return students.filter(s=>sel.includes((s.data.profile?.part||'').trim())); }
+  function renderGroup(){
+    const v=$('#v-group'); const parts=partsOf(); const gname=me?.studio||'the group';
+    if(!students.length){ v.innerHTML=`<div class="eyebrow">Group</div><h2 class="big">Nobody here yet.</h2><div class="card">Give members your code${me?.code?' (<b>'+h(me.code)+'</b>)':''}. Once they have joined, one note here becomes a week for every one of them, each for their own part.</div>`; show('group'); return; }
+    const dflt=addDays(today(),7)+'T19:00';
+    v.innerHTML=`<div class="eyebrow">${h(gname)} · ${students.length} members${parts.length?' · parts: '+h(parts.join(', ')):''}</div><h2 class="big">One note, everyone's week.</h2>
+      <div class="card"><h3>Who this is for</h3><div class="row" id="gParts"><label class="switch"><input type="checkbox" value="*" checked> Everyone</label>${parts.map(p=>`<label class="switch"><input type="checkbox" value="${h(p)}"> ${h(p)}</label>`).join('')}</div>
+        <div class="note">${parts.length?'Untick Everyone to pick parts. Members set their part in Goal; you can set it in their profile.':'No parts set yet. Members can set theirs under Goal, or you can in each profile, and then you can send work to one section at a time.'}</div></div>
+      <div class="card"><h3>After today's rehearsal</h3>
+        <div class="grid2"><div><label class="l" for="gDate2">Rehearsal date</label><input type="date" id="gDate2" value="${today()}"></div><div><label class="l" for="gNext2">Next rehearsal</label><input type="date" id="gNext2" value="${addDays(today(),7)}"></div></div>
+        <label class="l" for="gWorked">What we rehearsed <button type="button" class="btn quiet mic" data-dictate="gWorked">Dictate</button></label><textarea id="gWorked" placeholder="Bach Magnificat, movements 1 and 3. Sopranos late on the entries at bar 30; tenors flat in the fugue; everyone: words from memory for movement 1."></textarea>
+        <label class="l" for="gNextL">Know by next rehearsal, one per line <button type="button" class="btn quiet mic" data-dictate="gNextL">Dictate</button></label><textarea id="gNextL" placeholder="Movement 1 notes secure&#10;Entries at bar 30 counted, not guessed&#10;Words of movement 1 from memory"></textarea>
+        <label class="l" for="gLine">One line for the week <button type="button" class="btn quiet mic" data-dictate="gLine">Dictate</button></label><input id="gLine" placeholder="Learn it slowly and it stays learnt.">
+        <div class="row" style="margin-top:10px"><button class="btn" id="ggen">Write everyone's week</button><span class="status" id="ggenStatus" style="margin:0"></span></div>
+        <div class="note">Each member gets their own sessions for their own part: notes, rhythm, entries, words, listening. You review one preview, then it goes to all of them.</div></div>
+      <div id="gPreviewBox"></div>
+      <div class="card"><h3>Add a task for everyone this week</h3>
+        <div class="row"><input id="gxText" placeholder="e.g. Listen to the recording of movement 3 before Thursday" style="flex:1"><button class="btn sm" id="gxAdd">Add to all</button></div>
+        <div class="note">Goes onto every selected member's Today screen and checklist now, without touching their sessions.</div></div>
+      <div class="card"><h3>Book a rehearsal for everyone</h3>
+        <div class="grid2"><div><label class="l" for="gbAt">When</label><input type="datetime-local" id="gbAt" value="${dflt}"></div><div><label class="l" for="gbMin">Minutes</label><input type="number" id="gbMin" min="30" max="240" step="15" value="120"></div></div>
+        <div class="row" style="margin-top:10px"><button class="btn sm" id="gbOne">Book it</button><button class="btn sm quiet" id="gbWeekly">Weekly for 6 weeks</button></div>
+        <div class="note">Appears in every member's Lessons as a rehearsal. If someone can't make it, they tell you from there and it shows up under Needs you.</div></div>`;
+    $$('#gParts input').forEach(cb=>cb.onchange=()=>{ if(cb.value==='*'&&cb.checked) $$('#gParts input').forEach(x=>{ if(x.value!=='*') x.checked=false; }); if(cb.value!=='*'&&cb.checked) $('#gParts input[value="*"]').checked=false; });
+    $$('[data-dictate]').forEach(b=>b.onclick=()=>dictate(b.dataset.dictate,b));
+    $('#ggen').onclick=generateGroupWeek;
+    $('#gxAdd').onclick=async()=>{ const t=$('#gxText').value.trim(); if(!t) return; const tg=groupTargets(); for(const st of tg){ st.data.extras=st.data.extras||[]; st.data.extras.push({id:uid(), text:t, at:new Date().toISOString(), done:false, by:me?.name||'', group:true}); try{ await saveStudent(st); }catch(e){} } $('#gxText').value=''; toast('Added for '+tg.length+' members.'); };
+    const bookAll=async(weekly)=>{ const at=$('#gbAt').value; if(!at){ toast('Pick a time.'); return; } const tg=groupTargets(); for(const st of tg){ for(let k=0;k<(weekly?6:1);k++) bookFor(st, addDays(at.slice(0,10),7*k)+'T'+at.slice(11,16), $('#gbMin').value, 'rehearsal'); try{ await saveStudent(st); }catch(e){} } toast((weekly?'Six rehearsals':'Rehearsal')+' booked for '+tg.length+' members.'); };
+    $('#gbOne').onclick=()=>bookAll(false); $('#gbWeekly').onclick=()=>bookAll(true);
+    if(gpreview) renderGroupPreview();
+    show('group');
+  }
+  async function generateGroupWeek(){
+    const st=$('#ggenStatus'); const btn=$('#ggen'); const tg=groupTargets();
+    const note={date:$('#gDate2').value||today(), nextLesson:$('#gNext2').value||addDays(today(),7), workedOn:$('#gWorked').value.trim(), forNext:$('#gNextL').value.split('\n').map(x=>x.trim()).filter(Boolean), line:$('#gLine').value.trim()};
+    if(!note.workedOn&&!note.forNext.length){ st.textContent='Add what you rehearsed, or what to know.'; return; }
+    if(!tg.length){ st.textContent='Nobody matches those parts.'; return; }
+    btn.disabled=true; st.textContent='Writing the week for '+tg.length+' members…';
+    const parts=[...new Set(tg.map(s=>(s.data.profile?.part||'').trim()).filter(Boolean))];
+    const p0=tg[0].data.profile||{}; const profile={name:'each member', instrument:parts.length?'their part ('+parts.join(', ')+')':(p0.instrument||'their instrument or voice'), level:'mixed', sessionsPerWeek:3, minutes:p0.minutes||18};
+    try{ let out;
+      if(location.protocol.startsWith('http')){ const r=await fetch('/api/plan',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({profile, note, teacherName:me?.name||'your conductor', weeksToGoal:null, group:{name:me?.studio||'the group', parts}})}); if(!r.ok){ let e={}; try{ e=await r.json(); }catch(x){} throw new Error(e.message||('HTTP '+r.status)); } out=await r.json(); }
+      else out=offlinePlan(profile, note);
+      gpreview={note, out, count:tg.length, parts}; st.textContent=''; renderGroupPreview(); $('#gPreviewBox').scrollIntoView({behavior:'smooth'});
+    }catch(e){ st.textContent=e.message||'Could not write the week. Try again.'; }
+    finally{ btn.disabled=false; }
+  }
+  function renderGroupPreview(){
+    const box=$('#gPreviewBox'); const {note,out,count,parts}=gpreview;
+    box.innerHTML=`<div class="box a session-preview"><h3>Preview: the week for ${count} members${parts.length?' ('+h(parts.join(', '))+')':''}</h3><div class="note">Each member hears this for their own part. Regenerate if it's off; publish when it's right.</div>
+      ${out.sessions.map((s,i)=>`<div class="s"><b>${i+1}. ${h(s.title)}</b> <span class="note" style="margin:0">· ${s.steps.reduce((a,x)=>a+(+x.minutes||0),0)} min</span><div class="quote" style="font-size:16px;margin:4px 0">"${h(s.intro)}"</div><ol>${s.steps.map(x=>`<li><b>${h(x.name)}</b> (${h(x.minutes)} min): ${h(x.caption)}</li>`).join('')}</ol></div>`).join('')}
+      <div class="s"><b>Know by ${h(fmt(note.nextLesson))}</b><ul class="check">${out.checklist.map(c=>`<li><i></i><span>${h(c)}</span></li>`).join('')}</ul></div>
+      <div class="s"><div class="quote" style="font-size:17px">"${h(out.encouragement)}"</div></div>
+      <div class="row" style="margin-top:12px"><button class="btn" id="gpublish">Publish to ${count} members</button><button class="btn quiet" id="gregen">Regenerate</button><button class="btn quiet" id="gdiscard">Discard</button></div></div>`;
+    $('#gpublish').onclick=async()=>{ const btn=$('#gpublish'); btn.disabled=true; await synthesise(out, btn, 'group'); const tg=groupTargets(); btn.textContent='Publishing…'; await publishWeek(tg, note, out, {name:me?.studio||'group', parts}); gpreview=null; toast('Published to '+tg.length+' members.'); renderGroup(); };
+    $('#gregen').onclick=()=>{ const n=note; gpreview=null; renderGroup(); $('#gWorked').value=n.workedOn; $('#gNextL').value=n.forNext.join('\n'); $('#gLine').value=n.line; $('#gDate2').value=n.date; $('#gNext2').value=n.nextLesson; generateGroupWeek(); };
+    $('#gdiscard').onclick=()=>{ gpreview=null; renderGroup(); };
   }
 
   // ------------------------------------------------------------ demo: see how it works, no account, nothing leaves the device
   function demoSeed(){
     const W=(title,intro,steps)=>({title,intro,steps:steps.map(([name,minutes,caption])=>({name,minutes,caption}))});
-    const emre={profile:{name:'Emre',instrument:'violin',level:'beginner',goalLabel:'Grade 1 exam',goalDate:addDays(today(),150),sessionsPerWeek:3,minutes:18},teacherName:'Melisande',notes:[],flags:[{id:uid(),text:'G string squeaks on down bows',at:new Date().toISOString(),resolved:false},{id:uid(),text:'Got the third-finger F sharp in tune three times in a row',at:new Date().toISOString(),resolved:false}],tokens:{earned:4,redeemed:0},
+    const emre={profile:{name:'Emre',instrument:'violin',part:'Second violin',level:'beginner',goalLabel:'Grade 1 exam',goalDate:addDays(today(),150),sessionsPerWeek:3,minutes:18},teacherName:'Melisande',notes:[],extras:[{id:uid(),text:'Listen to the Twinkle variations recording once before Thursday',at:new Date().toISOString(),done:false,by:'Melisande'}],lessons:[{id:uid(),at:addDays(today(),4)+'T16:30',minutes:30,kind:'lesson',status:'booked',by:'teacher',note:'',seen:true},{id:uid(),at:addDays(today(),11)+'T16:30',minutes:30,kind:'lesson',status:'booked',by:'teacher',note:'',seen:true},{id:uid(),at:addDays(today(),6)+'T19:00',minutes:120,kind:'rehearsal',status:'booked',by:'teacher',note:'Youth orchestra',seen:true}],flags:[{id:uid(),text:'G string squeaks on down bows',at:new Date().toISOString(),resolved:false},{id:uid(),text:'Got the third-finger F sharp in tune three times in a row',at:new Date().toISOString(),resolved:false}],tokens:{earned:4,redeemed:0},
       weeks:[{id:uid(),createdAt:addDays(today(),-3),lessonDate:addDays(today(),-3),nextLesson:addDays(today(),4),workedOn:'D major scale, bow contact point nearer the bridge, first phrase of Twinkle variation A. Rushes the scale.',line:"Lovely tone today. Don't rush the scale.",encouragement:'Three short sessions and the lesson takes care of itself.',
         sessions:[W('Slow and wide','Everything at half the speed you think it needs, especially the scale.',[['Warm-up',3,'Long slow bows on the open D. Listen for the note to bloom.'],['D major, one note per breath',5,'Full bow on each note and a long pause at the top. The rushing happens between the notes.'],['Twinkle, first phrase',5,'Three times, then stop before it gets messy.'],['Scale again, nearer the bridge',4,"Same scale, bow a finger's width closer to the bridge. Brighter, not louder."],['Wind down',1,'One last open D, as beautiful as you can. Stop there.']]),
           W('Contact point','The bridge end of the string is where today lives.',[['Warm-up',3,'Open strings, long bows, eyes on the contact point.'],['Scale from memory',5,'Music away. Say the note names aloud as you play.'],['Twinkle',5,'Phrase one, in tune, twice. If the F sharp is low, stop and find it.'],['Contact point drill',4,'Slide the bow toward the bridge until the sound brightens, then hold it there.'],['Wind down',1,'Stop.']]),
           W('As if it were the lesson','Short, tidy steps. Play each thing once, properly.',[['Warm-up',3,'Two long bows per string.'],['Scale, once',4,'One go only. Steady, not fast.'],['Twinkle, once',5,"As you'll play it for me on Tuesday."],['Checklist run',5,'Tick what you can show.'],['Wind down',1,'Done. Sleep on it.']])],
         checklist:['D major scale from memory','First phrase of Twinkle in tune, with a high F sharp','Bow nearer the bridge on long notes'],done:[{i:0,at:addDays(today(),-2)+'T18:00:00Z',feel:'Good'}],ticks:[0]}]};
-    const aisha={profile:{name:'Aisha',instrument:'cello',level:'grade 3',goalLabel:'School concert',goalDate:addDays(today(),60),sessionsPerWeek:3,minutes:20},teacherName:'Melisande',notes:[],flags:[],tokens:{earned:9,redeemed:6},
+    const aisha={profile:{name:'Aisha',instrument:'cello',part:'Cello',level:'grade 3',goalLabel:'School concert',goalDate:addDays(today(),60),sessionsPerWeek:3,minutes:20},teacherName:'Melisande',notes:[],flags:[],extras:[],lessons:[{id:uid(),at:addDays(today(),1)+'T17:00',minutes:30,kind:'lesson',status:'booked',by:'teacher',note:'',seen:true},{id:uid(),at:addDays(today(),9)+'T17:30',minutes:30,kind:'lesson',status:'requested',by:'pupil',note:'Could we move to half past?',seen:false}],tokens:{earned:9,redeemed:6},
       weeks:[{id:uid(),createdAt:addDays(today(),-6),lessonDate:addDays(today(),-6),nextLesson:addDays(today(),1),workedOn:'C major two octaves, thumb position, first page of the Squire.',line:'Keep the left hand soft.',encouragement:'Nearly there.',sessions:[W('Even bows','Same length of bow for every note.',[['Warm-up',3,'Open strings.'],['C major',6,'Two octaves, evenly.'],['Squire, page one',7,'Without stopping.'],['Scale, faster',3,'One notch up.'],['Wind down',1,'Stop.']]),W('Thumb','Find the thumb position in one movement.',[['Warm-up',3,'Open strings.'],['Thumb position',6,'A string, thumb soft.'],['Squire',7,'Page one.'],['Scale',3,'From memory.'],['Wind down',1,'Stop.']]),W('Run-through','Once through, as on the day.',[['Warm-up',3,'Open strings.'],['Squire, whole page',10,'No stopping.'],['Trouble spots',6,'Only the bars that went wrong.'],['Wind down',1,'Stop.']])],checklist:['C major with even bowing','Page one without stopping'],done:[{i:0,at:addDays(today(),-5)+'T17:00:00Z',feel:'OK'},{i:1,at:addDays(today(),-3)+'T17:00:00Z',feel:'Good'},{i:2,at:addDays(today(),-1)+'T17:00:00Z',feel:'Good'}],ticks:[0,1]}]};
-    const tom={profile:{name:'Tom',instrument:'violin',level:'returning adult',goalLabel:'',goalDate:'',sessionsPerWeek:2,minutes:15},teacherName:'Melisande',notes:[],flags:[],tokens:{earned:0,redeemed:0},weeks:[]};
+    const tom={profile:{name:'Tom',instrument:'violin',part:'First violin',level:'returning adult',goalLabel:'',goalDate:'',sessionsPerWeek:2,minutes:15},teacherName:'Melisande',notes:[],flags:[],extras:[],lessons:[],tokens:{earned:0,redeemed:0},weeks:[]};
     return [{user_id:'demo-emre',data:emre},{user_id:'demo-aisha',data:aisha},{user_id:'demo-tom',data:tom}];
   }
   let demoRole='pupil';
