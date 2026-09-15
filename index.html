@@ -617,7 +617,7 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
         </div>
         <div>
           ${students.length?messageFormHTML():''}
-          <div class="card" id="groupCard" style="cursor:pointer"><div class="label">Whole group</div><p style="margin:0">One week for everyone: ${students.length} ${students.length===1?'member':'members'}${parts.length?' · '+h(parts.join(', ')):''}. Tap to open.</p></div>
+          <div class="card" id="groupCard" style="cursor:pointer"><div class="label">After a rehearsal</div><p style="margin:0">Write one week for the whole group, each member for their own part${parts.length?' ('+h(parts.join(', '))+')':''}. For choirs, orchestras and ensembles. Tap to open.</p></div>
         </div>
       </div>
       ${mode==='cloud'?`<div class="box ${me?.voice_ready?'b':'c'}" id="voiceCard" style="cursor:pointer"><div class="label">Your voice</div><div class="quote">${me?.voice_ready?'Recorded.':'Not recorded yet.'}</div><div class="note">${me?.voice_ready?'New weeks are spoken in it. Tap to re-record or remove.':'Record thirty seconds and pupils hear their sessions in your voice. Tap to set it up.'}</div></div>`:''}`;
