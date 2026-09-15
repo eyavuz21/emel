@@ -298,6 +298,17 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
       out+=`<g transform="translate(${x} ${y})">${now?'<circle r="17" fill="none" stroke="var(--amber)" stroke-width="3"/>':''}<ellipse rx="10" ry="7" transform="rotate(-22)" fill="${done?'var(--varnish)':'var(--card)'}" stroke="var(--varnish)" stroke-width="2"/><rect x="8" y="-38" width="2.5" height="38" fill="var(--varnish)"/></g><text x="${x}" y="${H-4}" text-anchor="middle" fill="${now?'var(--amber)':'var(--muted)'}">${N===7?DAYS[i]:i+1}</text>`; }
     return out+'</svg>';
   }
+  const fmtS=d=>{ if(!d) return ''; const [y,m,dd]=d.split('-'); return new Date(+y,+m-1,+dd).toLocaleDateString('en-GB',{day:'numeric',month:'short'}); };
+  function staveMonth(weeks){ // the last five weeks, one small stave each, most recent at the top: the month at a glance
+    const ws=weeks.slice(-5).reverse(); if(!ws.length) return '';
+    const W=360, RH=56, H=ws.length*RH+4; let out=`<svg class="stave-week" viewBox="0 0 ${W} ${H}" role="img" aria-label="the last ${ws.length} weeks">`;
+    ws.forEach((w,r)=>{ const y0=r*RH+6; const N=w.sessions.length; const d=new Set((w.done||[]).map(x=>x.i)); const x0=92, x1=W-58, dx=(x1-x0)/Math.max(1,N-1);
+      for(let k=0;k<5;k++) out+=`<line x1="${x0-12}" y1="${y0+12+k*7}" x2="${x1+12}" y2="${y0+12+k*7}" stroke="var(--line)" stroke-width="1.2"/>`;
+      out+=`<text x="0" y="${y0+32}">${h(fmtS(w.lessonDate||w.createdAt))}</text>`;
+      for(let i=0;i<N;i++){ const x=x0+i*dx, y=y0+40-((i*7)%5)*4; out+=`<g transform="translate(${x} ${y})"><ellipse rx="6.5" ry="4.5" transform="rotate(-22)" fill="${d.has(i)?'var(--varnish)':'var(--card)'}" stroke="var(--varnish)" stroke-width="1.6"/><rect x="5" y="-24" width="1.8" height="24" fill="var(--varnish)"/></g>`; }
+      out+=`<text x="${W}" y="${y0+32}" text-anchor="end" style="fill:var(--ink)">${doneCount(w)}/${N}</text>`; });
+    return out+'</svg>';
+  }
   const workList=w=>{ const items=[...(w.work||[]), ...(w.checklist||[])]; return [...new Set(items.map(x=>String(x).trim()).filter(Boolean))].slice(0,10); };
   function workTally(w){ const t={}; for(const d of (w.done||[])) for(const it of (d.worked||[])) t[it]=(t[it]||0)+1; return Object.entries(t).sort((a,b)=>b[1]-a[1]); }
   function tokensView(){ const t=doc().tokens||{earned:0,redeemed:0}; const avail=Math.max(0,(t.earned||0)-(t.redeemed||0)); return {avail, toNext: Math.max(0, 6-(avail%6||0))}; }
@@ -316,7 +327,7 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
     const i=nextIndex(w); const n=doneCount(w); const s=i>=0?w.sessions[i]:null;
     const lastDone=(w.done||[]).slice(-1)[0]; const mins=p.minutes||levelMinutes(p.level);
     v.innerHTML=`
-      <div class="chips"><span class="chip">${h(fmt(today()))}</span><span class="chip">Day <b>${Math.min(n+1,w.sessions.length)} of ${w.sessions.length}</b></span><span class="chip">${h(mins)} min <b>set by ${h(tn)}</b></span>${w.group?`<span class="chip">${h(w.group.name||'Group')} week${p.part?' · '+h(p.part):''}</span>`:''}</div>
+      <div class="chips"><span class="chip">${h(fmt(today()))}</span><span class="chip">Day <b>${Math.min(n+1,w.sessions.length)} of ${w.sessions.length}</b></span><span class="chip">${h(mins)} min <b>set by ${h(tn)}</b></span>${p.goalDate?`<span class="chip">${h(p.goalLabel||'Goal')} <b>${weeksBetween(today(),p.goalDate)} weeks</b></span>`:''}${w.group?`<span class="chip">${h(w.group.name||'Group')} week${p.part?' · '+h(p.part):''}</span>`:''}</div>
       <div class="card"><div class="label">This week</div>${staveWeek(w)}${openExtras().length?`<div class="label" style="margin-top:12px">News from ${h(tn)}</div>${openExtras().map(x=>`<div class="flag"><span>${h(x.text)} <span class="note" style="margin:0">· ${h(fmt(x.at.slice(0,10)))}</span></span><button class="btn sm quiet" data-xdone="${x.id}">Done</button></div>`).join('')}`:''}</div>
       <div class="box says"><div class="label">${h(tn)} says, for this week</div><div class="quote">${h(w.line||w.encouragement||'Turn up every day and the lesson takes care of itself.')}</div></div>
       ${lastDone?`<div class="card"><div class="label">Last time</div><p>${h(fmt(lastDone.at.slice(0,10)))} · you said it felt <b>${h(lastDone.feel||'')}</b>${(lastDone.worked||[]).length?` · you worked on <b>${h(lastDone.worked.join(', '))}</b>`:''}</p></div>`:''}
@@ -379,6 +390,7 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
     v.innerHTML=`
       <div class="chips"><span class="chip">Next lesson <b>${h(fmt(w.nextLesson))}</b></span><span class="chip"><b>${n} of ${w.sessions.length}</b> days done</span></div>
       <div class="card"><div class="label">This week on the stave</div>${staveWeek(w)}</div>
+      ${doc().weeks.length>1?`<div class="card"><div class="label">The last ${Math.min(5,doc().weeks.length)} weeks</div>${staveMonth(doc().weeks)}${p.goalDate?`<div class="note">${h(p.goalLabel||'Goal')} · ${h(fmtL(p.goalDate))} · ${weeksBetween(today(),p.goalDate)} weeks to go</div>`:''}</div>`:''}
       <h2 class="big">${w.sessions.length} days, then ${h(tn)}.</h2>
       <ul class="path">
         <li class="lesson"><div class="t">Lesson · ${h(fmt(w.lessonDate||w.createdAt))}</div><div class="d">${h((w.workedOn||'').slice(0,90))}</div></li>
@@ -425,7 +437,8 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
     const label=(t,y)=>{ ctx.fillStyle='#666666'; ctx.font=F(800,18); ctx.fillText(t.toUpperCase(),70,y); };
     const top=490; const fb=w&&(w.line||w.encouragement); const list=w&&w.checklist?w.checklist.slice(0,4):[];
     let hh=42; if(fb) hh+=36+lines(fb,W-140,F(700,28)).length*38+40; if(list.length){ hh+=36; list.forEach(t=>hh+=lines(t,W-180,F(600,24)).length*30+8); } if(!fb&&!list.length) hh+=40; hh+=18;
-    const H=top+hh+40; if(c.height!==H) c.height=H;
+    const goal=p.goalDate&&doc().weeks.length?{label:p.goalLabel||'Goal', date:p.goalDate, start:(doc().weeks[0].lessonDate||doc().weeks[0].createdAt)}:null;
+    const H=top+hh+40+(goal?200:0); if(c.height!==H) c.height=H;
     ctx.fillStyle='#FFFFFF'; ctx.fillRect(0,0,W,H);
     ctx.strokeStyle='#E9E9E9'; ctx.lineWidth=2; for(let y=40;y<H;y+=42){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
     // box 1: the dates
@@ -441,6 +454,19 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
     if(fb){ label('Feedback from the last lesson',y); y=wrap(fb,70,y+36,W-140,38,F(700,28),'#111111'); ctx.fillStyle='#666666'; ctx.font=F(600,19); ctx.fillText(tn,70,y-4); y+=40; }
     if(list.length){ label('For next lesson:',y); y+=36; list.forEach((t,k)=>{ const on=(w.ticks||[]).includes(k); ctx.fillStyle=on?'#111111':'#FFFFFF'; ctx.strokeStyle=on?'#111111':'#DEDEDE'; ctx.lineWidth=2; ctx.beginPath(); ctx.roundRect(70,y-20,24,24,6); ctx.fill(); ctx.stroke(); y=wrap(t,108,y,W-180,30,F(600,24),on?'#666666':'#111111')+8; }); }
     if(!fb&&!list.length){ ctx.fillStyle='#666666'; ctx.font=F(600,22); ctx.fillText('Feedback appears here after the next lesson.',70,y+2); }
+    if(goal){ // box 4: the months from the first week to the exam or concert, with "now" on it
+      const gy=top+hh+30; box(gy,170); label(goal.label+' · '+fmtL(goal.date),gy+42);
+      const t0=new Date(goal.start+'T12:00:00Z').getTime(), t1=new Date(goal.date+'T12:00:00Z').getTime(), tn=new Date(today()+'T12:00:00Z').getTime();
+      const X0=70, X1=W-70, ly=gy+90; const px=t=>X0+(X1-X0)*Math.min(1,Math.max(0,(t-t0)/Math.max(1,t1-t0)));
+      ctx.strokeStyle='#DEDEDE'; ctx.lineWidth=4; ctx.beginPath(); ctx.moveTo(X0,ly); ctx.lineTo(X1,ly); ctx.stroke();
+      ctx.strokeStyle='#111111'; ctx.beginPath(); ctx.moveTo(X0,ly); ctx.lineTo(px(tn),ly); ctx.stroke();
+      const m=new Date(t0); m.setUTCDate(1); m.setUTCMonth(m.getUTCMonth()+1); ctx.font=F(600,15); ctx.fillStyle='#666666'; ctx.textAlign='center';
+      for(; m.getTime()<t1; m.setUTCMonth(m.getUTCMonth()+1)){ const x=px(m.getTime()); ctx.fillStyle='#DEDEDE'; ctx.fillRect(x-1,ly-8,2,16); ctx.fillStyle='#666666'; ctx.fillText(m.toLocaleDateString('en-GB',{month:'short',timeZone:'UTC'}),x,ly+32); }
+      ctx.fillStyle='#111111'; ctx.beginPath(); ctx.arc(px(tn),ly,9,0,7); ctx.fill(); ctx.font=F(800,15); ctx.fillText('now',px(tn),ly-20);
+      ctx.beginPath(); ctx.roundRect(X1-6,ly-12,12,24,3); ctx.fill(); ctx.textAlign='right'; ctx.fillText(fmtS(goal.date),X1,ly-18); ctx.textAlign='left';
+      const wk=doc().weeks, practised=wk.filter(x=>doneCount(x)>0).length, complete=wk.filter(x=>x.sessions&&doneCount(x)===x.sessions.length).length;
+      ctx.fillStyle='#111111'; ctx.font=F(700,22); ctx.fillText(`${practised} ${practised===1?'week':'weeks'} practised, ${complete} complete`,70,gy+156);
+    }
   }
 
   // ------------------------------------------------------------ goal
@@ -552,6 +578,7 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
       ${flags.filter(f=>!f.resolved).length?`<div class="box" style="border-color:var(--danger)"><h3 style="color:var(--danger)">Flagged for the next lesson</h3>${flags.filter(f=>!f.resolved).map(f=>`<div class="flag"><span>${h(f.text)} <span class="note" style="margin:0">· ${h(fmt(f.at.slice(0,10)))}</span></span><button class="btn sm quiet" data-res="${f.id}">Done</button></div>`).join('')}</div>`:''}
       ${w?`<div class="card"><div class="label">This week</div>${staveWeek(w)}<div class="note" style="margin:0">${doneCount(w)} of ${w.sessions.length} days done · felt: ${(w.done||[]).map(x=>x.feel).filter(Boolean).join(', ')||'nothing logged yet'} · next lesson ${h(fmt(w.nextLesson))}</div>
         ${workTally(w).length?`<div class="label" style="margin-top:12px">Worked on most this week</div><ul class="ticks" style="margin-top:4px">${workTally(w).map(([it,c])=>`<li style="cursor:default"><span style="flex:1">${h(it)}</span><span class="pill on">${c} ${c===1?'day':'days'}</span></li>`).join('')}</ul>`:'<div class="note">What the pupil ticks after each session appears here, most-worked first, so you can plan the lesson.</div>'}
+        ${d.weeks.length>1?`<div class="label" style="margin-top:12px">The last ${Math.min(5,d.weeks.length)} weeks</div>${staveMonth(d.weeks)}`:''}${p.goalDate?`<div class="note">${h(p.goalLabel||'Goal')} · ${h(fmtL(p.goalDate))} · ${weeksBetween(today(),p.goalDate)} weeks to go</div>`:''}
         <div class="note">Tokens: ${(d.tokens?.earned||0)-(d.tokens?.redeemed||0)} available. ${((d.tokens?.earned||0)-(d.tokens?.redeemed||0))>=6?'<button class="btn sm" id="award">Mark reward given'+(p.reward?' ('+h(p.reward)+')':'')+'</button>':''}</div></div>`:''}
       <div class="card"><h3>Profile</h3>
         <div class="grid2">
@@ -717,6 +744,9 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
         sessions:[day('Slow and wide','Everything at half the speed you think it needs, especially the scale.',WORK[0],WORK[1]),day('Contact point','The bridge end of the string is where today lives.',WORK[2],WORK[1]),day('From memory','Music away today. Say the note names as you play.',WORK[0],WORK[3]),day('In tune','If the F sharp is low, stop and find it.',WORK[1],WORK[0]),day('Brighter, not louder','A finger\'s width closer to the bridge on every long note.',WORK[2],WORK[3]),day('Once through','Play each thing once, properly, as you would for me.',WORK[0],WORK[1]),day('Ready for Tuesday','Short and tidy. Then rest.',WORK[1],WORK[2])],
         checklist:['D major scale from memory','First phrase of Twinkle in tune, with a high F sharp','Bow nearer the bridge on long notes'],work:WORK,
         done:[{i:0,at:addDays(today(),-2)+'T18:00:00Z',feel:'Good',worked:[WORK[0],WORK[1]]},{i:1,at:addDays(today(),-1)+'T18:10:00Z',feel:'OK',worked:[WORK[2],WORK[1],WORK[3]]}],ticks:[0]}]};
+    // three earlier weeks, so the month view has something to show
+    const past=(k,doneIdx,line)=>({id:uid(),createdAt:addDays(today(),-3-7*k),lessonDate:addDays(today(),-3-7*k),nextLesson:addDays(today(),-3-7*(k-1)),workedOn:'Open strings, D major scale, first line of Twinkle.',line,encouragement:'',sessions:[day('Open strings','Long bows.',WORK[3],WORK[0]),day('D major','Slowly.',WORK[0],WORK[3]),day('Twinkle','First line.',WORK[1],WORK[0]),day('Contact point','Nearer the bridge.',WORK[2],WORK[1]),day('From memory','Music away.',WORK[0],WORK[1]),day('Once through','As for me.',WORK[1],WORK[2]),day('Rest and tidy','Short.',WORK[3],WORK[1])],checklist:[],work:WORK,done:doneIdx.map(i=>({i,at:addDays(today(),-3-7*k+i)+'T18:00:00Z',feel:'Good',worked:[WORK[i%4]]})),ticks:[]});
+    emre.weeks.unshift(past(3,[0,2,3,5],'Good start.'),past(2,[0,1,2,3,4,5,6],'Every day. Well done.'),past(1,[0,1,2,3,4,6],'Much better in tune.'));
     const aisha={profile:{name:'Aisha',instrument:'cello',part:'Cello',level:'grade 3',goalLabel:'School concert',goalDate:addDays(today(),60),sessionsPerWeek:7,minutes:25,reminder:'email'},teacherName:'Melisande',notes:[],flags:[],extras:[],tokens:{earned:9,redeemed:6},
       weeks:[{id:uid(),createdAt:addDays(today(),-6),lessonDate:addDays(today(),-6),nextLesson:addDays(today(),1),workedOn:'C major two octaves, thumb position, first page of the Squire.',line:'Keep the left hand soft.',encouragement:'Nearly there.',sessions:[W('Even bows','Same length of bow for every note.',[['Warm-up',3,'Open strings.'],['C major',6,'Two octaves, evenly.'],['Squire, page one',7,'Without stopping.'],['Scale, faster',3,'One notch up.'],['Wind down',1,'Stop.']]),W('Thumb','Find the thumb position in one movement.',[['Warm-up',3,'Open strings.'],['Thumb position',6,'A string, thumb soft.'],['Squire',7,'Page one.'],['Scale',3,'From memory.'],['Wind down',1,'Stop.']]),W('Run-through','Once through, as on the day.',[['Warm-up',3,'Open strings.'],['Squire, whole page',10,'No stopping.'],['Trouble spots',6,'Only the bars that went wrong.'],['Wind down',1,'Stop.']])],checklist:['C major with even bowing','Page one without stopping'],done:[{i:0,at:addDays(today(),-5)+'T17:00:00Z',feel:'OK'},{i:1,at:addDays(today(),-3)+'T17:00:00Z',feel:'Good'},{i:2,at:addDays(today(),-1)+'T17:00:00Z',feel:'Good'}],ticks:[0,1]}]};
     const tom={profile:{name:'Tom',instrument:'violin',part:'First violin',level:'returning',goalLabel:'',goalDate:'',sessionsPerWeek:7,minutes:25},teacherName:'Melisande',notes:[],flags:[],extras:[],tokens:{earned:0,redeemed:0},weeks:[]};
