@@ -23,7 +23,6 @@ Melodigo has two sides. The **teacher** writes a thirty-second note after each l
 - **A session every day.** Seven daily sessions by default (the teacher can set three to seven), one lighter day in the middle. The week is drawn as notes on a stave: filled notes are days done, the amber ring is today
 - **Tick what you worked on.** Every week comes with a work list (scale, passage, technique, piece). After each session, or after practising without the timer ("I practised on my own"), the pupil ticks what they did and can add their own. The teacher's pupil page shows **worked on most this week**, and last week's tally goes into the planner so neglected items get their turn
 - **The interface, redone for a nine-year-old and a teacher of any age.** One bold sans typeface throughout, black and white like the keys of a piano, every fact in its own box or chip (date, day 3 of 7, minutes set by the teacher), the teacher's line as a speech bubble, bigger buttons and labels, nothing crammed
-- Lesson booking removed (not needed)
 
 ## What's in v0.4 (15 September 2026)
 
@@ -55,12 +54,12 @@ Two kinds of account: teacher and pupil. There is no parent login. A young pupil
 - `index.html`: the whole app, no build step, one Google Font (Plus Jakarta Sans)
 - `api/plan.js`: a Vercel function. Takes the teacher's note, the pupil's profile and last week's tally (or a conductor's rehearsal note and the parts it is for), calls Claude (`claude-opus-5`, structured JSON output, effort `medium`, server-side refusal fallbacks) and returns the week: one session per day with steps, minutes and captions, a work list, a checklist, one line of encouragement
 - `api/voice.js`: creates the teacher's cloned voice from the recorded sample (ElevenLabs), or deletes it. Teacher only, verified server-side against Supabase
-- `api/speak.js`: turns one caption into audio in the studio's voice and stores it in the `sostenuto-audio` bucket under the studio's folder, using the teacher's own session so storage policies apply
+- `api/speak.js`: turns one caption into audio in the studio's voice and stores it in the `melodigo-audio` bucket under the studio's folder, using the teacher's own session so storage policies apply
 - `api/transcribe.js`: spoken notes to text (ElevenLabs Scribe) for browsers without built-in dictation
 - `api/reminders.js`: the morning message. GET from the cron (Authorization: Bearer CRON_SECRET) sends to every pupil due; POST from a signed-in pupil sends their own message now. Uses the Supabase service-role key server-side to read every pupil row
 - `sw.js`, `manifest.webmanifest`, `icon-192.png`, `icon-512.png`: the installable app and its notifications
 - `api/config.js`: public Supabase config for the page, plus which features are configured
-- `supabase/schema.sql`: studios, members, one JSON document per pupil that the pupil and their teacher can both read and write, row-level security, five RPCs. Every database object keeps the `sostenuto_` prefix from the previous name (renaming live tables gains nothing and risks the pilot's data); the prefix is never shown to a user
+- `supabase/schema.sql`: studios, members, one JSON document per pupil that the pupil and their teacher can both read and write, row-level security, the RPCs. Every database object is prefixed `melodigo_`
 - `logo.svg` (lockup with slogan), `wordmark.svg`, `mark.svg` (the flag-note), `icon-tile.svg`: outlines, no font needed
 
 ## Deploying
@@ -77,7 +76,7 @@ Vercel serves `index.html` as static and `api/*` as Node functions. Environment 
 | `CRON_SECRET` | for the cron | Vercel sends it as the bearer token on the scheduled call |
 | `RESEND_API_KEY`, `REMINDER_FROM` | for email messages | Resend account with a verified domain; falls back to push only when unset |
 
-Supabase: run `supabase/schema.sql` in the SQL editor once (or `supabase/migrate-2026-09-13-rename.sql` if you had the earlier `rosin_` objects); under Authentication → URL Configuration add the live URL to Redirect URLs. The built-in email sender is rate-limited, so add custom SMTP (Resend) before a real cohort.
+Supabase: run `supabase/schema.sql` in the SQL editor once; under Authentication → URL Configuration add the live URL to Redirect URLs. The built-in email sender is rate-limited, so add custom SMTP (Resend) before a real cohort.
 
 ## Running locally
 

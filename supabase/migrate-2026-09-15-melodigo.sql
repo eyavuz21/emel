@@ -1,3 +1,30 @@
+-- Melodigo: move everything off the sostenuto_ prefix. Safe to run more than once, from any half-finished state.
+-- Data in the three tables is kept. Run this ONCE in the Supabase SQL editor, then deploy the app that uses the new names.
+
+do $$
+declare r record;
+begin
+  -- 1. tables: rename if the old ones still exist
+  if to_regclass('public.sostenuto_studios') is not null then alter table public.sostenuto_studios rename to melodigo_studios; end if;
+  if to_regclass('public.sostenuto_members') is not null then alter table public.sostenuto_members rename to melodigo_members; end if;
+  if to_regclass('public.sostenuto_students') is not null then alter table public.sostenuto_students rename to melodigo_students; end if;
+
+  -- 2. every policy whose name starts with "sostenuto" (tables and storage.objects)
+  for r in select schemaname, tablename, policyname from pg_policies where policyname like 'sostenuto%' loop
+    execute format('drop policy if exists %I on %I.%I', r.policyname, r.schemaname, r.tablename);
+  end loop;
+
+  -- 3. every old function, whatever its signature
+  for r in select p.oid::regprocedure as sig from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+           where n.nspname = 'public' and p.proname like 'sostenuto\_%' loop
+    execute format('drop function if exists %s cascade', r.sig);
+  end loop;
+
+  -- 4. the old audio bucket: Supabase does not allow SQL to delete storage rows, so 'sostenuto-audio' stays.
+  --    Delete it by hand in Storage once the pilot has no old captions in it (there are none yet).
+end $$;
+
+-- 5. Everything under the new names (identical to supabase/schema.sql).
 -- Melodigo: a studio is a teacher and their pupils. Each pupil's plan, sessions and flags live in one JSON document
 -- that the pupil and their teacher can both read and write. Run once in the SQL editor. Every object is prefixed melodigo_.
 
