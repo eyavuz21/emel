@@ -28,7 +28,12 @@ Melodigo has two sides. The **teacher** writes a thirty-second note after each l
 - **The parent card** is three boxes: the dates, the pupil's week (days done, minutes practised, points earned), and the teacher's feedback from the last lesson with "For next lesson" underneath. When the teacher has set an exam or concert date, a fourth box draws the goal as the end of a piece: one note a week from the first week to the date, filled when practised, a ring on this week, bar lines every four weeks and the double bar line on the day; then weeks practised and weeks complete
 - **The month and the goal.** Today shows one chip with the goal and weeks to go, when there is one. Journey and the teacher's pupil page stack the last five weeks as small staves, most recent first, with the goal date under them. The Goal tab draws the same stave in place of a progress bar, above the road with its phases
 - **How it felt: Easy, Fine, Hard.** One axis, three taps. Hard asks one more thing, "which bit?", from the work list; that answer goes to the teacher as a flag for the next lesson. Easy and Fine ask nothing more
+- **The planner does not teach.** The only technical content in a session is what the teacher wrote, restated in her words and attributed; where the note says nothing for a step, the caption is about how to practise (slowly, once through, stop), not how to play. The app never claims to hear the pupil; the pupil and the teacher judge
 - **This week, from the teacher** on Today shows the work for the week (her "know by next lesson" list) first, then her one line
+
+## Later
+
+- A conductor's side of its own (next to pupil, teacher and parent's view): today a choir or orchestra is a studio in group mode on the teacher's side
 
 ## What's in v0.4 (15 September 2026)
 
