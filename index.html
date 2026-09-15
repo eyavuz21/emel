@@ -205,6 +205,7 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
   <section class="view" id="v-teacher"></section>
   <section class="view" id="v-tstudent"></section>
   <section class="view" id="v-group"></section>
+  <section class="view" id="v-message"></section>
 
   <nav class="tabs" id="tabs" hidden></nav>
 </div>
@@ -264,8 +265,8 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
     t.hidden=false;
     t.innerHTML = role==='student'
       ? `<button data-v="today"><span>♩</span>Today</button><button data-v="journey"><span>♪</span>Journey</button><button data-v="goal"><span>♬</span>Goal</button><button data-v="share"><span>♫</span>Share</button>${mode==='local'?'<button data-v="teacher"><span>♯</span>Teacher</button>':''}`
-      : `<button data-v="teacher"><span>♯</span>Pupils</button><button data-v="group"><span>𝄞</span>Group</button>${mode==='local'?'<button data-v="today"><span>♩</span>Pupil view</button>':''}`;
-    $$('#tabs button').forEach(b=>b.onclick=()=>{ const v=b.dataset.v; if(v==='teacher') renderTeacher(); else if(v==='group') renderGroup(); else if(v==='today') renderToday(); else if(v==='journey') renderJourney(); else if(v==='goal') renderGoal(); else if(v==='share') renderShare(); show(v); });
+      : `<button data-v="teacher"><span>♯</span>Pupils</button><button data-v="group"><span>𝄞</span>Group</button><button data-v="message"><span>♪</span>Message</button>${mode==='local'?'<button data-v="today"><span>♩</span>Pupil view</button>':''}`;
+    $$('#tabs button').forEach(b=>b.onclick=()=>{ const v=b.dataset.v; if(v==='teacher') renderTeacher(); else if(v==='group') renderGroup(); else if(v==='message') renderMessage(); else if(v==='today') renderToday(); else if(v==='journey') renderJourney(); else if(v==='goal') renderGoal(); else if(v==='share') renderShare(); show(v); });
   }
   function renderAuth(){
     const el=$('#auth');
@@ -316,12 +317,11 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
     const lastDone=(w.done||[]).slice(-1)[0]; const mins=p.minutes||levelMinutes(p.level);
     v.innerHTML=`
       <div class="chips"><span class="chip">${h(fmt(today()))}</span><span class="chip">Day <b>${Math.min(n+1,w.sessions.length)} of ${w.sessions.length}</b></span><span class="chip">${h(mins)} min <b>set by ${h(tn)}</b></span>${w.group?`<span class="chip">${h(w.group.name||'Group')} week${p.part?' · '+h(p.part):''}</span>`:''}</div>
-      <div class="card"><div class="label">This week</div>${staveWeek(w)}</div>
-      ${lastDone?`<div class="card"><div class="label">Last time</div><p>${h(fmt(lastDone.at.slice(0,10)))} · you said it felt <b>${h(lastDone.feel||'')}</b>${(lastDone.worked||[]).length?` · you worked on <b>${h(lastDone.worked.join(', '))}</b>`:''}</p></div>`:''}
-      <div class="card"><div class="label">Today's session</div><h2 class="big" style="margin-bottom:6px">${s?h(s.title):'Week complete'}</h2>${s?`<p>${h(s.intro)}</p><p class="muted">${h(s.steps.map(x=>x.name).join(' · '))}</p>`:`<p>All ${w.sessions.length} days done. Next lesson ${h(fmt(w.nextLesson))}.</p>`}</div>
+      <div class="card"><div class="label">This week</div>${staveWeek(w)}${openExtras().length?`<div class="label" style="margin-top:12px">News from ${h(tn)}</div>${openExtras().map(x=>`<div class="flag"><span>${h(x.text)} <span class="note" style="margin:0">· ${h(fmt(x.at.slice(0,10)))}</span></span><button class="btn sm quiet" data-xdone="${x.id}">Done</button></div>`).join('')}`:''}</div>
       <div class="box says"><div class="label">${h(tn)} says, for this week</div><div class="quote">${h(w.line||w.encouragement||'Turn up every day and the lesson takes care of itself.')}</div></div>
+      ${lastDone?`<div class="card"><div class="label">Last time</div><p>${h(fmt(lastDone.at.slice(0,10)))} · you said it felt <b>${h(lastDone.feel||'')}</b>${(lastDone.worked||[]).length?` · you worked on <b>${h(lastDone.worked.join(', '))}</b>`:''}</p></div>`:''}
+      <div class="card"><div class="label">Today's session</div><div class="quote">${s?h(s.title):'Week complete'}</div>${s?`<p style="margin-top:6px">${h(s.intro)}</p><p class="muted">${h(s.steps.map(x=>x.name).join(' · '))}</p>`:`<p>All ${w.sessions.length} days done. Next lesson ${h(fmt(w.nextLesson))}.</p>`}</div>
       ${s?`<button class="btn block" id="start">Start the guided session · ${s.steps.reduce((a,x)=>a+(+x.minutes||0),0)} min</button><button class="btn block quiet" id="tickOnly" style="margin-top:10px">I practised on my own: tick what I did</button>`:''}
-      ${openExtras().length?`<div class="box says" style="margin-top:14px"><div class="label">News from ${h(tn)}</div>${openExtras().map((x,k)=>`<div class="quote"${k?' style="margin-top:14px"':''}>${h(x.text)}</div><div class="row" style="margin-top:8px; justify-content:space-between"><span class="note" style="margin:0">${h(fmt(x.at.slice(0,10)))}</span><button class="btn sm quiet" data-xdone="${x.id}">Done</button></div>`).join('')}</div>`:''}
       <div class="card" style="margin-top:14px"><div class="streak"><span class="n">${streak()}</span><span class="quote">${streak()===1?'day':'days'} in a row</span></div>
         <div class="quote" style="margin-top:10px">${tokensView().toNext} more to go to ${p.reward?h(p.reward):'your reward'}</div></div>`;
     const to=$('#tickOnly'); if(to) to.onclick=()=>{ si=i; sess=w.sessions[i]; finish(true); };
@@ -528,8 +528,8 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
       return `<div class="student" data-sid="${h(s.user_id)}"><div><div class="n">${h(d.profile?.name||'Pupil')}</div><div class="m">${h(d.profile?.instrument||'')} · ${h(d.profile?.level||'')}${d.profile?.minutes?` · ${d.profile.minutes} min a day`:''}${w?` · this week ${doneCount(w)}/${w.sessions.length}`:' · no week set'}${flags?` · <b>${flags} flagged</b>`:''}</div></div><span class="pill">open</span></div>`; }).join('');
     const groups={}; students.forEach(s=>(s.data.weeks||[]).forEach(w=>{ if(w.group&&w.group.name){ const g=groups[w.group.name]||(groups[w.group.name]={n:0,next:null,parts:new Set()}); g.n++; if(!g.next||w.nextLesson>g.next) g.next=w.nextLesson; (w.group.parts||[]).forEach(x=>g.parts.add(x)); } }));
     const parts=partsOf();
-    const groupList=`<div class="student" data-group="1"><div><div class="n">${h(me?.studio||'Your studio')}</div><div class="m">${students.length} ${students.length===1?'member':'members'}${parts.length?' · parts: '+h(parts.join(', ')):''}${me?.code?' · code '+h(me.code):''}</div></div><span class="pill">open</span></div>`+
-      Object.entries(groups).map(([name,g])=>`<div class="student" data-group="1"><div><div class="n">${h(name)}</div><div class="m">week set for ${g.n} ${g.n===1?'member':'members'}${g.parts.size?' · '+h([...g.parts].join(', ')):''}${g.next?' · next rehearsal '+h(fmt(g.next)):''}</div></div><span class="pill">open</span></div>`).join('');
+    const groupList=`<div class="student" style="cursor:default"><div><div class="n">${h(me?.studio||'Your studio')}</div><div class="m">${students.length} ${students.length===1?'member':'members'}${parts.length?' · parts: '+h(parts.join(', ')):''}${me?.code?' · code '+h(me.code):''}</div></div></div>`+
+      Object.entries(groups).map(([name,g])=>`<div class="student" style="cursor:default"><div><div class="n">${h(name)}</div><div class="m">week set for ${g.n} ${g.n===1?'member':'members'}${g.parts.size?' · '+h([...g.parts].join(', ')):''}${g.next?' · next rehearsal '+h(fmt(g.next)):''}</div></div></div>`).join('');
     v.innerHTML=`<h2 class="big">${students.length?'Your pupils.':'No pupils yet.'}</h2>
       <div class="grid2" style="align-items:start">
         <div>
@@ -537,14 +537,13 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
           <div class="card"><div class="label">Pupils</div>${list||'<div class="note" style="margin:0">Pupils appear here when they join with your code.</div>'}</div>
         </div>
         <div>
-          <div class="box a" id="groupCard" style="cursor:pointer"><div class="label">Whole group</div><div class="quote">One week for everyone.</div><div class="note">Set one week for the whole studio, choir or orchestra, or add a task to all of them. Each member gets it for their own part. Tap to open.</div></div>
-          <div class="card"><div class="label">Studios, choirs and groups</div>${groupList}<div class="note">One studio per sign-in for now. A second choir or orchestra needs its own code.</div></div>
+          <div class="box a" id="groupCard" style="cursor:pointer"><div class="label">Whole group</div><div class="quote">One week for everyone.</div><div class="note">Set one week for the whole studio, choir or orchestra. Each member gets it for their own part. Tap to open.</div>${groupList}<div class="note">One studio per sign-in for now. A second choir or orchestra needs its own code.</div></div>
         </div>
       </div>
       ${mode==='cloud'?`<div class="box ${me?.voice_ready?'b':'c'}" id="voiceCard" style="cursor:pointer"><div class="label">Your voice</div><div class="quote">${me?.voice_ready?'Recorded.':'Not recorded yet.'}</div><div class="note">${me?.voice_ready?'New weeks are spoken in it. Tap to re-record or remove.':'Record thirty seconds and pupils hear their sessions in your voice. Tap to set it up.'}</div></div>`:''}`;
     $$('[data-sid]').forEach(el=>el.onclick=()=>{ current=students.find(s=>s.user_id===el.dataset.sid); renderTStudent(); show('tstudent'); });
     const vc=$('#voiceCard'); if(vc) vc.onclick=renderVoice;
-    const gc=$('#groupCard'); if(gc) gc.onclick=renderGroup; $$('[data-group]').forEach(el=>el.onclick=renderGroup);
+    const gc=$('#groupCard'); if(gc) gc.onclick=renderGroup; 
     show('teacher');
   }
   let preview=null;
@@ -658,16 +657,30 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
         <div class="row" style="margin-top:10px"><button class="btn" id="ggen">Write everyone's week</button><span class="status" id="ggenStatus" style="margin:0"></span></div>
         <div class="note">Each member gets a short session every day for their own part: notes, rhythm, entries, words, listening, and a work list they tick off. You review one preview, then it goes to all of them.</div></div>
       <div id="gPreviewBox"></div>
-      <div class="card"><h3>Add a task for everyone this week</h3>
-        <div class="row"><input id="gxText" placeholder="e.g. Listen to the recording of movement 3 before Thursday" style="flex:1"><button class="btn sm" id="gxAdd">Add to all</button></div>
-        <div class="note">Goes onto every selected member's Today screen and checklist now, without touching their sessions.</div></div>`;
+`;
 
     $$('#gParts input').forEach(cb=>cb.onchange=()=>{ if(cb.value==='*'&&cb.checked) $$('#gParts input').forEach(x=>{ if(x.value!=='*') x.checked=false; }); if(cb.value!=='*'&&cb.checked) $('#gParts input[value="*"]').checked=false; });
     $$('[data-dictate]').forEach(b=>b.onclick=()=>dictate(b.dataset.dictate,b));
     $('#ggen').onclick=generateGroupWeek;
-    $('#gxAdd').onclick=async()=>{ const t=$('#gxText').value.trim(); if(!t) return; const tg=groupTargets(); for(const st of tg){ st.data.extras=st.data.extras||[]; st.data.extras.push({id:uid(), text:t, at:new Date().toISOString(), done:false, by:me?.name||'', group:true}); try{ await saveStudent(st); }catch(e){} } $('#gxText').value=''; toast('Added for '+tg.length+' members.'); };
     if(gpreview) renderGroupPreview();
     show('group');
+  }
+  function renderMessage(){
+    const v=$('#v-message'); const parts=partsOf();
+    if(!students.length){ v.innerHTML=`<h2 class="big">Nobody to message yet.</h2><div class="card">Give pupils your code${me?.code?' (<b>'+h(me.code)+'</b>)':''} and they appear here.</div>`; show('message'); return; }
+    v.innerHTML=`<h2 class="big">Send a message.</h2>
+      <div class="card"><div class="label">To</div>
+        <div class="row" id="mTo"><label class="switch"><input type="checkbox" value="*" checked> Everyone</label>${parts.map(pt=>`<label class="switch"><input type="checkbox" value="part:${h(pt)}"> ${h(pt)}</label>`).join('')}</div>
+        <div class="row" id="mToP" style="margin-top:8px">${students.map(st=>`<label class="switch"><input type="checkbox" value="pupil:${h(st.user_id)}"> ${h(st.data.profile?.name||'Pupil')}</label>`).join('')}</div>
+        <div class="note">Untick Everyone to pick parts or pupils.</div></div>
+      <div class="card"><div class="label">Message</div>
+        <textarea id="mText" placeholder="e.g. Listen to the recording of movement 3 before Thursday"></textarea>
+        <div class="row" style="margin-top:10px"><button class="btn" id="mSend">Send</button><span class="status" id="mStatus" style="margin:0"></span></div>
+        <div class="note">It appears under News from ${h(me?.name||'you')} on their Today screen and in their Journey, and they tick it off when it is done. Their sessions are not changed.</div></div>`;
+    const targets=()=>{ const sel=$$('#mTo input:checked, #mToP input:checked').map(x=>x.value); if(!sel.length||sel.includes('*')) return students.slice(); return students.filter(st=>sel.includes('pupil:'+st.user_id)||sel.includes('part:'+(st.data.profile?.part||'').trim())); };
+    $$('#mTo input, #mToP input').forEach(i=>i.onchange=()=>{ if(i.value!=='*'&&i.checked) $('#mTo input[value="*"]').checked=false; $('#mStatus').textContent=targets().length+' will get it'; });
+    $('#mSend').onclick=async()=>{ const t=$('#mText').value.trim(); if(!t){ toast('Write the message first.'); return; } const tg=targets(); for(const st of tg){ st.data.extras=st.data.extras||[]; st.data.extras.push({id:uid(), text:t, at:new Date().toISOString(), done:false, by:me?.name||'', group:tg.length>1}); try{ await saveStudent(st); }catch(e){} } $('#mText').value=''; toast('Sent to '+tg.length+(tg.length===1?' pupil.':' pupils.')); $('#mStatus').textContent=''; };
+    show('message');
   }
   async function generateGroupWeek(){
     const st=$('#ggenStatus'); const btn=$('#ggen'); const tg=groupTargets();
@@ -783,7 +796,7 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
   // deep link into the demo: ?demo=pupil|teacher|group|lessons|journey|goal|share (nothing is saved)
   (function(){ const q=new URLSearchParams(location.search).get('demo'); if(!q) return; enterDemo();
     const v=q.toLowerCase(); const wait=ms=>new Promise(r=>setTimeout(r,ms));
-    wait(50).then(()=>{ if(v==='teacher'){ setDemoRole('teacher'); } else if(v==='group'){ setDemoRole('teacher'); renderGroup(); } else if(v==='share'){ setDemoRole('share'); } else { setDemoRole('pupil'); if(v==='journey') renderJourney(); else if(v==='goal') renderGoal(); } }); })();
+    wait(50).then(()=>{ if(v==='teacher'){ setDemoRole('teacher'); } else if(v==='group'){ setDemoRole('teacher'); renderGroup(); } else if(v==='message'){ setDemoRole('teacher'); renderMessage(); } else if(v==='share'){ setDemoRole('share'); } else { setDemoRole('pupil'); if(v==='journey') renderJourney(); else if(v==='goal') renderGoal(); } }); })();
 })();
 </script>
 </body>
