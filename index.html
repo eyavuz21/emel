@@ -309,6 +309,25 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
       out+=`<text x="${W}" y="${y0+32}" text-anchor="end" style="fill:var(--ink)">${doneCount(w)}/${N}</text>`; });
     return out+'</svg>';
   }
+  function goalWeeks(weeks, goalDate){ // one entry per week from the first week to the goal: the piece being written, a note a week
+    if(!goalDate||!weeks.length) return null; const start=weeks[0].lessonDate||weeks[0].createdAt; const days=Math.round((new Date(goalDate)-new Date(start))/86400000); if(days<0) return null;
+    const total=Math.max(1,Math.ceil((days+1)/7)); const t=today(); const out=[];
+    for(let k=0;k<total;k++){ const a=addDays(start,7*k), b=addDays(start,7*k+7); const ws=weeks.filter(w=>(w.lessonDate||w.createdAt)>=a&&(w.lessonDate||w.createdAt)<b);
+      out.push({a, practised:ws.some(w=>doneCount(w)>0), complete:ws.some(w=>w.sessions&&doneCount(w)===w.sessions.length), now:t>=a&&t<b}); }
+    return out;
+  }
+  function staveGoal(weeks, goalDate, label){ // the goal as the end of a piece: a note a week on one stave, bar lines every four, the double bar on the day
+    const gw=goalWeeks(weeks, goalDate); if(!gw) return '';
+    const N=gw.length, x0=16, dx=Math.max(11,Math.min(30,(360-40)/N)), W=Math.max(360,x0+dx*N+24), H=96; const y=(k)=>60-((k*7)%5)*6;
+    let out=`<svg class="stave-week" viewBox="0 0 ${W} ${H}" role="img" aria-label="${gw.filter(x=>x.practised).length} of ${N} weeks practised">`;
+    for(let k=0;k<5;k++) out+=`<line x1="4" y1="${24+k*12}" x2="${W-4}" y2="${24+k*12}" stroke="var(--line)" stroke-width="1.5"/>`;
+    for(let k=4;k<N;k+=4) out+=`<line x1="${x0+k*dx-dx/2}" y1="24" x2="${x0+k*dx-dx/2}" y2="72" stroke="var(--line)" stroke-width="1.5"/>`;
+    const xe=x0+N*dx+2; out+=`<line x1="${xe}" y1="24" x2="${xe}" y2="72" stroke="var(--varnish)" stroke-width="1.5"/><line x1="${xe+5}" y1="24" x2="${xe+5}" y2="72" stroke="var(--varnish)" stroke-width="4"/>`;
+    gw.forEach((g,k)=>{ const x=x0+k*dx+dx/2, yy=y(k); const r=dx<16?0.62:0.85;
+      out+=`<g transform="translate(${x} ${yy}) scale(${r})">${g.now?'<circle r="15" fill="none" stroke="var(--amber)" stroke-width="3"/>':''}<ellipse rx="9" ry="6.5" transform="rotate(-22)" fill="${g.practised?'var(--varnish)':'var(--card)'}" stroke="var(--varnish)" stroke-width="2"/><rect x="7" y="-34" width="2.2" height="34" fill="var(--varnish)"/></g>`; });
+    out+=`<text x="4" y="${H-4}" text-anchor="start">${h(fmtS(gw[0].a))}</text><text x="${W-4}" y="${H-4}" text-anchor="end" style="fill:var(--ink)">${h(label||'')}</text></svg>`;
+    return out;
+  }
   const workList=w=>{ const items=[...(w.work||[]), ...(w.checklist||[])]; return [...new Set(items.map(x=>String(x).trim()).filter(Boolean))].slice(0,10); };
   function workTally(w){ const t={}; for(const d of (w.done||[])) for(const it of (d.worked||[])) t[it]=(t[it]||0)+1; return Object.entries(t).sort((a,b)=>b[1]-a[1]); }
   function tokensView(){ const t=doc().tokens||{earned:0,redeemed:0}; const avail=Math.max(0,(t.earned||0)-(t.redeemed||0)); return {avail, toNext: Math.max(0, 6-(avail%6||0))}; }
@@ -454,18 +473,20 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
     if(fb){ label('Feedback from the last lesson',y); y=wrap(fb,70,y+36,W-140,38,F(700,28),'#111111'); ctx.fillStyle='#666666'; ctx.font=F(600,19); ctx.fillText(tn,70,y-4); y+=40; }
     if(list.length){ label('For next lesson:',y); y+=36; list.forEach((t,k)=>{ const on=(w.ticks||[]).includes(k); ctx.fillStyle=on?'#111111':'#FFFFFF'; ctx.strokeStyle=on?'#111111':'#DEDEDE'; ctx.lineWidth=2; ctx.beginPath(); ctx.roundRect(70,y-20,24,24,6); ctx.fill(); ctx.stroke(); y=wrap(t,108,y,W-180,30,F(600,24),on?'#666666':'#111111')+8; }); }
     if(!fb&&!list.length){ ctx.fillStyle='#666666'; ctx.font=F(600,22); ctx.fillText('Feedback appears here after the next lesson.',70,y+2); }
-    if(goal){ // box 4: the months from the first week to the exam or concert, with "now" on it
+    if(goal){ // box 4: the goal as the end of a piece: a note a week, filled when practised, the double bar line on the day
       const gy=top+hh+30; box(gy,170); label(goal.label+' · '+fmtL(goal.date),gy+42);
-      const t0=new Date(goal.start+'T12:00:00Z').getTime(), t1=new Date(goal.date+'T12:00:00Z').getTime(), tn=new Date(today()+'T12:00:00Z').getTime();
-      const X0=70, X1=W-70, ly=gy+90; const px=t=>X0+(X1-X0)*Math.min(1,Math.max(0,(t-t0)/Math.max(1,t1-t0)));
-      ctx.strokeStyle='#DEDEDE'; ctx.lineWidth=4; ctx.beginPath(); ctx.moveTo(X0,ly); ctx.lineTo(X1,ly); ctx.stroke();
-      ctx.strokeStyle='#111111'; ctx.beginPath(); ctx.moveTo(X0,ly); ctx.lineTo(px(tn),ly); ctx.stroke();
-      const m=new Date(t0); m.setUTCDate(1); m.setUTCMonth(m.getUTCMonth()+1); ctx.font=F(600,15); ctx.fillStyle='#666666'; ctx.textAlign='center';
-      for(; m.getTime()<t1; m.setUTCMonth(m.getUTCMonth()+1)){ const x=px(m.getTime()); ctx.fillStyle='#DEDEDE'; ctx.fillRect(x-1,ly-8,2,16); ctx.fillStyle='#666666'; ctx.fillText(m.toLocaleDateString('en-GB',{month:'short',timeZone:'UTC'}),x,ly+32); }
-      ctx.fillStyle='#111111'; ctx.beginPath(); ctx.arc(px(tn),ly,9,0,7); ctx.fill(); ctx.font=F(800,15); ctx.fillText('now',px(tn),ly-20);
-      ctx.beginPath(); ctx.roundRect(X1-6,ly-12,12,24,3); ctx.fill(); ctx.textAlign='right'; ctx.fillText(fmtS(goal.date),X1,ly-18); ctx.textAlign='left';
+      const gw=goalWeeks(doc().weeks, goal.date); const N=gw.length; const X0=70, X1=W-70; const dx=Math.min(30,(X1-X0-30)/N); const sy=gy+70;
+      ctx.strokeStyle='#DEDEDE'; ctx.lineWidth=1.5; for(let k=0;k<5;k++){ ctx.beginPath(); ctx.moveTo(X0,sy+k*10); ctx.lineTo(X1,sy+k*10); ctx.stroke(); }
+      for(let k=4;k<N;k+=4){ const x=X0+k*dx; ctx.beginPath(); ctx.moveTo(x,sy); ctx.lineTo(x,sy+40); ctx.stroke(); }
+      const xe=X0+N*dx+6; ctx.strokeStyle='#111111'; ctx.lineWidth=1.5; ctx.beginPath(); ctx.moveTo(xe,sy); ctx.lineTo(xe,sy+40); ctx.stroke(); ctx.lineWidth=4; ctx.beginPath(); ctx.moveTo(xe+6,sy); ctx.lineTo(xe+6,sy+40); ctx.stroke();
+      const sc=dx<16?0.6:0.85;
+      gw.forEach((g,k)=>{ const x=X0+k*dx+dx/2, yy=sy+30-((k*7)%5)*5; ctx.save(); ctx.translate(x,yy); ctx.scale(sc,sc);
+        if(g.now){ ctx.strokeStyle='#111111'; ctx.lineWidth=2.5; ctx.beginPath(); ctx.arc(0,0,15,0,7); ctx.stroke(); }
+        ctx.rotate(-22*Math.PI/180); ctx.beginPath(); ctx.ellipse(0,0,9,6.5,0,0,7); ctx.fillStyle=g.practised?'#111111':'#FFFFFF'; ctx.fill(); ctx.strokeStyle='#111111'; ctx.lineWidth=2; ctx.stroke(); ctx.rotate(22*Math.PI/180);
+        ctx.fillStyle='#111111'; ctx.fillRect(7,-34,2.2,34); ctx.restore(); });
+      ctx.fillStyle='#666666'; ctx.font=F(600,15); ctx.fillText(fmtS(goal.start),X0,sy+62); ctx.textAlign='right'; ctx.fillStyle='#111111'; ctx.font=F(800,15); ctx.fillText(fmtS(goal.date),X1,sy+62); ctx.textAlign='left';
       const wk=doc().weeks, practised=wk.filter(x=>doneCount(x)>0).length, complete=wk.filter(x=>x.sessions&&doneCount(x)===x.sessions.length).length;
-      ctx.fillStyle='#111111'; ctx.font=F(700,22); ctx.fillText(`${practised} ${practised===1?'week':'weeks'} practised, ${complete} complete`,70,gy+156);
+      ctx.fillStyle='#111111'; ctx.font=F(700,22); ctx.fillText(`${practised} ${practised===1?'week':'weeks'} practised, ${complete} complete. A note a week to the double bar.`,70,gy+156);
     }
   }
 
@@ -483,7 +504,8 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
       <div class="eyebrow">Your goal</div>
       <h2 class="big">${has?h(p.goalLabel||'Your goal')+' · '+h(fmtL(p.goalDate))+'.':'No date set yet.'}</h2>
       ${has?`<div class="card"><div class="row" style="justify-content:space-between"><b>${left} weeks to go</b><span class="eyebrow">week ${doneW+1} · ${cur}</span></div>
-        <div style="height:8px;border-radius:4px;background:var(--stave);margin:8px 0 4px"><div style="width:${Math.min(100,Math.round(100*doneW/totalW))}%;height:8px;border-radius:4px;background:var(--amber)"></div></div></div>
+        ${staveGoal(doc().weeks,p.goalDate,(p.goalLabel||'Goal')+' · '+fmtS(p.goalDate))||`<div style="height:8px;border-radius:4px;background:var(--stave);margin:8px 0 4px"><div style="width:${Math.min(100,Math.round(100*doneW/totalW))}%;height:8px;border-radius:4px;background:var(--amber)"></div></div>`}
+        <div class="note" style="margin-top:6px">A note a week. Filled notes are weeks you practised; the double bar line is the day.</div></div>
         <ul class="path">${rows}</ul>`:'<div class="card">Your teacher sets the exam or performance date, even roughly, and the road appears here. You can change it too, below.</div>'}
       <div class="card"><h3>Set or change the goal</h3>
         <div class="grid2"><div><label class="l" for="gLabel">What it is</label><input id="gLabel" placeholder="e.g. Grade 3 exam, school concert" value="${h(p.goalLabel||'')}"></div><div><label class="l" for="gDate">Roughly when</label><input type="date" id="gDate" value="${h(p.goalDate||'')}"></div></div>
