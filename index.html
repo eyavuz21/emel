@@ -616,8 +616,8 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
           <div class="card"><div class="label">Pupils</div>${list||'<div class="note" style="margin:0">Pupils appear here when they join with your code.</div>'}</div>
         </div>
         <div>
+          <div class="card" id="groupCard" style="cursor:pointer"><div class="label">After a rehearsal</div><p style="margin:0">Write one week for the whole group, each member for their own part. For choirs, orchestras and ensembles. Tap to open.</p></div>
           ${students.length?messageFormHTML():''}
-          <div class="card" id="groupCard" style="cursor:pointer"><div class="label">After a rehearsal</div><p style="margin:0">Write one week for the whole group, each member for their own part${parts.length?' ('+h(parts.join(', '))+')':''}. For choirs, orchestras and ensembles. Tap to open.</p></div>
         </div>
       </div>
       ${mode==='cloud'?`<div class="box ${me?.voice_ready?'b':'c'}" id="voiceCard" style="cursor:pointer"><div class="label">Your voice</div><div class="quote">${me?.voice_ready?'Recorded.':'Not recorded yet.'}</div><div class="note">${me?.voice_ready?'New weeks are spoken in it. Tap to re-record or remove.':'Record thirty seconds and pupils hear their sessions in your voice. Tap to set it up.'}</div></div>`:''}`;
@@ -728,7 +728,7 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
   function renderGroup(){
     const v=$('#v-group'); const parts=partsOf(); const gname=me?.studio||'the group';
     if(!students.length){ v.innerHTML=`<button class="btn sm quiet" onclick="renderTeacher()">← Pupils</button><div class="eyebrow" style="margin-top:10px">Group</div><h2 class="big">Nobody here yet.</h2><div class="card">Give members your code${me?.code?' (<b>'+h(me.code)+'</b>)':''}. Once they have joined, one note here becomes a week for every one of them, each for their own part.</div>`; show('group'); return; }
-    v.innerHTML=`<button class="btn sm quiet" id="backG2">← Pupils</button><div class="eyebrow" style="margin-top:10px">${h(gname)} · ${students.length} members${parts.length?' · parts: '+h(parts.join(', ')):''}</div><h2 class="big">One note, everyone's week.</h2>
+    v.innerHTML=`<button class="btn sm quiet" id="backG2">← Pupils</button><div class="eyebrow" style="margin-top:10px">After a rehearsal</div><h2 class="big">One note, everyone's week.</h2>
       <div class="card"><h3>Who this is for</h3><div class="row" id="gParts"><label class="switch"><input type="checkbox" value="*" checked> Everyone</label>${parts.map(p=>`<label class="switch"><input type="checkbox" value="${h(p)}"> ${h(p)}</label>`).join('')}</div>
         <div class="note">${parts.length?'Untick Everyone to pick parts. Members set their part in Goal; you can set it in their profile.':'No parts set yet. Members can set theirs under Goal, or you can in each profile, and then you can send work to one section at a time.'}</div></div>
       <div class="card"><h3>After today's rehearsal</h3>
