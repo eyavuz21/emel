@@ -1,4 +1,4 @@
-<p align="center"><img src="logo.svg" alt="Emel: a musical note running towards a finish line. Moving towards your goal." width="560"></p>
+<p align="center"><img src="logo.svg" alt="Emel: a figure looking to the horizon, hair flowing back as a stave, notes lifting off it. Moving towards your goal." width="560"></p>
 
 # Emel
 
@@ -17,7 +17,7 @@ Emel has two sides. The **teacher** writes a thirty-second note after each lesso
 - **Group mode for choirs and orchestras:** a studio can be an ensemble. Members set their part (alto, second violin); the conductor opens the Group tab, picks everyone or particular parts, writes one rehearsal note, reviews one preview, and publishes a week to every member. The sessions are written for "your part": notes and rhythms slowly, entries counted, words from memory, listening with the score. The conductor's cloned voice is synthesised once and shared. Add a task to everyone, and book a rehearsal for everyone, from the same screen
 - **Tasks during the week:** a teacher who thinks of something on Wednesday adds it to a pupil's week without rewriting it. It appears on the pupil's Today screen under "New from [teacher]" and in their Journey checklist; the pupil ticks it off
 - **Lessons, booked and moved in the app:** a Lessons tab for the pupil (what's coming up, "Can't make it" with a reason, ask for a lesson at a time of their choosing) and a Lessons card for the teacher on each pupil (book one, book weekly for six weeks, confirm or decline requests, see cancellations with the reason). Requests and cancellations surface at the top of the teacher's pupils list under "Needs you". The next booked lesson becomes the default date for the next week's plan
-- New name, new mark: Emel, with a note running towards a finish line
+- New name, new mark: Emel, a figure looking to the horizon with a stave for hair
 
 ## What was in v0.2
 
@@ -74,7 +74,7 @@ Open `index.html` in a browser and choose "Try it on this device". Accounts and 
 
 ## The name
 
-*Emel*: Turkish for aspiration, the thing you are striving towards. It is also the two founders' letters, E-M-E-L, in order. The mark is a note running towards a finish line. Previously Emel, Sostenuto and Rosin, in that order.
+*Emel*: Turkish for aspiration, the thing you are striving towards. It is also the two founders' letters, E-M-E-L, in order. The mark is a figure looking to the horizon, hair flowing back as a musical stave, notes lifting off it like birds, the sun as the goal. Previously Emel, Sostenuto and Rosin, in that order.
 
 ## Founders
 
