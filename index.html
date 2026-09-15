@@ -270,7 +270,7 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
     if(!role){ t.hidden=true; t.innerHTML=''; return; }
     t.innerHTML = role==='student'
       ? (mode==='local'?`<button data-v="today"><span>♩</span>My trail</button><button data-v="teacher"><span>♯</span>Teacher</button>`:'')
-      : `<button data-v="teacher"><span>♯</span>Pupils</button><button data-v="group"><span>𝄞</span>Group</button><button data-v="message"><span>♪</span>Message</button>${mode==='local'?'<button data-v="today"><span>♩</span>Pupil view</button>':''}`;
+      : (mode==='local'?`<button data-v="teacher"><span>♯</span>Pupils</button><button data-v="today"><span>♩</span>Pupil view</button>`:'');
     t.hidden=!t.innerHTML;
     $$('#tabs button').forEach(b=>b.onclick=()=>{ const v=b.dataset.v; if(v==='teacher') renderTeacher(); else if(v==='group') renderGroup(); else if(v==='message') renderMessage(); else if(v==='today') renderToday(); else if(v==='journey') renderJourney(); else if(v==='goal') renderGoal(); else if(v==='share') renderShare(); show(v); });
   }
@@ -344,7 +344,7 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
     let path=`M ${pts[0][0]} ${pts[0][1]}`; for(let i=1;i<pts.length;i++){ const [ax,ay]=pts[i-1],[bx,by]=pts[i]; const m=(ay+by)/2; path+=` C ${ax} ${m}, ${bx} ${m}, ${bx} ${by}`; }
     const start=w.lessonDate||w.createdAt; const dayOf=k=>addDays(start,k+1);
     const note=(x,y,filled,ring,sc)=>`<g transform="translate(${x} ${y}) scale(${sc})">${ring?'<circle r="19" fill="none" stroke="var(--amber)" stroke-width="3"/>':''}<ellipse rx="10" ry="7" transform="rotate(-22)" fill="${filled?'var(--varnish)':'var(--card)'}" stroke="var(--varnish)" stroke-width="2"/><rect x="8" y="-38" width="2.5" height="38" fill="var(--varnish)"/></g>`;
-    const coin=(x,y,on,label)=>`<g transform="translate(${x} ${y})"><circle r="11" fill="${on?'var(--varnish)':'var(--card)'}" stroke="var(--varnish)" stroke-width="1.5"/><text y="4" text-anchor="middle" style="font-size:12px;font-weight:800;fill:${on?'var(--card)':'var(--muted)'}">${label||'♪'}</text></g>`;
+    const coin=(x,y,on,label)=>`<g transform="translate(${x} ${y})"><circle r="11" fill="${on?'var(--varnish)':'var(--card)'}" stroke="var(--varnish)" stroke-width="1.5"/><text y="4" text-anchor="middle" style="font-size:11px;font-weight:800;fill:${on?'var(--card)':'var(--muted)'}">${label||'+1'}</text></g>`;
     const cut=t=>t.length>24?t.slice(0,23)+'…':t;
     let out=`<svg class="jmap" viewBox="0 0 ${W} ${H}" role="img" aria-label="${doneCount(w)} of ${N} days done, then the lesson">
       <path d="${path}" fill="none" stroke="var(--line)" stroke-width="5" stroke-linecap="round" stroke-dasharray="1 10"/>
@@ -352,24 +352,24 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
     ks.forEach(k=>{ const sess=w.sessions[k]; const x=sx(k), y=sy(k), left=k%2===0, done=d.has(k), now=k===nx; const lx=left?x+34:x-34; const anchor=left?'start':'end';
       out+=note(x,y,done,now,0.95);
       out+=`<text x="${lx}" y="${y-14}" text-anchor="${anchor}" class="${done?'t':now?'t now':'m'}">${h(dayLetter(w,k))} · ${h(cut(sess.title))}</text><text x="${lx}" y="${y+6}" text-anchor="${anchor}" class="s">${done?'done':now?'today':h(fmtS(dayOf(k)))}</text>`;
-      out+=coin(left?x-30:x+30, y-26, done, '♪');
-      const fl=(flags||[]).filter(f=>!f.resolved&&String(f.at).slice(0,10)===dayOf(k)); if(fl.length) out+=`<g transform="translate(${left?x-30:x+30} ${y+22})"><rect x="-14" y="-12" width="28" height="22" rx="8" fill="var(--danger)"/><path d="M -4 10 L 0 16 L 4 10 Z" fill="var(--danger)"/><text y="5" text-anchor="middle" style="font-size:13px;font-weight:800;fill:#fff">!</text></g>`; });
+      out+=coin(left?x-30:x+30, y-26, done, '+1');
+    });
     const full=doneCount(w)===N;
     if(part!=='top'){ out+=`<rect x="40" y="${H-76}" width="280" height="44" rx="14" fill="var(--varnish)"/><text x="180" y="${H-49}" text-anchor="middle" class="t" style="fill:var(--card)">Next lesson with ${h(tn)} · ${h(fmt(w.nextLesson))}</text>`;
-      out+=coin(300,H-88,full,'+2')+`<text x="180" y="${H-12}" text-anchor="middle" class="s">${full?'Week complete: two extra tokens.':'Every day is a token. A full week is two more.'}</text>`; }
+      out+=coin(300,H-88,full,'+2')+`<text x="180" y="${H-12}" text-anchor="middle" class="s">${full?'Week complete: two extra tokens.':'A token a day. A full week is two more.'}</text>`; }
     return out+'</svg>';
   }
   function roadHTML(p){ // the road to the goal: a note a week to the double bar, then the stages (the teacher's, or a suggested shape)
     const has=!!p.goalDate; const tn=doc().teacherName||'your teacher';
-    if(!has) return `<div class="card"><div class="label">The road ahead</div><p style="margin:0">No exam or concert date yet. ${h(tn)} sets it, even roughly, and the road appears here. You can set it too, below.</p></div>`;
+    if(!has) return `<div class="card"><div class="label">The road ahead</div><p style="margin:0">No exam or concert date yet. ${h(tn)} sets it, even roughly, and the weeks to it appear here. You can set it too, below.</p></div>`;
     const left=weeksBetween(today(),p.goalDate); const doneW=doc().weeks.length; const totalW=Math.max(4,left+doneW);
-    const own=Array.isArray(p.stages)&&p.stages.length; const sumW=own?p.stages.reduce((a,x)=>a+(+x.weeks||1),0):0;
-    const phases=own?p.stages.map(x=>[x.name,(+x.weeks||1)/sumW,x.note||'']):[['Foundations',.35,'Sound, rhythm, first patterns'],['Repertoire',.35,'The pieces, one at a time'],['Polish',.2,'Dynamics, phrasing, playing through'],['Mock exam',.07,'A full run for your teacher, then a parent'],['Exam',.03,'You\'re ready. Sleep.']];
+    const own=Array.isArray(p.stages)&&p.stages.length; if(!own) return ''; const sumW=p.stages.reduce((a,x)=>a+(+x.weeks||1),0);
+    const phases=p.stages.map(x=>[x.name,(+x.weeks||1)/sumW,x.note||'']);
     let rows='', w=1, cur=phases[0][0]; let acc=0; for(const [n,f] of phases){ acc+=f; if(doneW/totalW<=acc){ cur=n; break; } }
     for(const [n,f,sub] of phases){ const c=Math.max(1,Math.round(totalW*f)); const a=Math.min(w,totalW), b=Math.min(totalW,w+c-1); w=b+1; const k=b<doneW?'done':a<=doneW+1?'now':''; rows+=`<li class="${k}"><div class="t">${h(n)} <span class="pill ${k==='now'?'on':''}">${k==='done'?'done':k==='now'?'now':a===b?'week '+a:'weeks '+a+'–'+b}</span></div><div class="d">${h(sub)}</div></li>`; }
     return `<div class="card"><div class="label">The road to ${h(p.goalLabel||'your goal')}</div>
       <div class="row" style="justify-content:space-between"><b>${left} weeks to go</b><span class="eyebrow">week ${doneW+1} · ${h(cur)}</span></div>
-      <ul class="path">${rows}</ul><div class="note">${own?'Stages set by '+h(tn)+'.':'A suggested shape for the weeks. '+h(tn)+' can change the stages and their lengths.'}</div></div>`;
+      <ul class="path">${rows}</ul><div class="note">Stages set by ${h(tn)}.</div></div>`;
   }
   const workList=w=>{ const items=[...(w.work||[]), ...(w.checklist||[])]; return [...new Set(items.map(x=>String(x).trim()).filter(Boolean))].slice(0,10); };
   function workTally(w){ const t={}; for(const d of (w.done||[])) for(const it of (d.worked||[])) t[it]=(t[it]||0)+1; return Object.entries(t).sort((a,b)=>b[1]-a[1]); }
@@ -398,22 +398,23 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
     v.innerHTML=`
       <div class="chips"><span class="chip">${h(fmt(today()))}</span><span class="chip">Day <b>${Math.min(n+1,w.sessions.length)} of ${w.sessions.length}</b></span><span class="chip">${h(mins)} min <b>set by ${h(tn)}</b></span>${p.goalDate?`<span class="chip">${h(p.goalLabel||'Goal')} <b>${weeksBetween(today(),p.goalDate)} weeks</b></span>`:''}${w.group?`<span class="chip">${h(w.group.name||'Group')} week${p.part?' · '+h(p.part):''}</span>`:''}</div>
       <div class="box says"><div class="label">Lesson · ${h(fmt(w.lessonDate||w.createdAt))} · from ${h(tn)}</div><p style="margin:0"><b>What you did well:</b> ${h(w.line||w.encouragement||'Turn up every day and the lesson takes care of itself.')}</p>${(w.checklist||[]).length?`<p style="margin:8px 0 0"><b>What to work on:</b> ${h(w.checklist.join(' · '))}.</p>`:''}
-        ${openExtras().map(x=>`<div class="row" style="margin:8px 0 0;justify-content:space-between;flex-wrap:nowrap;align-items:flex-start"><p style="margin:0"><b>News from ${h(tn)}:</b> ${h(x.text)} (${h(fmt(x.at.slice(0,10)))})</p><button class="btn sm quiet" data-xdone="${x.id}" style="flex:none">Done</button></div>`).join('')}</div>
+        ${openExtras().map(x=>`<div class="row" style="margin:4px 0 0;justify-content:space-between;flex-wrap:nowrap;align-items:flex-start"><p style="margin:0"><b>News from ${h(tn)}:</b> ${h(x.text)} (${h(fmt(x.at.slice(0,10)))})</p><button class="btn sm quiet" data-xdone="${x.id}" style="flex:none">Done</button></div>`).join('')}</div>
       <div class="card"><div class="label">${w.sessions.length} days, then ${h(tn)}</div>
         ${s?journeyMap(w, flags, 'top'):''}${todayCard}${s?journeyMap(w, flags, 'bottom'):journeyMap(w, flags, 'all')}
         <div class="label" style="margin-top:10px">At the lesson: show ${h(tn)}</div>
         <ul class="check" id="prep">${(w.checklist||[]).map((c,k)=>`<li class="${(w.ticks||[]).includes(k)?'on':''}" data-k="${k}"><i></i><span>${h(c)}</span></li>`).join('')||'<li><i></i><span style="color:var(--muted)">No checklist this week</span></li>'}</ul>
         ${extras().filter(x=>x.at>=w.createdAt).length?`<ul class="check">${extras().filter(x=>x.at>=w.createdAt).map(x=>`<li class="${x.done?'on':''}" data-x="${x.id}"><i></i><span>${h(x.text)}</span></li>`).join('')}</ul>`:''}
-        <div class="label" style="margin-top:12px">Tokens</div>
-        <div class="tokens">${Array.from({length:6},(_,k)=>`<i class="tok ${k<(tk.avail%6||(tk.avail>=6?6:0))?'on':''}"></i>`).join('')}<span style="margin-left:8px">${tk.avail>=6?'Six: ask '+h(tn)+(p.reward?' for '+h(p.reward):' for your reward'):tk.toNext+' more for '+(p.reward?h(p.reward):'your reward')}</span></div>
-        <div class="streak" style="margin-top:8px"><span class="n">${streak()}</span><span>${streak()===1?'day':'days'} in a row</span></div></div>
+        <div class="label" style="margin-top:12px">Tokens · ${Math.min(6,tk.avail%6||(tk.avail>=6?6:0))} of 6</div>
+        <div class="tokens">${Array.from({length:6},(_,k)=>`<i class="tok ${k<(tk.avail%6||(tk.avail>=6?6:0))?'on':''}"></i>`).join('')}</div>
+        <p style="margin:6px 0 0">${tk.avail>=6?'Ask '+h(tn)+(p.reward?' for '+h(p.reward):' for your reward')+'.':'Each filled circle is a token. '+tk.toNext+' more for '+(p.reward?h(p.reward):'your reward')+'.'}</p>
+        <p style="margin:6px 0 0">${streak()>0?`You have practised ${streak()} ${streak()===1?'day':'days'} in a row!`:'Practise today and the run starts.'}</p></div>
       ${p.goalDate?`<div class="card"><div class="label">${weeksBetween(today(),p.goalDate)} weeks to ${h(p.goalLabel||'your goal')} · ${h(fmtL(p.goalDate))}</div>${staveGoal(doc().weeks,p.goalDate,(p.goalLabel||'Goal')+' · '+fmtS(p.goalDate))}<div class="note" style="margin-top:6px">A note a week. Filled notes are weeks you practised; the double bar line is the day.</div></div>`:''}
       ${doc().weeks.length>1?`<div class="card"><div class="label">The last ${Math.min(5,doc().weeks.length)} weeks</div>${staveMonth(doc().weeks)}</div>`:''}
       ${roadHTML(p)}
       <div class="box warn"><div class="label">At the lesson: ask ${h(tn)}</div>
         <div id="flags">${flags.filter(f=>!f.resolved).map(f=>`<div class="flag"><span>${h(f.text)}</span><button class="btn sm quiet" data-unflag="${f.id}" aria-label="Remove">×</button></div>`).join('')||'<div class="note" style="margin:0">Nothing flagged. Type it the moment it happens: a squeak, a question, a breakthrough.</div>'}</div>
         <form id="flagForm" class="row" style="margin-top:8px"><input id="flagText" placeholder="e.g. G string squeaks on down bows" style="flex:1"><button class="btn sm" type="submit">Flag it</button></form>
-        <div class="note">A red mark on the map is where it happened. ${h(tn)} sees these before the lesson starts.</div></div>
+        <div class="note">${h(tn)} sees these before the lesson starts.</div></div>
       <div class="grid2" style="margin-top:4px"><button class="btn quiet" id="goGoal">Set or change the goal</button><button class="btn" id="goShare">Share the card</button></div>`;
     const to=$('#tickOnly'); if(to) to.onclick=()=>{ si=i; sess=w.sessions[i]; finish(true); };
     const b=$('#start'); if(b) b.onclick=()=>startSession(i);
@@ -615,13 +616,14 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
           <div class="card"><div class="label">Pupils</div>${list||'<div class="note" style="margin:0">Pupils appear here when they join with your code.</div>'}</div>
         </div>
         <div>
-          <div class="box a" id="groupCard" style="cursor:pointer"><div class="label">Whole group</div><div class="quote">Send a message to the whole group.</div><div class="note">${students.length} ${students.length===1?'member':'members'}${parts.length?' · '+h(parts.join(', ')):''}. Tap to open.</div></div>
+          ${students.length?messageFormHTML():''}
+          <div class="card" id="groupCard" style="cursor:pointer"><div class="label">Whole group</div><p style="margin:0">One week for everyone: ${students.length} ${students.length===1?'member':'members'}${parts.length?' · '+h(parts.join(', ')):''}. Tap to open.</p></div>
         </div>
       </div>
       ${mode==='cloud'?`<div class="box ${me?.voice_ready?'b':'c'}" id="voiceCard" style="cursor:pointer"><div class="label">Your voice</div><div class="quote">${me?.voice_ready?'Recorded.':'Not recorded yet.'}</div><div class="note">${me?.voice_ready?'New weeks are spoken in it. Tap to re-record or remove.':'Record thirty seconds and pupils hear their sessions in your voice. Tap to set it up.'}</div></div>`:''}`;
     $$('[data-sid]').forEach(el=>el.onclick=()=>{ current=students.find(s=>s.user_id===el.dataset.sid); renderTStudent(); show('tstudent'); });
     const vc=$('#voiceCard'); if(vc) vc.onclick=renderVoice;
-    const gc=$('#groupCard'); if(gc) gc.onclick=renderMessage; 
+    const gc=$('#groupCard'); if(gc) gc.onclick=renderGroup; wireMessageForm(); 
     show('teacher');
   }
   let preview=null;
@@ -643,7 +645,7 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
           <div><label class="l" for="pGoal">Goal</label><input id="pGoal" value="${h(p.goalLabel||'')}" placeholder="Grade 3 exam"></div>
           <div><label class="l" for="pGoalDate">Goal date (rough)</label><input type="date" id="pGoalDate" value="${h(p.goalDate||'')}"></div>
           <div><label class="l" for="pSpw">Days a week</label><input type="number" id="pSpw" min="3" max="7" value="${h(p.sessionsPerWeek||7)}"><div class="note" style="margin:4px 0 0">Seven: one short session every day.</div></div>
-          <div style="grid-column:1/-1"><label class="l" for="pStages">Stages to the goal, one per line: name, weeks (optional)</label><textarea id="pStages" placeholder="Foundations, 8&#10;Pieces, 8&#10;Polish, 4&#10;Mock, 1&#10;Exam, 1">${h((p.stages||[]).map(x=>x.name+', '+x.weeks).join('\n'))}</textarea><div class="note" style="margin:4px 0 0">Leave empty and the pupil sees a suggested shape, marked as suggested. Fill it in and it is yours.</div></div>
+          <div style="grid-column:1/-1"><label class="l" for="pStages">Stages to the goal, one per line: name, weeks (optional)</label><textarea id="pStages" placeholder="Foundations, 8&#10;Pieces, 8&#10;Polish, 4&#10;Mock, 1&#10;Exam, 1">${h((p.stages||[]).map(x=>x.name+', '+x.weeks).join('\n'))}</textarea><div class="note" style="margin:4px 0 0">Optional. Leave empty and the pupil sees only the weeks to the date. Fill it in and the stages appear on their trail, in your name.</div></div>
           <div style="grid-column:1/-1"><label class="l" for="pReward">The reward at six tokens (a full week or two)</label><input id="pReward" value="${h(p.reward||'')}" placeholder="e.g. a hot chocolate after Thursday's lesson, a new set of strings, a sheet-music voucher"><div class="note" style="margin:4px 0 0">Named by you, a parent or the school. Small, occasional, from a real person. The pupil sees it on their Journey.</div></div>
           <div><label class="l" for="pMin">Minutes a day (you set this)</label><input type="number" id="pMin" min="10" max="120" step="5" value="${h(p.minutes||levelMinutes(p.level))}"><div class="note" style="margin:4px 0 0">Suggested for the level: ${levelMinutes(p.level)}. Change it and it sticks.</div></div>
         </div><button class="btn sm" id="pSave" style="margin-top:10px">Save profile</button></div>
@@ -725,8 +727,8 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
   function groupTargets(){ const sel=$$('#gParts input:checked').map(x=>x.value); if(!sel.length||sel.includes('*')) return students.slice(); return students.filter(s=>sel.includes((s.data.profile?.part||'').trim())); }
   function renderGroup(){
     const v=$('#v-group'); const parts=partsOf(); const gname=me?.studio||'the group';
-    if(!students.length){ v.innerHTML=`<div class="eyebrow">Group</div><h2 class="big">Nobody here yet.</h2><div class="card">Give members your code${me?.code?' (<b>'+h(me.code)+'</b>)':''}. Once they have joined, one note here becomes a week for every one of them, each for their own part.</div>`; show('group'); return; }
-    v.innerHTML=`<div class="eyebrow">${h(gname)} · ${students.length} members${parts.length?' · parts: '+h(parts.join(', ')):''}</div><h2 class="big">One note, everyone's week.</h2>
+    if(!students.length){ v.innerHTML=`<button class="btn sm quiet" onclick="renderTeacher()">← Pupils</button><div class="eyebrow" style="margin-top:10px">Group</div><h2 class="big">Nobody here yet.</h2><div class="card">Give members your code${me?.code?' (<b>'+h(me.code)+'</b>)':''}. Once they have joined, one note here becomes a week for every one of them, each for their own part.</div>`; show('group'); return; }
+    v.innerHTML=`<button class="btn sm quiet" id="backG2">← Pupils</button><div class="eyebrow" style="margin-top:10px">${h(gname)} · ${students.length} members${parts.length?' · parts: '+h(parts.join(', ')):''}</div><h2 class="big">One note, everyone's week.</h2>
       <div class="card"><h3>Who this is for</h3><div class="row" id="gParts"><label class="switch"><input type="checkbox" value="*" checked> Everyone</label>${parts.map(p=>`<label class="switch"><input type="checkbox" value="${h(p)}"> ${h(p)}</label>`).join('')}</div>
         <div class="note">${parts.length?'Untick Everyone to pick parts. Members set their part in Goal; you can set it in their profile.':'No parts set yet. Members can set theirs under Goal, or you can in each profile, and then you can send work to one section at a time.'}</div></div>
       <div class="card"><h3>After today's rehearsal</h3>
@@ -743,25 +745,22 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
     $$('[data-dictate]').forEach(b=>b.onclick=()=>dictate(b.dataset.dictate,b));
     $('#ggen').onclick=generateGroupWeek;
     if(gpreview) renderGroupPreview();
+    $('#backG2').onclick=renderTeacher;
     show('group');
   }
-  function renderMessage(){
-    const v=$('#v-message'); const parts=partsOf();
-    if(!students.length){ v.innerHTML=`<h2 class="big">Nobody to message yet.</h2><div class="card">Give pupils your code${me?.code?' (<b>'+h(me.code)+'</b>)':''} and they appear here.</div>`; show('message'); return; }
-    v.innerHTML=`<h2 class="big">Send a message.</h2>
-      <div class="card"><div class="label">To</div>
+  function messageFormHTML(){ const parts=partsOf();
+    return `<div class="card"><div class="label">Send a message</div>
         <div class="row" id="mTo"><label class="switch"><input type="checkbox" value="*" checked> Everyone</label>${parts.map(pt=>`<label class="switch"><input type="checkbox" value="part:${h(pt)}"> ${h(pt)}</label>`).join('')}</div>
-        <div class="row" id="mToP" style="margin-top:8px">${students.map(st=>`<label class="switch"><input type="checkbox" value="pupil:${h(st.user_id)}"> ${h(st.data.profile?.name||'Pupil')}</label>`).join('')}</div>
-        <div class="note">Untick Everyone to pick parts or pupils.</div></div>
-      <div class="card"><div class="label">Message</div>
-        <textarea id="mText" placeholder="e.g. Listen to the recording of movement 3 before Thursday"></textarea>
-        <div class="row" style="margin-top:10px"><button class="btn" id="mSend">Send</button><span class="status" id="mStatus" style="margin:0"></span></div>
-        <div class="note">It appears under News from ${h(me?.name||'you')} on their Today screen and in their Journey, and they tick it off when it is done. Their sessions are not changed.</div></div>`;
+        <div class="row" id="mToP" style="margin-top:6px">${students.map(st=>`<label class="switch"><input type="checkbox" value="pupil:${h(st.user_id)}"> ${h(st.data.profile?.name||'Pupil')}</label>`).join('')}</div>
+        <textarea id="mText" placeholder="e.g. Listen to the recording of movement 3 before Thursday" style="margin-top:8px"></textarea>
+        <div class="row" style="margin-top:10px"><button class="btn sm" id="mSend">Send</button><span class="status" id="mStatus" style="margin:0"></span></div>
+        <div class="note">Untick Everyone to pick parts or pupils. It lands on their trail as news from you and they tick it off; their sessions are not changed.</div></div>`; }
+  function wireMessageForm(){
     const targets=()=>{ const sel=$$('#mTo input:checked, #mToP input:checked').map(x=>x.value); if(!sel.length||sel.includes('*')) return students.slice(); return students.filter(st=>sel.includes('pupil:'+st.user_id)||sel.includes('part:'+(st.data.profile?.part||'').trim())); };
     $$('#mTo input, #mToP input').forEach(i=>i.onchange=()=>{ if(i.value!=='*'&&i.checked) $('#mTo input[value="*"]').checked=false; $('#mStatus').textContent=targets().length+' will get it'; });
-    $('#mSend').onclick=async()=>{ const t=$('#mText').value.trim(); if(!t){ toast('Write the message first.'); return; } const tg=targets(); for(const st of tg){ st.data.extras=st.data.extras||[]; st.data.extras.push({id:uid(), text:t, at:new Date().toISOString(), done:false, by:me?.name||'', group:tg.length>1}); try{ await saveStudent(st); }catch(e){} } $('#mText').value=''; toast('Sent to '+tg.length+(tg.length===1?' pupil.':' pupils.')); $('#mStatus').textContent=''; };
-    show('message');
+    const b=$('#mSend'); if(b) b.onclick=async()=>{ const t=$('#mText').value.trim(); if(!t){ toast('Write the message first.'); return; } const tg=targets(); for(const st of tg){ st.data.extras=st.data.extras||[]; st.data.extras.push({id:uid(), text:t, at:new Date().toISOString(), done:false, by:me?.name||'', group:tg.length>1}); try{ await saveStudent(st); }catch(e){} } $('#mText').value=''; toast('Sent to '+tg.length+(tg.length===1?' pupil.':' pupils.')); $('#mStatus').textContent=''; };
   }
+  function renderMessage(){ renderTeacher(); }
   async function generateGroupWeek(){
     const st=$('#ggenStatus'); const btn=$('#ggen'); const tg=groupTargets();
     const note={date:$('#gDate2').value||today(), nextLesson:$('#gNext2').value||addDays(today(),7), workedOn:$('#gWorked').value.trim(), forNext:$('#gNextL').value.split('\n').map(x=>x.trim()).filter(Boolean), line:$('#gLine').value.trim()};

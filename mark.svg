@@ -1,10 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-label="Melodigo">
-  <g transform="translate(46.00 226.00) scale(2.6630)">
+  <g transform="translate(78.00 226.00) scale(2.6630)">
     <ellipse cx="13" cy="-9" rx="14" ry="9.5" transform="rotate(-22 13 -9)" fill="#111111"/>
     <rect x="21" y="-72" width="8" height="66" rx="4" fill="#111111"/>
-    <g transform="translate(29 -72)">
-      <rect width="32" height="22" fill="#FFFFFF" stroke="#111111" stroke-width="3"/>
-      <g fill="#111111"><rect x="0" y="0" width="6.4" height="7.3"/><rect x="12.8" y="0" width="6.4" height="7.3"/><rect x="25.6" y="0" width="6.4" height="7.3"/><rect x="6.4" y="7.3" width="6.4" height="7.3"/><rect x="19.2" y="7.3" width="6.4" height="7.3"/><rect x="0" y="14.6" width="6.4" height="7.3"/><rect x="12.8" y="14.6" width="6.4" height="7.3"/><rect x="25.6" y="14.6" width="6.4" height="7.3"/></g>
-    </g>
   </g>
 </svg>
