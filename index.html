@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Melodigo</title>
 <meta name="description" content="Moving towards your goal. Couch to 5K for practising an instrument, in a choir or in an orchestra. Your teacher sets the week; Melodigo gets you to Thursday.">
-<link rel="icon" type="image/svg+xml" href="icon-tile.svg"><link rel="apple-touch-icon" href="icon-tile.svg">
+<link rel="icon" type="image/svg+xml" href="icon-tile.svg"><link rel="apple-touch-icon" href="icon-192.png"><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#C8792A">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@400;500;600;700&display=swap">
 <style>
@@ -233,7 +233,9 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
   let current=null; // selected student (teacher) or self (student): {user_id, data}
   let pushTimer=null;
 
-  function blankDoc(name){ return {profile:{name:name||'', instrument:'violin', part:'', level:'beginner', goalLabel:'', goalDate:'', sessionsPerWeek:3, minutes:18}, notes:[], weeks:[], flags:[], extras:[], lessons:[], tokens:{earned:0, redeemed:0}, teacherName:''}; }
+  const LEVELS=[['beginner','Beginner',20],['grade1-3','Grades 1 to 3',25],['grade4-6','Grades 4 to 6',40],['grade7-8','Grades 7 to 8, diploma',60],['returning','Returning adult',25],['advanced','Advanced, conservatoire',75]];
+  function levelMinutes(level){ const l=LEVELS.find(x=>x[0]===level||x[1].toLowerCase()===String(level||'').toLowerCase()); return l?l[2]:20; }
+  function blankDoc(name){ return {profile:{name:name||'', instrument:'violin', part:'', level:'beginner', goalLabel:'', goalDate:'', sessionsPerWeek:3, minutes:20, reminder:'push'}, notes:[], weeks:[], flags:[], extras:[], lessons:[], tokens:{earned:0, redeemed:0}, teacherName:''}; }
   function loadLocal(){ try{ let s=localStorage.getItem(LKEY); if(!s){ for(const k of LKEY_OLDS){ s=localStorage.getItem(k); if(s){ localStorage.setItem(LKEY,s); localStorage.removeItem(k); break; } } } if(s) return JSON.parse(s); }catch(e){} return null; }
   function saveLocal(o){ try{ localStorage.setItem(LKEY, JSON.stringify(o)); }catch(e){} }
 
@@ -310,7 +312,7 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
     const i=nextIndex(w); const n=doneCount(w); const s=i>=0?w.sessions[i]:null;
     const lastDone=(w.done||[]).slice(-1)[0];
     v.innerHTML=`
-      <div class="eyebrow">${h(fmt(today()))} · week of ${h(fmt(w.createdAt))} · session ${Math.min(n+1,w.sessions.length)} of ${w.sessions.length}${w.group?' · group week ('+h(w.group.name||'everyone')+')'+(p.part?' · your part: '+h(p.part):''):''}</div>
+      <div class="eyebrow">${h(fmt(today()))} · week of ${h(fmt(w.createdAt))} · session ${Math.min(n+1,w.sessions.length)} of ${w.sessions.length}${w.group?' · group week ('+h(w.group.name||'everyone')+')'+(p.part?' · your part: '+h(p.part):''):''}${p.minutes?' · '+h(p.minutes)+' min a day, set by '+h(tn):''}</div>
       <h2 class="big">${s?h(s.title):'Week complete.'}</h2>
       ${openExtras().length?`<div class="box c"><h3>New from ${h(tn)}</h3>${openExtras().map(x=>`<div class="flag"><span>${h(x.text)} <span class="note" style="margin:0">· ${h(fmt(x.at.slice(0,10)))}</span></span><button class="btn sm quiet" data-xdone="${x.id}">Done</button></div>`).join('')}</div>`:''}
       <div class="card"><div class="quote">"${h(s?s.intro:(w.encouragement||'Rest until the lesson. You did the work.'))}"</div><div class="who">${h(tn)}</div></div>
@@ -442,8 +444,15 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
       <div class="card"><h3>Set or change the goal</h3>
         <div class="grid2"><div><label class="l" for="gLabel">What it is</label><input id="gLabel" placeholder="e.g. Grade 3 exam, school concert" value="${h(p.goalLabel||'')}"></div><div><label class="l" for="gDate">Roughly when</label><input type="date" id="gDate" value="${h(p.goalDate||'')}"></div></div>
         <label class="l" for="gPart">Your part or section, if you sing or play in a group</label><input id="gPart" placeholder="e.g. Alto, Second violin, Cello" value="${h(p.part||'')}">
-        <button class="btn sm" id="gSave" style="margin-top:10px">Save</button></div>`;
+        <button class="btn sm" id="gSave" style="margin-top:10px">Save</button></div>
+      <div class="card"><h3>The morning message</h3>
+        <p>On the mornings a session is due, ${h(doc().teacherName||'your teacher')} sends one short note: what you did last time, what is on today, and how long. Never twice in a day, never once the week is done.</p>
+        <div class="row" id="remRow"><label class="switch" style="font-size:14px;color:var(--ink)"><input type="radio" name="rem" value="push" ${(p.reminder||'push')==='push'?'checked':''}> Notification on this phone</label><label class="switch" style="font-size:14px;color:var(--ink)"><input type="radio" name="rem" value="email" ${p.reminder==='email'?'checked':''}> Email${doc().contactEmail?' ('+h(doc().contactEmail)+')':''}</label><label class="switch" style="font-size:14px;color:var(--ink)"><input type="radio" name="rem" value="off" ${p.reminder==='off'?'checked':''}> Off</label></div>
+        <div class="row" style="margin-top:10px"><button class="btn sm" id="pushOn">${doc().push?'Notifications are on for this phone':'Turn on notifications'}</button><button class="btn sm quiet" id="remTest">Send me today\'s message now</button><span class="status" id="remStatus" style="margin:0"></span></div>
+        <div class="note">${mode==='cloud'?'On an iPhone, add Melodigo to your Home Screen first (Share, then "Add to Home Screen"), then turn notifications on from there.':'Notifications need the live site with an account.'}</div></div>`;
     $('#gSave').onclick=()=>{ p.goalLabel=$('#gLabel').value.trim(); p.goalDate=$('#gDate').value; p.part=$('#gPart').value.trim(); saveCurrent(); renderGoal(false); toast('Saved.'); };
+    $$('#remRow input').forEach(r=>r.onchange=()=>{ p.reminder=r.value; saveCurrent(); toast(r.value==='off'?'No morning messages.':'Saved.'); });
+    $('#pushOn').onclick=enablePush; $('#remTest').onclick=sendTestReminder;
     if(showIt!==false) show('goal');
   }
 
@@ -540,7 +549,7 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
   function renderTeacher(){
     const v=$('#v-teacher');
     const list=students.map(s=>{ const d=s.data; const w=d.weeks&&d.weeks.length?d.weeks[d.weeks.length-1]:null; const flags=(d.flags||[]).filter(f=>!f.resolved).length;
-      return `<div class="student" data-sid="${h(s.user_id)}"><div><div class="n">${h(d.profile?.name||'Pupil')}</div><div class="m">${h(d.profile?.instrument||'')} · ${h(d.profile?.level||'')}${w?` · this week ${doneCount(w)}/${w.sessions.length}`:' · no week set'}${flags?` · <b>${flags} flagged</b>`:''}</div></div><span class="pill">open</span></div>`; }).join('');
+      return `<div class="student" data-sid="${h(s.user_id)}"><div><div class="n">${h(d.profile?.name||'Pupil')}</div><div class="m">${h(d.profile?.instrument||'')} · ${h(d.profile?.level||'')}${d.profile?.minutes?` · ${d.profile.minutes} min a day`:''}${w?` · this week ${doneCount(w)}/${w.sessions.length}`:' · no week set'}${flags?` · <b>${flags} flagged</b>`:''}</div></div><span class="pill">open</span></div>`; }).join('');
     const attn=[]; students.forEach(s=>{ const ls=s.data.lessons||[]; const nm=s.data.profile?.name||'Pupil'; ls.filter(l=>l.status==='requested').forEach(l=>attn.push(`<b>${h(nm)}</b> asked for a lesson on ${h(fmtAt(l.at))}`)); ls.filter(l=>l.status==='cancelled'&&!l.seen).forEach(l=>attn.push(`<b>${h(nm)}</b> cancelled ${h(fmtAt(l.at))}${l.note?': "'+h(l.note)+'"':''}`)); });
     v.innerHTML=`<div class="eyebrow">${h(me?.studio||'Your studio')}${me?.code?` · code <b>${h(me.code)}</b>`:''}</div><h2 class="big">${students.length?'Your pupils.':'No pupils yet.'}</h2>
       ${attn.length?`<div class="box c"><h3>Needs you</h3>${attn.map(a=>`<div style="margin:4px 0">${a}</div>`).join('')}<div class="note">Open the pupil to confirm or reply.</div></div>`:''}
@@ -565,12 +574,12 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
       <div class="card"><h3>Profile</h3>
         <div class="grid2">
           <div><label class="l" for="pInst">Instrument</label><input id="pInst" value="${h(p.instrument||'violin')}"></div>
-          <div><label class="l" for="pLevel">Level</label><input id="pLevel" value="${h(p.level||'beginner')}" placeholder="beginner, grade 3, returning adult…"></div>
+          <div><label class="l" for="pLevel">Level</label><select id="pLevel">${LEVELS.map(([k,lab])=>`<option value="${k}" ${(p.level===k||(!LEVELS.some(x=>x[0]===p.level)&&k==='beginner'))?'selected':''}>${lab}</option>`).join('')}</select></div>
           <div><label class="l" for="pPart">Part or section (groups)</label><input id="pPart" value="${h(p.part||'')}" placeholder="Alto, Second violin…"></div>
           <div><label class="l" for="pGoal">Goal</label><input id="pGoal" value="${h(p.goalLabel||'')}" placeholder="Grade 3 exam"></div>
           <div><label class="l" for="pGoalDate">Goal date (rough)</label><input type="date" id="pGoalDate" value="${h(p.goalDate||'')}"></div>
           <div><label class="l" for="pSpw">Sessions a week</label><input type="number" id="pSpw" min="2" max="5" value="${h(p.sessionsPerWeek||3)}"></div>
-          <div><label class="l" for="pMin">Minutes a session</label><input type="number" id="pMin" min="10" max="45" value="${h(p.minutes||18)}"></div>
+          <div><label class="l" for="pMin">Minutes a day (you set this)</label><input type="number" id="pMin" min="10" max="120" step="5" value="${h(p.minutes||levelMinutes(p.level))}"><div class="note" style="margin:4px 0 0">Suggested for the level: ${levelMinutes(p.level)}. Change it and it sticks.</div></div>
         </div><button class="btn sm" id="pSave" style="margin-top:10px">Save profile</button></div>
       ${lessonCardTeacher(current)}
       <div class="card"><h3>Add a task this week</h3>
@@ -587,9 +596,10 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
       <div id="previewBox"></div>`;
     $('#backT').onclick=()=>renderTeacher();
     wireLessonCard(current, renderTStudent);
+    $('#pLevel').onchange=()=>{ $('#pMin').value=levelMinutes($('#pLevel').value); };
     $('#xAdd').onclick=()=>{ const t=$('#xText').value.trim(); if(!t) return; d.extras=d.extras||[]; d.extras.push({id:uid(), text:t, at:new Date().toISOString(), done:false, by:me?.name||''}); saveCurrent(); renderTStudent(); toast('Added to their week.'); };
     $$('[data-xrm]').forEach(b=>b.onclick=()=>{ d.extras=(d.extras||[]).filter(x=>x.id!==b.dataset.xrm); saveCurrent(); renderTStudent(); });
-    $('#pSave').onclick=()=>{ p.instrument=$('#pInst').value.trim()||'violin'; p.part=$('#pPart').value.trim(); p.level=$('#pLevel').value.trim()||'beginner'; p.goalLabel=$('#pGoal').value.trim(); p.goalDate=$('#pGoalDate').value; p.sessionsPerWeek=+$('#pSpw').value||3; p.minutes=+$('#pMin').value||18; saveCurrent(); toast('Profile saved.'); };
+    $('#pSave').onclick=()=>{ p.instrument=$('#pInst').value.trim()||'violin'; p.part=$('#pPart').value.trim(); p.level=$('#pLevel').value||'beginner'; p.goalLabel=$('#pGoal').value.trim(); p.goalDate=$('#pGoalDate').value; p.sessionsPerWeek=+$('#pSpw').value||3; p.minutes=+$('#pMin').value||levelMinutes(p.level); saveCurrent(); toast('Profile saved.'); };
     $$('[data-res]').forEach(b=>b.onclick=()=>{ const f=flags.find(x=>x.id===b.dataset.res); if(f) f.resolved=true; saveCurrent(); renderTStudent(); });
     const aw=$('#award'); if(aw) aw.onclick=()=>{ d.tokens=d.tokens||{earned:0,redeemed:0}; d.tokens.redeemed=(d.tokens.redeemed||0)+6; saveCurrent(); renderTStudent(); toast('Reward marked as given.'); };
     $('#gen').onclick=generateWeek;
@@ -614,7 +624,7 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
     finally{ btn.disabled=false; }
   }
   function offlinePlan(p, note){ // used only when the page is opened as a file, so the flow can still be tried
-    const items=note.forNext.length?note.forNext:['the thing we worked on']; const per=Math.max(3,Math.round((p.minutes||18)/5));
+    const items=note.forNext.length?note.forNext:['the thing we worked on']; const per=Math.max(3,Math.round((p.minutes||levelMinutes(p.level))/5));
     const mk=(t,i)=>({title:t, intro:`Session ${i}. ${note.line||'Slow and in tune beats fast and nearly.'}`, steps:[{name:'Warm-up',minutes:3,caption:'Long, slow bows on the open strings. Listen for the note to bloom.'},{name:items[0],minutes:per,caption:`${items[0]}, slowly. Hear it before you play it.`},{name:'The piece',minutes:per,caption:'First phrase only, three times. Stop before it gets messy.'},{name:items[1]||items[0]+' again',minutes:per,caption:`Back to ${(items[1]||items[0]).toLowerCase()}, one notch faster than before.`},{name:'Wind down',minutes:1,caption:'One last open string, as beautiful as you can. Stop there.'}]});
     return {sessions:Array.from({length:p.sessionsPerWeek||3},(_,i)=>mk(['Foundations','Building','Ready for the lesson'][i]||'Session',i+1)), checklist:items, encouragement:'Three short sessions beat one long one. Turn up.'};
   }
@@ -684,7 +694,7 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
     if(!tg.length){ st.textContent='Nobody matches those parts.'; return; }
     btn.disabled=true; st.textContent='Writing the week for '+tg.length+' members…';
     const parts=[...new Set(tg.map(s=>(s.data.profile?.part||'').trim()).filter(Boolean))];
-    const p0=tg[0].data.profile||{}; const profile={name:'each member', instrument:parts.length?'their part ('+parts.join(', ')+')':(p0.instrument||'their instrument or voice'), level:'mixed', sessionsPerWeek:3, minutes:p0.minutes||18};
+    const p0=tg[0].data.profile||{}; const profile={name:'each member', instrument:parts.length?'their part ('+parts.join(', ')+')':(p0.instrument||'their instrument or voice'), level:'mixed', sessionsPerWeek:3, minutes:p0.minutes||levelMinutes(p0.level)};
     try{ let out;
       if(location.protocol.startsWith('http')){ const r=await fetch('/api/plan',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({profile, note, teacherName:me?.name||'your conductor', weeksToGoal:null, group:{name:me?.studio||'the group', parts}})}); if(!r.ok){ let e={}; try{ e=await r.json(); }catch(x){} throw new Error(e.message||('HTTP '+r.status)); } out=await r.json(); }
       else out=offlinePlan(profile, note);
@@ -707,15 +717,15 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
   // ------------------------------------------------------------ demo: see how it works, no account, nothing leaves the device
   function demoSeed(){
     const W=(title,intro,steps)=>({title,intro,steps:steps.map(([name,minutes,caption])=>({name,minutes,caption}))});
-    const emre={profile:{name:'Emre',instrument:'violin',part:'Second violin',level:'beginner',goalLabel:'Grade 1 exam',goalDate:addDays(today(),150),sessionsPerWeek:3,minutes:18},teacherName:'Melisande',notes:[],extras:[{id:uid(),text:'Listen to the Twinkle variations recording once before Thursday',at:new Date().toISOString(),done:false,by:'Melisande'}],lessons:[{id:uid(),at:addDays(today(),4)+'T16:30',minutes:30,kind:'lesson',status:'booked',by:'teacher',note:'',seen:true},{id:uid(),at:addDays(today(),11)+'T16:30',minutes:30,kind:'lesson',status:'booked',by:'teacher',note:'',seen:true},{id:uid(),at:addDays(today(),6)+'T19:00',minutes:120,kind:'rehearsal',status:'booked',by:'teacher',note:'Youth orchestra',seen:true}],flags:[{id:uid(),text:'G string squeaks on down bows',at:new Date().toISOString(),resolved:false},{id:uid(),text:'Got the third-finger F sharp in tune three times in a row',at:new Date().toISOString(),resolved:false}],tokens:{earned:4,redeemed:0},
+    const emre={profile:{name:'Emre',instrument:'violin',part:'Second violin',level:'beginner',goalLabel:'Grade 1 exam',goalDate:addDays(today(),150),sessionsPerWeek:3,minutes:20,reminder:'push'},teacherName:'Melisande',notes:[],extras:[{id:uid(),text:'Listen to the Twinkle variations recording once before Thursday',at:new Date().toISOString(),done:false,by:'Melisande'}],lessons:[{id:uid(),at:addDays(today(),4)+'T16:30',minutes:30,kind:'lesson',status:'booked',by:'teacher',note:'',seen:true},{id:uid(),at:addDays(today(),11)+'T16:30',minutes:30,kind:'lesson',status:'booked',by:'teacher',note:'',seen:true},{id:uid(),at:addDays(today(),6)+'T19:00',minutes:120,kind:'rehearsal',status:'booked',by:'teacher',note:'Youth orchestra',seen:true}],flags:[{id:uid(),text:'G string squeaks on down bows',at:new Date().toISOString(),resolved:false},{id:uid(),text:'Got the third-finger F sharp in tune three times in a row',at:new Date().toISOString(),resolved:false}],tokens:{earned:4,redeemed:0},
       weeks:[{id:uid(),createdAt:addDays(today(),-3),lessonDate:addDays(today(),-3),nextLesson:addDays(today(),4),workedOn:'D major scale, bow contact point nearer the bridge, first phrase of Twinkle variation A. Rushes the scale.',line:"Lovely tone today. Don't rush the scale.",encouragement:'Three short sessions and the lesson takes care of itself.',
         sessions:[W('Slow and wide','Everything at half the speed you think it needs, especially the scale.',[['Warm-up',3,'Long slow bows on the open D. Listen for the note to bloom.'],['D major, one note per breath',5,'Full bow on each note and a long pause at the top. The rushing happens between the notes.'],['Twinkle, first phrase',5,'Three times, then stop before it gets messy.'],['Scale again, nearer the bridge',4,"Same scale, bow a finger's width closer to the bridge. Brighter, not louder."],['Wind down',1,'One last open D, as beautiful as you can. Stop there.']]),
           W('Contact point','The bridge end of the string is where today lives.',[['Warm-up',3,'Open strings, long bows, eyes on the contact point.'],['Scale from memory',5,'Music away. Say the note names aloud as you play.'],['Twinkle',5,'Phrase one, in tune, twice. If the F sharp is low, stop and find it.'],['Contact point drill',4,'Slide the bow toward the bridge until the sound brightens, then hold it there.'],['Wind down',1,'Stop.']]),
           W('As if it were the lesson','Short, tidy steps. Play each thing once, properly.',[['Warm-up',3,'Two long bows per string.'],['Scale, once',4,'One go only. Steady, not fast.'],['Twinkle, once',5,"As you'll play it for me on Tuesday."],['Checklist run',5,'Tick what you can show.'],['Wind down',1,'Done. Sleep on it.']])],
         checklist:['D major scale from memory','First phrase of Twinkle in tune, with a high F sharp','Bow nearer the bridge on long notes'],done:[{i:0,at:addDays(today(),-2)+'T18:00:00Z',feel:'Good'}],ticks:[0]}]};
-    const aisha={profile:{name:'Aisha',instrument:'cello',part:'Cello',level:'grade 3',goalLabel:'School concert',goalDate:addDays(today(),60),sessionsPerWeek:3,minutes:20},teacherName:'Melisande',notes:[],flags:[],extras:[],lessons:[{id:uid(),at:addDays(today(),1)+'T17:00',minutes:30,kind:'lesson',status:'booked',by:'teacher',note:'',seen:true},{id:uid(),at:addDays(today(),9)+'T17:30',minutes:30,kind:'lesson',status:'requested',by:'pupil',note:'Could we move to half past?',seen:false}],tokens:{earned:9,redeemed:6},
+    const aisha={profile:{name:'Aisha',instrument:'cello',part:'Cello',level:'grade 3',goalLabel:'School concert',goalDate:addDays(today(),60),sessionsPerWeek:3,minutes:25,reminder:'email'},teacherName:'Melisande',notes:[],flags:[],extras:[],lessons:[{id:uid(),at:addDays(today(),1)+'T17:00',minutes:30,kind:'lesson',status:'booked',by:'teacher',note:'',seen:true},{id:uid(),at:addDays(today(),9)+'T17:30',minutes:30,kind:'lesson',status:'requested',by:'pupil',note:'Could we move to half past?',seen:false}],tokens:{earned:9,redeemed:6},
       weeks:[{id:uid(),createdAt:addDays(today(),-6),lessonDate:addDays(today(),-6),nextLesson:addDays(today(),1),workedOn:'C major two octaves, thumb position, first page of the Squire.',line:'Keep the left hand soft.',encouragement:'Nearly there.',sessions:[W('Even bows','Same length of bow for every note.',[['Warm-up',3,'Open strings.'],['C major',6,'Two octaves, evenly.'],['Squire, page one',7,'Without stopping.'],['Scale, faster',3,'One notch up.'],['Wind down',1,'Stop.']]),W('Thumb','Find the thumb position in one movement.',[['Warm-up',3,'Open strings.'],['Thumb position',6,'A string, thumb soft.'],['Squire',7,'Page one.'],['Scale',3,'From memory.'],['Wind down',1,'Stop.']]),W('Run-through','Once through, as on the day.',[['Warm-up',3,'Open strings.'],['Squire, whole page',10,'No stopping.'],['Trouble spots',6,'Only the bars that went wrong.'],['Wind down',1,'Stop.']])],checklist:['C major with even bowing','Page one without stopping'],done:[{i:0,at:addDays(today(),-5)+'T17:00:00Z',feel:'OK'},{i:1,at:addDays(today(),-3)+'T17:00:00Z',feel:'Good'},{i:2,at:addDays(today(),-1)+'T17:00:00Z',feel:'Good'}],ticks:[0,1]}]};
-    const tom={profile:{name:'Tom',instrument:'violin',part:'First violin',level:'returning adult',goalLabel:'',goalDate:'',sessionsPerWeek:2,minutes:15},teacherName:'Melisande',notes:[],flags:[],extras:[],lessons:[],tokens:{earned:0,redeemed:0},weeks:[]};
+    const tom={profile:{name:'Tom',instrument:'violin',part:'First violin',level:'returning',goalLabel:'',goalDate:'',sessionsPerWeek:2,minutes:25},teacherName:'Melisande',notes:[],flags:[],extras:[],lessons:[],tokens:{earned:0,redeemed:0},weeks:[]};
     return [{user_id:'demo-emre',data:emre},{user_id:'demo-aisha',data:aisha},{user_id:'demo-tom',data:tom}];
   }
   let demoRole='pupil';
@@ -726,6 +736,27 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
   }
   function renderDemoBar(){ const b=$('#demoBar'); b.className='demo-bar'; b.hidden=false; b.innerHTML=`<span><b>Demo.</b> Nothing here is saved to an account. Switch sides:</span><span class="seg"><button data-r="pupil" class="${demoRole==='pupil'?'on':''}">Pupil</button><button data-r="teacher" class="${demoRole==='teacher'?'on':''}">Teacher</button><button data-r="share" class="${demoRole==='share'?'on':''}">Parent's view</button></span><button class="x" id="demoReset">Reset demo</button>`; $$('#demoBar [data-r]').forEach(x=>x.onclick=()=>setDemoRole(x.dataset.r)); $('#demoReset').onclick=()=>{ try{ localStorage.removeItem('sostenuto.demo.v1'); }catch(e){} students=demoSeed(); current=students[0]; setDemoRole(demoRole); }; }
   function setDemoRole(r){ demoRole=r; renderDemoBar(); if(r==='teacher'){ setTabs('teacher'); renderTeacher(); } else if(r==='share'){ current=students[0]; setTabs('student'); renderShare(); } else { current=students[0]; setTabs('student'); renderToday(); } }
+
+  // ------------------------------------------------------------ the morning message: push subscription + test send
+  const b64ToU8=b=>{ const p='='.repeat((4-b.length%4)%4); const s=(b+p).replace(/-/g,'+').replace(/_/g,'/'); const r=atob(s); return Uint8Array.from([...r].map(c=>c.charCodeAt(0))); };
+  async function enablePush(){
+    const st=$('#remStatus');
+    if(mode!=='cloud'){ st.textContent='Sign in on the live site first.'; return; }
+    if(!('serviceWorker' in navigator)||!('PushManager' in window)){ st.textContent='This browser cannot show notifications. On an iPhone, add Melodigo to the Home Screen first.'; return; }
+    if(!cfg?.vapidPublicKey){ st.textContent='Notifications are not configured on this deployment yet.'; return; }
+    try{
+      const reg=await navigator.serviceWorker.register('/sw.js'); await navigator.serviceWorker.ready;
+      const perm=await Notification.requestPermission(); if(perm!=='granted'){ st.textContent='Notifications were not allowed.'; return; }
+      const sub=await reg.pushManager.subscribe({userVisibleOnly:true, applicationServerKey:b64ToU8(cfg.vapidPublicKey)});
+      doc().push=sub.toJSON(); doc().profile.reminder='push'; saveCurrent(); st.textContent='Done. The first message comes the next morning a session is due.'; renderGoal(false);
+    }catch(e){ st.textContent='Could not turn on notifications: '+(e.message||e); }
+  }
+  async function sendTestReminder(){
+    const st=$('#remStatus'); if(mode!=='cloud'){ st.textContent='Needs the live site with an account.'; return; }
+    st.textContent='Sending…';
+    try{ const r=await fetch('/api/reminders',{method:'POST',headers:{'content-type':'application/json',...(await authHeaders())},body:'{}'}); const j=await r.json(); st.textContent=(j.sent?'Sent by '+j.via+'. ':'')+(j.message||'')+(j.preview?' “'+j.preview+'”':''); }
+    catch(e){ st.textContent='Could not send: '+e.message; }
+  }
 
   // ------------------------------------------------------------ boot
   function enterLocal(){
@@ -739,7 +770,7 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
     me={...meta, email:sbUser.email}; mode='cloud'; await refresh();
     renderAuth();
     if(me.role==='teacher'){ setTabs('teacher'); renderTeacher(); }
-    else { current=students.find(s=>s.user_id===sbUser.id)||students[0]; if(current){ if(!current.data.profile.name) current.data.profile.name=me.name||''; current.data.teacherName=current.data.teacherName||''; } setTabs('student'); renderToday(); }
+    else { current=students.find(s=>s.user_id===sbUser.id)||students[0]; if(current){ if(!current.data.profile.name) current.data.profile.name=me.name||''; current.data.teacherName=current.data.teacherName||''; if(sbUser.email&&current.data.contactEmail!==sbUser.email){ current.data.contactEmail=sbUser.email; saveCurrent(); } } setTabs('student'); renderToday(); if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(()=>{}); }
   }
   let sbUser=null;
   function signInDialog(){

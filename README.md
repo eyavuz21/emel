@@ -19,6 +19,12 @@ Melodigo has two sides. The **teacher** writes a thirty-second note after each l
 - **Lessons, booked and moved in the app:** a Lessons tab for the pupil (what's coming up, "Can't make it" with a reason, ask for a lesson at a time of their choosing) and a Lessons card for the teacher on each pupil (book one, book weekly for six weeks, confirm or decline requests, see cancellations with the reason). Requests and cancellations surface at the top of the teacher's pupils list under "Needs you". The next booked lesson becomes the default date for the next week's plan
 - New name, new mark: Melodigo, with a quaver whose flag is the finish flag as the i
 
+## What's in v0.4 (15 September 2026)
+
+- **The teacher sets the practice time.** Level is a dropdown (beginner, grades 1 to 3, 4 to 6, 7 to 8, returning adult, advanced) and each level suggests minutes a day (20, 25, 40, 60, 25, 75); the teacher can override it per pupil, up to 120. The sessions are written to that length and the pupil's Today screen says who set it
+- **The morning message.** On any morning a session is due, the pupil gets one note from the teacher: what they did last time and how they said it felt, what is on today and how long. Never twice a day, nothing once the week is done. Delivered as a phone notification (web push, the app added to the Home Screen) or by email; the pupil chooses under Goal and can send themselves today's message to check it. A daily Vercel cron (`/api/reminders`, 06:30 UTC) does the sending and logs every send against the pupil, so completion within the day can be measured
+- Installable: manifest, icons and a service worker, so Melodigo sits on the Home Screen like an app
+
 ## What was in v0.2
 
 - Email sign-in (no password); teachers create a studio and get a six-character code; pupils join with it
@@ -44,6 +50,8 @@ Two kinds of account: teacher and pupil. There is no parent login. A young pupil
 - `api/voice.js`: creates the teacher's cloned voice from the recorded sample (ElevenLabs), or deletes it. Teacher only, verified server-side against Supabase
 - `api/speak.js`: turns one caption into audio in the studio's voice and stores it in the `sostenuto-audio` bucket under the studio's folder, using the teacher's own session so storage policies apply
 - `api/transcribe.js`: spoken notes to text (ElevenLabs Scribe) for browsers without built-in dictation
+- `api/reminders.js`: the morning message. GET from the cron (Authorization: Bearer CRON_SECRET) sends to every pupil due; POST from a signed-in pupil sends their own message now. Uses the Supabase service-role key server-side to read every pupil row
+- `sw.js`, `manifest.webmanifest`, `icon-192.png`, `icon-512.png`: the installable app and its notifications
 - `api/config.js`: public Supabase config for the page, plus which features are configured
 - `supabase/schema.sql`: studios, members, one JSON document per pupil that the pupil and their teacher can both read and write, row-level security, five RPCs. Every database object keeps the `sostenuto_` prefix from the previous name (renaming live tables gains nothing and risks the pilot's data); the prefix is never shown to a user
 - `logo.svg` (lockup with slogan), `wordmark.svg`, `mark.svg` (the flag-note), `icon-tile.svg`: outlines, no font needed
@@ -57,6 +65,10 @@ Vercel serves `index.html` as static and `api/*` as Node functions. Environment 
 | `ANTHROPIC_API_KEY` | yes | Writes the weeks |
 | `SUPABASE_URL`, `SUPABASE_ANON_KEY` | for accounts | Project Settings → API. The anon key is public by design |
 | `ELEVENLABS_API_KEY` | for the voice | Voice cloning, spoken captions, and transcription fallback |
+| `SUPABASE_SERVICE_ROLE_KEY` | for the morning message | Server-only; lets the cron read every pupil. Never sent to the page |
+| `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT` | for notifications | Generate once with `npx web-push generate-vapid-keys` |
+| `CRON_SECRET` | for the cron | Vercel sends it as the bearer token on the scheduled call |
+| `RESEND_API_KEY`, `REMINDER_FROM` | for email messages | Resend account with a verified domain; falls back to push only when unset |
 
 Supabase: run `supabase/schema.sql` in the SQL editor once (or `supabase/migrate-2026-09-13-rename.sql` if you had the earlier `rosin_` objects); under Authentication → URL Configuration add the live URL to Redirect URLs. The built-in email sender is rate-limited, so add custom SMTP (Resend) before a real cohort.
 
@@ -68,7 +80,7 @@ Open `index.html` in a browser and choose "Try it on this device". Accounts and 
 
 1. Pilot with twenty pupils and one ensemble; measure who is still practising in week four
 2. Record a clip at the end of a session and send it to the teacher, unscored
-3. Custom SMTP for sign-in emails; a daily cap on generation per studio; calendar export for booked lessons
+3. Custom SMTP for sign-in emails; a daily cap on generation per studio; calendar export for booked lessons; the morning message as a voice note in the teacher's voice, and over WhatsApp
 4. Piano and singing programmes; returning-adult track; sectionals (one note per part) for larger ensembles
 5. Studio and ensemble licences for schools, youth orchestras, choirs and music hubs
 

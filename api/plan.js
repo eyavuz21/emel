@@ -41,7 +41,7 @@ export default async function handler(req, res) {
 
   const { profile = {}, note = {}, teacherName = "your teacher", weeksToGoal = null, group = null } = req.body || {};
   const sessions = Math.min(5, Math.max(2, Number(profile.sessionsPerWeek) || 3));
-  const minutes = Math.min(45, Math.max(10, Number(profile.minutes) || 18));
+  const minutes = Math.min(120, Math.max(10, Number(profile.minutes) || 20));
   const workedOn = String(note.workedOn || "").slice(0, 2000);
   const forNext = Array.isArray(note.forNext) ? note.forNext.map(String).slice(0, 10) : [];
   const line = String(note.line || "").slice(0, 400);
@@ -66,7 +66,7 @@ What we worked on: ${workedOn || "(not given)"}
 For next lesson: ${forNext.length ? forNext.map((x) => "- " + x).join("\n") : "(not given)"}
 One line for the week: ${line || "(none)"}
 
-Write exactly ${sessions} sessions for the week, each about ${minutes} minutes in total (the step minutes must add up to between ${minutes - 2} and ${minutes + 2}). Each session has 4 to 6 steps. Structure every session: a short warm-up, then technique from the note, then the piece or passage from the note, then a return to the technique in a new way (interleave), then a one-minute wind-down that ends by telling the pupil to stop. Steps get shorter and more focused as the week goes on; session ${sessions} should feel like preparation for the lesson.
+Write exactly ${sessions} sessions for the week, each about ${minutes} minutes in total, which is the length the teacher has set for this pupil (the step minutes must add up to between ${minutes - 2} and ${minutes + 2}). Each session has ${minutes >= 45 ? "6 to 9" : "4 to 6"} steps. Structure every session: a short warm-up, then technique from the note, then the piece or passage from the note, then a return to the technique in a new way (interleave), then a one-minute wind-down that ends by telling the pupil to stop. Steps get shorter and more focused as the week goes on; session ${sessions} should feel like preparation for the lesson.
 
 Each step's caption is what the teacher says at the start of that step, one or two sentences, concrete and physical (what to do with the bow, fingers, ears), and it must refer to the note where possible. Never say "great job" style filler. A "stop before it gets messy" instruction belongs somewhere in each session. Vary the sessions; do not repeat captions.
 
