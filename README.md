@@ -1,23 +1,23 @@
-<p align="center"><img src="logo.svg" alt="Emel: a musical note running towards a finish line. Moving towards your goal." width="560"></p>
+<p align="center"><img src="logo.svg" alt="Melodigo. Moving towards your goal." width="420"></p>
 
-# Emel
+# Melodigo
 
-**Moving towards your goal.** Couch to 5K for practising an instrument, on your own with a teacher or as part of a choir or orchestra. Your teacher sets the week in thirty seconds; Emel gets you to Thursday.
+**Moving towards your goal.** Couch to 5K for practising an instrument, on your own with a teacher or as part of a choir or orchestra. Your teacher sets the week in thirty seconds; Melodigo gets you to Thursday.
 
-**Live:** https://emelmusic.vercel.app
+**Live:** https://melodigo.vercel.app
 
 ## The idea
 
 Every practice app is one of two things: it listens to you play and scores the notes (Yousician, Simply Piano, Trala), or it's a diary where you log your minutes (Tonara, Modacity). Both leave you alone on the part that matters, which is turning up three times a week when nobody is making you. Couch to 5K never measured anyone's running; it had a calm voice, a structure, and a reason to go out on Thursday. Nobody had done that for practising an instrument.
 
-Emel has two sides. The **teacher** writes a thirty-second note after each lesson (what we worked on, what to prepare, one line for the week); Emel turns it into that pupil's week: three guided sessions with step-by-step captions in the teacher's voice, a checklist for the next lesson, and a journey to get there. The **pupil** runs the sessions with a timer, flags questions and breakthroughs while they're fresh, ticks the checklist, and keeps a streak that forgives a missed day. Both set a goal date, an exam or a performance, and the road re-plans to it. A **conductor** does the same for a whole choir or orchestra: one rehearsal note becomes a week for every member, each for their own part.
+Melodigo has two sides. The **teacher** writes a thirty-second note after each lesson (what we worked on, what to prepare, one line for the week); Melodigo turns it into that pupil's week: three guided sessions with step-by-step captions in the teacher's voice, a checklist for the next lesson, and a journey to get there. The **pupil** runs the sessions with a timer, flags questions and breakthroughs while they're fresh, ticks the checklist, and keeps a streak that forgives a missed day. Both set a goal date, an exam or a performance, and the road re-plans to it. A **conductor** does the same for a whole choir or orchestra: one rehearsal note becomes a week for every member, each for their own part.
 
 ## What's in v0.3 (14 September 2026)
 
 - **Group mode for choirs and orchestras:** a studio can be an ensemble. Members set their part (alto, second violin); the conductor opens the Group tab, picks everyone or particular parts, writes one rehearsal note, reviews one preview, and publishes a week to every member. The sessions are written for "your part": notes and rhythms slowly, entries counted, words from memory, listening with the score. The conductor's cloned voice is synthesised once and shared. Add a task to everyone, and book a rehearsal for everyone, from the same screen
 - **Tasks during the week:** a teacher who thinks of something on Wednesday adds it to a pupil's week without rewriting it. It appears on the pupil's Today screen under "New from [teacher]" and in their Journey checklist; the pupil ticks it off
 - **Lessons, booked and moved in the app:** a Lessons tab for the pupil (what's coming up, "Can't make it" with a reason, ask for a lesson at a time of their choosing) and a Lessons card for the teacher on each pupil (book one, book weekly for six weeks, confirm or decline requests, see cancellations with the reason). Requests and cancellations surface at the top of the teacher's pupils list under "Needs you". The next booked lesson becomes the default date for the next week's plan
-- New name, new mark: Emel, with a note running towards a finish line
+- New name, new mark: Melodigo, with a quaver whose flag is the finish flag as the i
 
 ## What was in v0.2
 
@@ -26,7 +26,7 @@ Emel has two sides. The **teacher** writes a thirty-second note after each lesso
 - **Pupil:** Today (next session, streak, week dots), a session runner with a progress ring, captions, optional read-aloud (browser speech), pause/skip/stop, and "how did it feel"; Journey (path from lesson to lesson, checklist, flags, tokens); Goal (date, weeks to go, road phases)
 - Tokens: one per session, two more for a full week; six is a small reward the teacher marks as given
 - **See how it works:** a demo with three pupils and a week already set, switchable between the pupil's side, the teacher's side and the parent's view, no sign-in
-- **The teacher's voice:** on first use the teacher reads a thirty-second passage with a consent box ticked; Emel clones the voice (ElevenLabs) and every caption in every published week is spoken in it. Only text the teacher has previewed and published is ever spoken; the teacher can re-record or delete the clone at any time, and deleting it removes it from ElevenLabs too. Pupils are told it's generated
+- **The teacher's voice:** on first use the teacher reads a thirty-second passage with a consent box ticked; Melodigo clones the voice (ElevenLabs) and every caption in every published week is spoken in it. Only text the teacher has previewed and published is ever spoken; the teacher can re-record or delete the clone at any time, and deleting it removes it from ElevenLabs too. Pupils are told it's generated
 - **Dictated notes:** every note field has a Dictate button. Browser speech recognition where it exists (Chrome, Safari), server transcription as the fallback
 - **Share card:** the pupil turns their week into an image (sessions, minutes, streak, checklist, the teacher's line) and shares it with a parent or anyone they choose, from their own phone. Nothing is shared unless the pupil sends it; nothing else about them is in it
 - Works on this device with no account, so anyone can try the whole loop alone (you play both sides)
@@ -46,7 +46,7 @@ Two kinds of account: teacher and pupil. There is no parent login. A young pupil
 - `api/transcribe.js`: spoken notes to text (ElevenLabs Scribe) for browsers without built-in dictation
 - `api/config.js`: public Supabase config for the page, plus which features are configured
 - `supabase/schema.sql`: studios, members, one JSON document per pupil that the pupil and their teacher can both read and write, row-level security, five RPCs. Every database object keeps the `sostenuto_` prefix from the previous name (renaming live tables gains nothing and risks the pilot's data); the prefix is never shown to a user
-- `logo.svg`, `mark.svg`, `icon-tile.svg`: the mark and wordmark
+- `logo.svg` (lockup with slogan), `wordmark.svg`, `mark.svg` (the flag-note), `icon-tile.svg`: outlines, no font needed
 
 ## Deploying
 
@@ -74,7 +74,7 @@ Open `index.html` in a browser and choose "Try it on this device". Accounts and 
 
 ## The name
 
-*Emel*: Turkish for aspiration, the thing you are striving towards. It is also the two founders' letters, E-M-E-L, in order. The mark is a note running towards a finish line: the goal, and the getting there. Previously Emel, Sostenuto and Rosin, in that order.
+*Melodigo*: *melodi*, the Turkish word for melody, and *go*. The mark is the letter i drawn as a quaver whose flag is a chequered finish flag: a note with somewhere to get to. Previously Melodigo, Mosso, Sostenuto and Rosin, in that order.
 
 ## Founders
 
