@@ -16,11 +16,11 @@ Melodigo has two sides. The **teacher** writes a thirty-second note after each l
 
 - **Group mode for choirs and orchestras:** a studio can be an ensemble. Members set their part (alto, second violin); the conductor opens the Group tab, picks everyone or particular parts, writes one rehearsal note, reviews one preview, and publishes a week to every member. The sessions are written for "your part": notes and rhythms slowly, entries counted, words from memory, listening with the score. The conductor's cloned voice is synthesised once and shared. Add a task to everyone, and book a rehearsal for everyone, from the same screen
 - **Tasks during the week:** a teacher who thinks of something on Wednesday adds it to a pupil's week without rewriting it. It appears on the pupil's Today screen under "New from [teacher]" and in their Journey checklist; the pupil ticks it off
-- **Lessons, booked and moved in the app:** a Lessons tab for the pupil (what's coming up, "Can't make it" with a reason, ask for a lesson at a time of their choosing) and a Lessons card for the teacher on each pupil (book one, book weekly for six weeks, confirm or decline requests, see cancellations with the reason). Requests and cancellations surface at the top of the teacher's pupils list under "Needs you". The next booked lesson becomes the default date for the next week's plan
 - New name, new mark: Melodigo, with a quaver whose flag is the finish flag as the i
 
 ## What's in v0.4 (15 September 2026)
 
+- **A named reward.** The teacher writes what six tokens earns ("a hot chocolate after Thursday's lesson"); the pupil sees it on their Journey, and the teacher marks it given
 - **The teacher sets the practice time.** Level is a dropdown (beginner, grades 1 to 3, 4 to 6, 7 to 8, returning adult, advanced) and each level suggests minutes a day (20, 25, 40, 60, 25, 75); the teacher can override it per pupil, up to 120. The sessions are written to that length and the pupil's Today screen says who set it
 - **The morning message.** On any morning a session is due, the pupil gets one note from the teacher: what they did last time and how they said it felt, what is on today and how long. Never twice a day, nothing once the week is done. Delivered as a phone notification (web push, the app added to the Home Screen) or by email; the pupil chooses under Goal and can send themselves today's message to check it. A daily Vercel cron (`/api/reminders`, 06:30 UTC) does the sending and logs every send against the pupil, so completion within the day can be measured
 - Installable: manifest, icons and a service worker, so Melodigo sits on the Home Screen like an app
@@ -80,7 +80,7 @@ Open `index.html` in a browser and choose "Try it on this device". Accounts and 
 
 1. Pilot with twenty pupils and one ensemble; measure who is still practising in week four
 2. Record a clip at the end of a session and send it to the teacher, unscored
-3. Custom SMTP for sign-in emails; a daily cap on generation per studio; calendar export for booked lessons; the morning message as a voice note in the teacher's voice, and over WhatsApp
+3. Custom SMTP for sign-in emails; a daily cap on generation per studio; the morning message as a voice note in the teacher's voice, and over WhatsApp
 4. Piano and singing programmes; returning-adult track; sectionals (one note per part) for larger ensembles
 5. Studio and ensemble licences for schools, youth orchestras, choirs and music hubs
 

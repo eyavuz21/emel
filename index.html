@@ -141,7 +141,7 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
   <section class="view on" id="v-landing">
     <div class="hero">
       <h2>Your teacher sets the week. Melodigo gets you to Thursday.</h2>
-      <p>Three short guided sessions between lessons, in your teacher's words. A checklist for the next lesson, a journey to get there, a place to flag the thing that squeaked, and a streak that forgives a missed day. Book and move lessons in the same place. Nothing listens to you play and scores you. It does the harder thing: it gets you to turn up.</p>
+      <p>Three short guided sessions between lessons, in your teacher's words. A checklist for the next lesson, a journey to get there, a place to flag the thing that squeaked, and a streak that forgives a missed day.  Nothing listens to you play and scores you. It does the harder thing: it gets you to turn up.</p>
       <p class="note">Couch to 5K, for practising an instrument. It works for one pupil and one teacher, and for a whole choir or orchestra: the conductor sets the work for everyone, and each member gets their own week for their part.</p>
     </div>
     <div class="grid2">
@@ -200,7 +200,6 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
   <section class="view" id="v-goal"></section>
   <section class="view" id="v-voice"></section>
   <section class="view" id="v-share"></section>
-  <section class="view" id="v-lessons"></section>
 
   <!-- TEACHER -->
   <section class="view" id="v-teacher"></section>
@@ -235,7 +234,7 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
 
   const LEVELS=[['beginner','Beginner',20],['grade1-3','Grades 1 to 3',25],['grade4-6','Grades 4 to 6',40],['grade7-8','Grades 7 to 8, diploma',60],['returning','Returning adult',25],['advanced','Advanced, conservatoire',75]];
   function levelMinutes(level){ const l=LEVELS.find(x=>x[0]===level||x[1].toLowerCase()===String(level||'').toLowerCase()); return l?l[2]:20; }
-  function blankDoc(name){ return {profile:{name:name||'', instrument:'violin', part:'', level:'beginner', goalLabel:'', goalDate:'', sessionsPerWeek:3, minutes:20, reminder:'push'}, notes:[], weeks:[], flags:[], extras:[], lessons:[], tokens:{earned:0, redeemed:0}, teacherName:''}; }
+  function blankDoc(name){ return {profile:{name:name||'', instrument:'violin', part:'', level:'beginner', goalLabel:'', goalDate:'', sessionsPerWeek:3, minutes:20, reminder:'push'}, notes:[], weeks:[], flags:[], extras:[], tokens:{earned:0, redeemed:0}, teacherName:''}; }
   function loadLocal(){ try{ let s=localStorage.getItem(LKEY); if(!s){ for(const k of LKEY_OLDS){ s=localStorage.getItem(k); if(s){ localStorage.setItem(LKEY,s); localStorage.removeItem(k); break; } } } if(s) return JSON.parse(s); }catch(e){} return null; }
   function saveLocal(o){ try{ localStorage.setItem(LKEY, JSON.stringify(o)); }catch(e){} }
 
@@ -264,9 +263,9 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
     if(!role){ t.hidden=true; t.innerHTML=''; return; }
     t.hidden=false;
     t.innerHTML = role==='student'
-      ? `<button data-v="today"><span>♩</span>Today</button><button data-v="journey"><span>♪</span>Journey</button><button data-v="lessons"><span>♭</span>Lessons</button><button data-v="goal"><span>♬</span>Goal</button><button data-v="share"><span>♫</span>Share</button>${mode==='local'?'<button data-v="teacher"><span>♯</span>Teacher</button>':''}`
+      ? `<button data-v="today"><span>♩</span>Today</button><button data-v="journey"><span>♪</span>Journey</button><button data-v="goal"><span>♬</span>Goal</button><button data-v="share"><span>♫</span>Share</button>${mode==='local'?'<button data-v="teacher"><span>♯</span>Teacher</button>':''}`
       : `<button data-v="teacher"><span>♯</span>Pupils</button><button data-v="group"><span>𝄞</span>Group</button>${mode==='local'?'<button data-v="today"><span>♩</span>Pupil view</button>':''}`;
-    $$('#tabs button').forEach(b=>b.onclick=()=>{ const v=b.dataset.v; if(v==='teacher') renderTeacher(); else if(v==='group') renderGroup(); else if(v==='today') renderToday(); else if(v==='journey') renderJourney(); else if(v==='lessons') renderLessons(); else if(v==='goal') renderGoal(); else if(v==='share') renderShare(); show(v); });
+    $$('#tabs button').forEach(b=>b.onclick=()=>{ const v=b.dataset.v; if(v==='teacher') renderTeacher(); else if(v==='group') renderGroup(); else if(v==='today') renderToday(); else if(v==='journey') renderJourney(); else if(v==='goal') renderGoal(); else if(v==='share') renderShare(); show(v); });
   }
   function renderAuth(){
     const el=$('#auth');
@@ -287,11 +286,6 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
     for(let k=ws.length-1;k>=0;k--){ const w=ws[k]; const d=(w.done||[]).slice().sort((a,b)=>a.i-b.i); if(k<ws.length-1 && d.length<w.sessions.length) { n+=d.length; break; } n+=d.length; }
     return n;
   }
-  // lessons: [{id, at:'YYYY-MM-DDTHH:MM', minutes, kind:'lesson'|'rehearsal', status:'booked'|'requested'|'cancelled', by:'teacher'|'pupil', note, seen}]
-  const lessons=()=>(doc().lessons=doc().lessons||[]);
-  const nowIso=()=>{ const d=new Date(); d.setSeconds(0,0); return new Date(d-d.getTimezoneOffset()*60000).toISOString().slice(0,16); };
-  const upcoming=(st)=>((st||doc()).lessons||[]).filter(l=>l.status==='booked'&&l.at>=nowIso()).sort((a,b)=>a.at.localeCompare(b.at));
-  const fmtAt=a=>{ if(!a) return ''; const [d,t]=a.split('T'); return fmt(d)+(t?' · '+t:''); };
   const extras=()=>(doc().extras=doc().extras||[]);
   const openExtras=()=>extras().filter(x=>!x.done);
   function tokensView(){ const t=doc().tokens||{earned:0,redeemed:0}; const avail=Math.max(0,(t.earned||0)-(t.redeemed||0)); return {avail, toNext: Math.max(0, 6-(avail%6||0))}; }
@@ -306,7 +300,6 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
         ${openExtras().length?`<div class="box c"><h3>From ${h(tn)}</h3>${openExtras().map(x=>`<div class="flag"><span>${h(x.text)}</span><button class="btn sm quiet" data-xdone="${x.id}">Done</button></div>`).join('')}</div>`:''}
         ${mode==='local'?'<div class="card"><h3>Trying it on your own?</h3><p>Open the <b>Teacher</b> tab, write a lesson note as if you were the teacher, and generate a week. Then come back here.</p></div>':''}`;
       $$('[data-xdone]').forEach(x=>x.onclick=()=>{ const e=extras().find(y=>y.id===x.dataset.xdone); if(e){ e.done=true; } saveCurrent(); renderToday(); });
-      const up0=upcoming()[0]; if(up0){ v.insertAdjacentHTML('beforeend',`<div class="card"><h3>Next ${h(up0.kind||'lesson')}</h3><div>${h(fmtAt(up0.at))}</div></div>`); }
       show('today'); return;
     }
     const i=nextIndex(w); const n=doneCount(w); const s=i>=0?w.sessions[i]:null;
@@ -323,7 +316,6 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
       ${lastDone?`<div class="card"><h3>Last time</h3><div>${h(fmt(lastDone.at.slice(0,10)))} · you said <b>${h(lastDone.feel||'')}</b>${w.line?`. ${h(w.line)}`:''}</div></div>`:(w.line?`<div class="card"><h3>From ${h(tn)}</h3><div class="quote" style="font-size:18px">"${h(w.line)}"</div></div>`:'')}`;
     const b=$('#start'); if(b) b.onclick=()=>startSession(i);
     $$('[data-xdone]').forEach(x=>x.onclick=()=>{ const e=extras().find(y=>y.id===x.dataset.xdone); if(e){ e.done=true; e.doneAt=new Date().toISOString(); } saveCurrent(); renderToday(); toast('Done. Nice.'); });
-    const up=upcoming()[0]; if(up){ v.insertAdjacentHTML('beforeend',`<div class="card"><h3>Next ${h(up.kind||'lesson')}</h3><div class="row" style="justify-content:space-between"><span>${h(fmtAt(up.at))}${up.minutes?' · '+h(up.minutes)+' min':''}</span><button class="btn sm quiet" id="toLessons">Change</button></div></div>`); $('#toLessons').onclick=()=>renderLessons(); }
     show('today');
   }
 
@@ -385,9 +377,9 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
         <div id="flags">${flags.filter(f=>!f.resolved).map(f=>`<div class="flag"><span>${h(f.text)}</span><button class="btn sm quiet" data-unflag="${f.id}" aria-label="Remove">×</button></div>`).join('')||'<div class="note" style="margin:0">Nothing flagged. Type it the moment it happens: a squeak, a question, a breakthrough.</div>'}</div>
         <form id="flagForm" class="row" style="margin-top:8px"><input id="flagText" placeholder="e.g. G string squeaks on down bows" style="flex:1"><button class="btn sm" type="submit">Flag it</button></form>
         <div class="note">${h(tn)} sees these before the lesson starts.</div></div>
-      <div class="card"><h3>Tokens</h3>
-        <div class="tokens">${Array.from({length:6},(_,k)=>`<i class="tok ${k<(tk.avail%6||(tk.avail>=6?6:0))?'on':''}"></i>`).join('')}<span class="note" style="margin:0 0 0 6px">${tk.avail} available${tk.avail>=6?' · ask '+h(tn)+' for your reward':' · '+tk.toNext+' to the next reward'}</span></div>
-        <div class="note">One token per session, two more for a full week. Six is a small reward your teacher, parent or school has put up. Earned for showing up, not for talent.</div></div>`;
+      <div class="card"><h3>${p.reward?'Six tokens: '+h(p.reward):'Tokens'}</h3>
+        <div class="tokens">${Array.from({length:6},(_,k)=>`<i class="tok ${k<(tk.avail%6||(tk.avail>=6?6:0))?'on':''}"></i>`).join('')}<span class="note" style="margin:0 0 0 6px">${tk.avail} available${tk.avail>=6?' · ask '+h(tn)+(p.reward?' for your '+h(p.reward):' for your reward'):' · '+tk.toNext+' to go'}</span></div>
+        <div class="note">One token per session, two more for a full week. ${p.reward?'At six, '+h(tn)+' has put up '+h(p.reward)+'.':'Six is a small reward your teacher, parent or school has put up.'} Earned for showing up, not for talent.</div></div>`;
     $$('#prep li[data-k]').forEach(li=>li.onclick=()=>{ w.ticks=w.ticks||[]; const k=+li.dataset.k; w.ticks=w.ticks.includes(k)?w.ticks.filter(x=>x!==k):[...w.ticks,k]; saveCurrent(); renderJourney(false); });
     $$('li[data-x]').forEach(li=>li.onclick=()=>{ const e=extras().find(y=>y.id===li.dataset.x); if(e) e.done=!e.done; saveCurrent(); renderJourney(false); });
     $('#flagForm').onsubmit=e=>{ e.preventDefault(); const t=$('#flagText').value.trim(); if(!t) return; doc().flags=doc().flags||[]; doc().flags.push({id:uid(), text:t, at:new Date().toISOString(), resolved:false}); saveCurrent(); renderJourney(false); toast('Flagged for the lesson.'); };
@@ -456,48 +448,6 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
     if(showIt!==false) show('goal');
   }
 
-  // ------------------------------------------------------------ lessons (book, move, cancel, request)
-  function renderLessons(showIt){
-    if(!current) return; const v=$('#v-lessons'); const tn=doc().teacherName||'your teacher'; const ls=lessons();
-    const up=ls.filter(l=>l.status==='booked'&&l.at>=nowIso()).sort((a,b)=>a.at.localeCompare(b.at));
-    const req=ls.filter(l=>l.status==='requested').sort((a,b)=>a.at.localeCompare(b.at));
-    const past=ls.filter(l=>l.status==='cancelled'||(l.status==='booked'&&l.at<nowIso())).sort((a,b)=>b.at.localeCompare(a.at)).slice(0,5);
-    const dflt=addDays(today(),7)+'T16:00';
-    v.innerHTML=`<div class="eyebrow">Lessons</div><h2 class="big">${up.length?'Next: '+h(fmtAt(up[0].at))+'.':'Nothing booked.'}</h2>
-      <div class="card"><h3>Coming up</h3>${up.map(l=>`<div class="flag"><span><b>${h(fmtAt(l.at))}</b> · ${h(l.kind||'lesson')}${l.minutes?' · '+h(l.minutes)+' min':''}${l.note?' · '+h(l.note):''}</span><button class="btn sm quiet" data-cancel="${l.id}">Can't make it</button></div>`).join('')||'<div class="note" style="margin:0">'+h(tn)+' books lessons here, and you can ask for one below.</div>'}</div>
-      ${req.length?`<div class="box c"><h3>Waiting for ${h(tn)}</h3>${req.map(l=>`<div class="flag"><span>${h(fmtAt(l.at))}${l.note?' · '+h(l.note):''}</span><button class="btn sm quiet" data-withdraw="${l.id}">Withdraw</button></div>`).join('')}</div>`:''}
-      <div class="card"><h3>Ask for a lesson</h3>
-        <div class="grid2"><div><label class="l" for="rqAt">When</label><input type="datetime-local" id="rqAt" value="${dflt}"></div><div><label class="l" for="rqNote">Anything to add</label><input id="rqNote" placeholder="e.g. before the concert, 30 minutes is fine"></div></div>
-        <button class="btn sm" id="rqSend" style="margin-top:10px">Send the request</button>
-        <div class="note">${h(tn)} confirms it and it appears above. Cancel a lesson here and ${h(tn)} is told straight away, with your reason.</div></div>
-      ${past.length?`<div class="card"><h3>Earlier</h3>${past.map(l=>`<div class="note" style="margin:4px 0">${h(fmtAt(l.at))} · ${l.status==='cancelled'?'cancelled'+(l.note?' ('+h(l.note)+')':''):'done'}</div>`).join('')}</div>`:''}`;
-    $$('[data-cancel]').forEach(b=>b.onclick=()=>{ const l=ls.find(x=>x.id===b.dataset.cancel); const why=prompt('Tell '+tn+' why, in a few words (optional):','')||''; if(why===null) return; l.status='cancelled'; l.by='pupil'; l.note=why.trim(); l.seen=false; l.cancelledAt=new Date().toISOString(); doc().flags=doc().flags||[]; doc().flags.push({id:uid(), text:'Cancelled the '+(l.kind||'lesson')+' on '+fmtAt(l.at)+(why?': '+why:''), at:new Date().toISOString(), resolved:false, kind:'lesson'}); saveCurrent(); renderLessons(false); toast(tn+' has been told.'); });
-    $$('[data-withdraw]').forEach(b=>b.onclick=()=>{ doc().lessons=ls.filter(x=>x.id!==b.dataset.withdraw); saveCurrent(); renderLessons(false); });
-    $('#rqSend').onclick=()=>{ const at=$('#rqAt').value; if(!at){ toast('Pick a time.'); return; } ls.push({id:uid(), at, minutes:30, kind:'lesson', status:'requested', by:'pupil', note:$('#rqNote').value.trim(), seen:false, createdAt:new Date().toISOString()}); saveCurrent(); renderLessons(false); toast('Sent to '+tn+'.'); };
-    if(showIt!==false) show('lessons');
-  }
-  function bookFor(st, at, minutes, kind, note){ st.data.lessons=st.data.lessons||[]; st.data.lessons.push({id:uid(), at, minutes:+minutes||30, kind:kind||'lesson', status:'booked', by:'teacher', note:note||'', seen:true, createdAt:new Date().toISOString()}); const w=st.data.weeks&&st.data.weeks.length?st.data.weeks[st.data.weeks.length-1]:null; if(w&&(!w.nextLesson||w.nextLesson<today())) w.nextLesson=at.slice(0,10); }
-  function lessonCardTeacher(st){ // teacher's lessons card for one pupil
-    const ls=st.data.lessons=st.data.lessons||[]; const up=ls.filter(l=>l.status==='booked'&&l.at>=nowIso()).sort((a,b)=>a.at.localeCompare(b.at)); const req=ls.filter(l=>l.status==='requested'); const canc=ls.filter(l=>l.status==='cancelled'&&!l.seen);
-    const dflt=(up[0]?addDays(up[0].at.slice(0,10),7)+'T'+up[0].at.slice(11,16):addDays(today(),7)+'T16:00');
-    return `<div class="card" id="lessonsCard"><h3>Lessons</h3>
-      ${canc.length?`<div class="box c" style="margin-bottom:10px"><b>Cancelled by the pupil:</b> ${canc.map(l=>`<div class="flag"><span>${h(fmtAt(l.at))}${l.note?' · "'+h(l.note)+'"':''}</span><button class="btn sm quiet" data-lseen="${l.id}">OK</button></div>`).join('')}</div>`:''}
-      ${req.length?`<div class="box b" style="margin-bottom:10px"><b>Requested:</b> ${req.map(l=>`<div class="flag"><span>${h(fmtAt(l.at))}${l.note?' · "'+h(l.note)+'"':''}</span><span><button class="btn sm" data-lok="${l.id}">Confirm</button> <button class="btn sm quiet" data-lno="${l.id}">Decline</button></span></div>`).join('')}</div>`:''}
-      ${up.map(l=>`<div class="flag"><span><b>${h(fmtAt(l.at))}</b> · ${h(l.kind||'lesson')} · ${h(l.minutes||30)} min${l.note?' · '+h(l.note):''}</span><button class="btn sm quiet" data-lcancel="${l.id}">Cancel</button></div>`).join('')||'<div class="note" style="margin:0 0 8px">No lesson booked.</div>'}
-      <div class="grid2"><div><label class="l" for="bkAt">Book a lesson</label><input type="datetime-local" id="bkAt" value="${dflt}"></div><div><label class="l" for="bkMin">Minutes</label><input type="number" id="bkMin" min="15" max="120" step="15" value="30"></div></div>
-      <div class="row" style="margin-top:10px"><button class="btn sm" id="bkOne">Book it</button><button class="btn sm quiet" id="bkWeekly">Book weekly for 6 weeks</button></div>
-      <div class="note">The pupil sees it on their Today screen and in Lessons. If they cancel, you are told here with their reason.</div></div>`;
-  }
-  function wireLessonCard(st, rerender){
-    const ls=st.data.lessons;
-    $$('[data-lseen]').forEach(b=>b.onclick=()=>{ const l=ls.find(x=>x.id===b.dataset.lseen); if(l) l.seen=true; saveCurrent(); rerender(); });
-    $$('[data-lok]').forEach(b=>b.onclick=()=>{ const l=ls.find(x=>x.id===b.dataset.lok); if(l){ l.status='booked'; l.seen=true; } saveCurrent(); rerender(); toast('Confirmed. They can see it.'); });
-    $$('[data-lno]').forEach(b=>b.onclick=()=>{ const l=ls.find(x=>x.id===b.dataset.lno); if(l){ l.status='cancelled'; l.by='teacher'; l.note='Not possible at that time'; } saveCurrent(); rerender(); });
-    $$('[data-lcancel]').forEach(b=>b.onclick=()=>{ if(!confirm('Cancel this lesson? The pupil will see it.')) return; const l=ls.find(x=>x.id===b.dataset.lcancel); if(l){ l.status='cancelled'; l.by='teacher'; l.seen=true; } saveCurrent(); rerender(); });
-    $('#bkOne').onclick=()=>{ const at=$('#bkAt').value; if(!at){ toast('Pick a time.'); return; } bookFor(st, at, $('#bkMin').value, 'lesson'); saveCurrent(); rerender(); toast('Booked.'); };
-    $('#bkWeekly').onclick=()=>{ const at=$('#bkAt').value; if(!at){ toast('Pick a time.'); return; } for(let k=0;k<6;k++) bookFor(st, addDays(at.slice(0,10),7*k)+'T'+at.slice(11,16), $('#bkMin').value, 'lesson'); saveCurrent(); rerender(); toast('Six lessons booked.'); };
-  }
-
   // ------------------------------------------------------------ dictation (browser first, server fallback)
   let rec=null, recChunks=[], recMime='audio/webm';
   function pickMime(){ const c=['audio/webm;codecs=opus','audio/webm','audio/mp4','audio/ogg;codecs=opus']; return (window.MediaRecorder&&c.find(m=>MediaRecorder.isTypeSupported(m)))||''; }
@@ -550,10 +500,8 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
     const v=$('#v-teacher');
     const list=students.map(s=>{ const d=s.data; const w=d.weeks&&d.weeks.length?d.weeks[d.weeks.length-1]:null; const flags=(d.flags||[]).filter(f=>!f.resolved).length;
       return `<div class="student" data-sid="${h(s.user_id)}"><div><div class="n">${h(d.profile?.name||'Pupil')}</div><div class="m">${h(d.profile?.instrument||'')} · ${h(d.profile?.level||'')}${d.profile?.minutes?` · ${d.profile.minutes} min a day`:''}${w?` · this week ${doneCount(w)}/${w.sessions.length}`:' · no week set'}${flags?` · <b>${flags} flagged</b>`:''}</div></div><span class="pill">open</span></div>`; }).join('');
-    const attn=[]; students.forEach(s=>{ const ls=s.data.lessons||[]; const nm=s.data.profile?.name||'Pupil'; ls.filter(l=>l.status==='requested').forEach(l=>attn.push(`<b>${h(nm)}</b> asked for a lesson on ${h(fmtAt(l.at))}`)); ls.filter(l=>l.status==='cancelled'&&!l.seen).forEach(l=>attn.push(`<b>${h(nm)}</b> cancelled ${h(fmtAt(l.at))}${l.note?': "'+h(l.note)+'"':''}`)); });
     v.innerHTML=`<div class="eyebrow">${h(me?.studio||'Your studio')}${me?.code?` · code <b>${h(me.code)}</b>`:''}</div><h2 class="big">${students.length?'Your pupils.':'No pupils yet.'}</h2>
-      ${attn.length?`<div class="box c"><h3>Needs you</h3>${attn.map(a=>`<div style="margin:4px 0">${a}</div>`).join('')}<div class="note">Open the pupil to confirm or reply.</div></div>`:''}
-      ${students.length>1?`<div class="box a" id="groupCard" style="cursor:pointer"><b>Whole group.</b> <span class="note" style="margin:0">Set one week for everyone, add a task to all, or book a rehearsal. For choirs, orchestras and ensembles. Tap to open.</span></div>`:''}
+      ${students.length>1?`<div class="box a" id="groupCard" style="cursor:pointer"><b>Whole group.</b> <span class="note" style="margin:0">Set one week for everyone, or add a task to all. For choirs, orchestras and ensembles. Tap to open.</span></div>`:''}
       ${me?.code?`<div class="box b"><b>Give pupils this code:</b> <span class="pill on" style="font-size:16px;letter-spacing:.2em">${h(me.code)}</span><div class="note">They sign in, choose "I'm a pupil", enter it, and they're in your studio.</div></div>`:''}
       ${mode==='cloud'?`<div class="box ${me?.voice_ready?'b':'c'}" id="voiceCard" style="cursor:pointer"><b>Your voice: ${me?.voice_ready?'recorded':'not recorded yet'}.</b> <span class="note" style="margin:0">${me?.voice_ready?'New weeks are spoken in it. Tap to re-record or remove.':'Record thirty seconds and pupils hear their sessions in your voice. Tap to set it up.'}</span></div>`:''}
       <div class="card">${list||'<div class="note" style="margin:0">Pupils appear here when they join with your code.</div>'}</div>`;
@@ -570,7 +518,7 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
       <div class="eyebrow" style="margin-top:10px">Pupil</div><h2 class="big">${h(p.name||'Pupil')}</h2>
       ${flags.filter(f=>!f.resolved).length?`<div class="box c"><h3>Flagged for the next lesson</h3>${flags.filter(f=>!f.resolved).map(f=>`<div class="flag"><span>${h(f.text)} <span class="note" style="margin:0">· ${h(fmt(f.at.slice(0,10)))}</span></span><button class="btn sm quiet" data-res="${f.id}">Done</button></div>`).join('')}</div>`:''}
       ${w?`<div class="card"><h3>This week</h3><div class="row"><span class="dots">${w.sessions.map((_,k)=>`<i class="dot ${(w.done||[]).some(x=>x.i===k)?'done':''}"></i>`).join('')}</span><span class="note" style="margin:0">${doneCount(w)} of ${w.sessions.length} done · ${(w.done||[]).map(x=>x.feel).filter(Boolean).join(', ')||'no feelings logged yet'} · next lesson ${h(fmt(w.nextLesson))}</span></div>
-        <div class="note">Tokens: ${(d.tokens?.earned||0)-(d.tokens?.redeemed||0)} available. ${((d.tokens?.earned||0)-(d.tokens?.redeemed||0))>=6?'<button class="btn sm" id="award">Mark reward given</button>':''}</div></div>`:''}
+        <div class="note">Tokens: ${(d.tokens?.earned||0)-(d.tokens?.redeemed||0)} available. ${((d.tokens?.earned||0)-(d.tokens?.redeemed||0))>=6?'<button class="btn sm" id="award">Mark reward given'+(p.reward?' ('+h(p.reward)+')':'')+'</button>':''}</div></div>`:''}
       <div class="card"><h3>Profile</h3>
         <div class="grid2">
           <div><label class="l" for="pInst">Instrument</label><input id="pInst" value="${h(p.instrument||'violin')}"></div>
@@ -579,15 +527,15 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
           <div><label class="l" for="pGoal">Goal</label><input id="pGoal" value="${h(p.goalLabel||'')}" placeholder="Grade 3 exam"></div>
           <div><label class="l" for="pGoalDate">Goal date (rough)</label><input type="date" id="pGoalDate" value="${h(p.goalDate||'')}"></div>
           <div><label class="l" for="pSpw">Sessions a week</label><input type="number" id="pSpw" min="2" max="5" value="${h(p.sessionsPerWeek||3)}"></div>
+          <div style="grid-column:1/-1"><label class="l" for="pReward">The reward at six tokens (a full week or two)</label><input id="pReward" value="${h(p.reward||'')}" placeholder="e.g. a hot chocolate after Thursday's lesson, a new set of strings, a sheet-music voucher"><div class="note" style="margin:4px 0 0">Named by you, a parent or the school. Small, occasional, from a real person. The pupil sees it on their Journey.</div></div>
           <div><label class="l" for="pMin">Minutes a day (you set this)</label><input type="number" id="pMin" min="10" max="120" step="5" value="${h(p.minutes||levelMinutes(p.level))}"><div class="note" style="margin:4px 0 0">Suggested for the level: ${levelMinutes(p.level)}. Change it and it sticks.</div></div>
         </div><button class="btn sm" id="pSave" style="margin-top:10px">Save profile</button></div>
-      ${lessonCardTeacher(current)}
       <div class="card"><h3>Add a task this week</h3>
         <div class="row"><input id="xText" placeholder="e.g. Listen to the Bach three times before Thursday" style="flex:1"><button type="button" class="btn quiet mic" data-dictate="xText">Dictate</button><button class="btn sm" id="xAdd">Add</button></div>
         ${(d.extras||[]).filter(x=>!x.done).length?`<div style="margin-top:8px">${(d.extras||[]).filter(x=>!x.done).map(x=>`<div class="flag"><span>${h(x.text)} <span class="note" style="margin:0">· ${h(fmt(x.at.slice(0,10)))}</span></span><button class="btn sm quiet" data-xrm="${x.id}">Remove</button></div>`).join('')}</div>`:''}
         <div class="note">Something you thought of after the lesson. It appears on ${h(p.name||'the pupil')}'s Today screen and in their checklist, without rewriting the week.</div></div>
       <div class="card"><h3>After today's lesson</h3>
-        <div class="grid2"><div><label class="l" for="nDate">Lesson date</label><input type="date" id="nDate" value="${today()}"></div><div><label class="l" for="nNext">Next lesson</label><input type="date" id="nNext" value="${(upcoming(current.data)[0]?upcoming(current.data)[0].at.slice(0,10):addDays(today(),7))}"></div></div>
+        <div class="grid2"><div><label class="l" for="nDate">Lesson date</label><input type="date" id="nDate" value="${today()}"></div><div><label class="l" for="nNext">Next lesson</label><input type="date" id="nNext" value="${addDays(today(),7)}"></div></div>
         <label class="l" for="nWorked">What we worked on <button type="button" class="btn quiet mic" data-dictate="nWorked">Dictate</button></label><textarea id="nWorked" placeholder="D major scale, bow contact point near the bridge, first phrase of Twinkle variation A. Tone is opening up; rushes the scale."></textarea>
         <label class="l" for="nNextL">For next lesson, one per line <button type="button" class="btn quiet mic" data-dictate="nNextL">Dictate</button></label><textarea id="nNextL" placeholder="Scale from memory, two octaves&#10;First phrase in tune&#10;Bow nearer the bridge on long notes"></textarea>
         <label class="l" for="nLine">One line for the week <button type="button" class="btn quiet mic" data-dictate="nLine">Dictate</button></label><input id="nLine" placeholder="Lovely tone today. Don't rush the scale.">
@@ -595,11 +543,10 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
         <div class="note">Thirty seconds here becomes ${h(p.sessionsPerWeek||3)} guided sessions, a checklist and a journey for ${h(p.name||'the pupil')}. You review before it goes to them.</div></div>
       <div id="previewBox"></div>`;
     $('#backT').onclick=()=>renderTeacher();
-    wireLessonCard(current, renderTStudent);
     $('#pLevel').onchange=()=>{ $('#pMin').value=levelMinutes($('#pLevel').value); };
     $('#xAdd').onclick=()=>{ const t=$('#xText').value.trim(); if(!t) return; d.extras=d.extras||[]; d.extras.push({id:uid(), text:t, at:new Date().toISOString(), done:false, by:me?.name||''}); saveCurrent(); renderTStudent(); toast('Added to their week.'); };
     $$('[data-xrm]').forEach(b=>b.onclick=()=>{ d.extras=(d.extras||[]).filter(x=>x.id!==b.dataset.xrm); saveCurrent(); renderTStudent(); });
-    $('#pSave').onclick=()=>{ p.instrument=$('#pInst').value.trim()||'violin'; p.part=$('#pPart').value.trim(); p.level=$('#pLevel').value||'beginner'; p.goalLabel=$('#pGoal').value.trim(); p.goalDate=$('#pGoalDate').value; p.sessionsPerWeek=+$('#pSpw').value||3; p.minutes=+$('#pMin').value||levelMinutes(p.level); saveCurrent(); toast('Profile saved.'); };
+    $('#pSave').onclick=()=>{ p.instrument=$('#pInst').value.trim()||'violin'; p.part=$('#pPart').value.trim(); p.level=$('#pLevel').value||'beginner'; p.goalLabel=$('#pGoal').value.trim(); p.goalDate=$('#pGoalDate').value; p.sessionsPerWeek=+$('#pSpw').value||3; p.minutes=+$('#pMin').value||levelMinutes(p.level); p.reward=$('#pReward').value.trim(); saveCurrent(); toast('Profile saved.'); };
     $$('[data-res]').forEach(b=>b.onclick=()=>{ const f=flags.find(x=>x.id===b.dataset.res); if(f) f.resolved=true; saveCurrent(); renderTStudent(); });
     const aw=$('#award'); if(aw) aw.onclick=()=>{ d.tokens=d.tokens||{earned:0,redeemed:0}; d.tokens.redeemed=(d.tokens.redeemed||0)+6; saveCurrent(); renderTStudent(); toast('Reward marked as given.'); };
     $('#gen').onclick=generateWeek;
@@ -659,7 +606,6 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
   function renderGroup(){
     const v=$('#v-group'); const parts=partsOf(); const gname=me?.studio||'the group';
     if(!students.length){ v.innerHTML=`<div class="eyebrow">Group</div><h2 class="big">Nobody here yet.</h2><div class="card">Give members your code${me?.code?' (<b>'+h(me.code)+'</b>)':''}. Once they have joined, one note here becomes a week for every one of them, each for their own part.</div>`; show('group'); return; }
-    const dflt=addDays(today(),7)+'T19:00';
     v.innerHTML=`<div class="eyebrow">${h(gname)} · ${students.length} members${parts.length?' · parts: '+h(parts.join(', ')):''}</div><h2 class="big">One note, everyone's week.</h2>
       <div class="card"><h3>Who this is for</h3><div class="row" id="gParts"><label class="switch"><input type="checkbox" value="*" checked> Everyone</label>${parts.map(p=>`<label class="switch"><input type="checkbox" value="${h(p)}"> ${h(p)}</label>`).join('')}</div>
         <div class="note">${parts.length?'Untick Everyone to pick parts. Members set their part in Goal; you can set it in their profile.':'No parts set yet. Members can set theirs under Goal, or you can in each profile, and then you can send work to one section at a time.'}</div></div>
@@ -673,17 +619,12 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
       <div id="gPreviewBox"></div>
       <div class="card"><h3>Add a task for everyone this week</h3>
         <div class="row"><input id="gxText" placeholder="e.g. Listen to the recording of movement 3 before Thursday" style="flex:1"><button class="btn sm" id="gxAdd">Add to all</button></div>
-        <div class="note">Goes onto every selected member's Today screen and checklist now, without touching their sessions.</div></div>
-      <div class="card"><h3>Book a rehearsal for everyone</h3>
-        <div class="grid2"><div><label class="l" for="gbAt">When</label><input type="datetime-local" id="gbAt" value="${dflt}"></div><div><label class="l" for="gbMin">Minutes</label><input type="number" id="gbMin" min="30" max="240" step="15" value="120"></div></div>
-        <div class="row" style="margin-top:10px"><button class="btn sm" id="gbOne">Book it</button><button class="btn sm quiet" id="gbWeekly">Weekly for 6 weeks</button></div>
-        <div class="note">Appears in every member's Lessons as a rehearsal. If someone can't make it, they tell you from there and it shows up under Needs you.</div></div>`;
+        <div class="note">Goes onto every selected member's Today screen and checklist now, without touching their sessions.</div></div>`;
+
     $$('#gParts input').forEach(cb=>cb.onchange=()=>{ if(cb.value==='*'&&cb.checked) $$('#gParts input').forEach(x=>{ if(x.value!=='*') x.checked=false; }); if(cb.value!=='*'&&cb.checked) $('#gParts input[value="*"]').checked=false; });
     $$('[data-dictate]').forEach(b=>b.onclick=()=>dictate(b.dataset.dictate,b));
     $('#ggen').onclick=generateGroupWeek;
     $('#gxAdd').onclick=async()=>{ const t=$('#gxText').value.trim(); if(!t) return; const tg=groupTargets(); for(const st of tg){ st.data.extras=st.data.extras||[]; st.data.extras.push({id:uid(), text:t, at:new Date().toISOString(), done:false, by:me?.name||'', group:true}); try{ await saveStudent(st); }catch(e){} } $('#gxText').value=''; toast('Added for '+tg.length+' members.'); };
-    const bookAll=async(weekly)=>{ const at=$('#gbAt').value; if(!at){ toast('Pick a time.'); return; } const tg=groupTargets(); for(const st of tg){ for(let k=0;k<(weekly?6:1);k++) bookFor(st, addDays(at.slice(0,10),7*k)+'T'+at.slice(11,16), $('#gbMin').value, 'rehearsal'); try{ await saveStudent(st); }catch(e){} } toast((weekly?'Six rehearsals':'Rehearsal')+' booked for '+tg.length+' members.'); };
-    $('#gbOne').onclick=()=>bookAll(false); $('#gbWeekly').onclick=()=>bookAll(true);
     if(gpreview) renderGroupPreview();
     show('group');
   }
@@ -717,15 +658,15 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
   // ------------------------------------------------------------ demo: see how it works, no account, nothing leaves the device
   function demoSeed(){
     const W=(title,intro,steps)=>({title,intro,steps:steps.map(([name,minutes,caption])=>({name,minutes,caption}))});
-    const emre={profile:{name:'Emre',instrument:'violin',part:'Second violin',level:'beginner',goalLabel:'Grade 1 exam',goalDate:addDays(today(),150),sessionsPerWeek:3,minutes:20,reminder:'push'},teacherName:'Melisande',notes:[],extras:[{id:uid(),text:'Listen to the Twinkle variations recording once before Thursday',at:new Date().toISOString(),done:false,by:'Melisande'}],lessons:[{id:uid(),at:addDays(today(),4)+'T16:30',minutes:30,kind:'lesson',status:'booked',by:'teacher',note:'',seen:true},{id:uid(),at:addDays(today(),11)+'T16:30',minutes:30,kind:'lesson',status:'booked',by:'teacher',note:'',seen:true},{id:uid(),at:addDays(today(),6)+'T19:00',minutes:120,kind:'rehearsal',status:'booked',by:'teacher',note:'Youth orchestra',seen:true}],flags:[{id:uid(),text:'G string squeaks on down bows',at:new Date().toISOString(),resolved:false},{id:uid(),text:'Got the third-finger F sharp in tune three times in a row',at:new Date().toISOString(),resolved:false}],tokens:{earned:4,redeemed:0},
+    const emre={profile:{name:'Emre',instrument:'violin',part:'Second violin',level:'beginner',goalLabel:'Grade 1 exam',goalDate:addDays(today(),150),sessionsPerWeek:3,minutes:20,reminder:'push',reward:'a hot chocolate after Thursday\'s lesson'},teacherName:'Melisande',notes:[],extras:[{id:uid(),text:'Listen to the Twinkle variations recording once before Thursday',at:new Date().toISOString(),done:false,by:'Melisande'}],flags:[{id:uid(),text:'G string squeaks on down bows',at:new Date().toISOString(),resolved:false},{id:uid(),text:'Got the third-finger F sharp in tune three times in a row',at:new Date().toISOString(),resolved:false}],tokens:{earned:4,redeemed:0},
       weeks:[{id:uid(),createdAt:addDays(today(),-3),lessonDate:addDays(today(),-3),nextLesson:addDays(today(),4),workedOn:'D major scale, bow contact point nearer the bridge, first phrase of Twinkle variation A. Rushes the scale.',line:"Lovely tone today. Don't rush the scale.",encouragement:'Three short sessions and the lesson takes care of itself.',
         sessions:[W('Slow and wide','Everything at half the speed you think it needs, especially the scale.',[['Warm-up',3,'Long slow bows on the open D. Listen for the note to bloom.'],['D major, one note per breath',5,'Full bow on each note and a long pause at the top. The rushing happens between the notes.'],['Twinkle, first phrase',5,'Three times, then stop before it gets messy.'],['Scale again, nearer the bridge',4,"Same scale, bow a finger's width closer to the bridge. Brighter, not louder."],['Wind down',1,'One last open D, as beautiful as you can. Stop there.']]),
           W('Contact point','The bridge end of the string is where today lives.',[['Warm-up',3,'Open strings, long bows, eyes on the contact point.'],['Scale from memory',5,'Music away. Say the note names aloud as you play.'],['Twinkle',5,'Phrase one, in tune, twice. If the F sharp is low, stop and find it.'],['Contact point drill',4,'Slide the bow toward the bridge until the sound brightens, then hold it there.'],['Wind down',1,'Stop.']]),
           W('As if it were the lesson','Short, tidy steps. Play each thing once, properly.',[['Warm-up',3,'Two long bows per string.'],['Scale, once',4,'One go only. Steady, not fast.'],['Twinkle, once',5,"As you'll play it for me on Tuesday."],['Checklist run',5,'Tick what you can show.'],['Wind down',1,'Done. Sleep on it.']])],
         checklist:['D major scale from memory','First phrase of Twinkle in tune, with a high F sharp','Bow nearer the bridge on long notes'],done:[{i:0,at:addDays(today(),-2)+'T18:00:00Z',feel:'Good'}],ticks:[0]}]};
-    const aisha={profile:{name:'Aisha',instrument:'cello',part:'Cello',level:'grade 3',goalLabel:'School concert',goalDate:addDays(today(),60),sessionsPerWeek:3,minutes:25,reminder:'email'},teacherName:'Melisande',notes:[],flags:[],extras:[],lessons:[{id:uid(),at:addDays(today(),1)+'T17:00',minutes:30,kind:'lesson',status:'booked',by:'teacher',note:'',seen:true},{id:uid(),at:addDays(today(),9)+'T17:30',minutes:30,kind:'lesson',status:'requested',by:'pupil',note:'Could we move to half past?',seen:false}],tokens:{earned:9,redeemed:6},
+    const aisha={profile:{name:'Aisha',instrument:'cello',part:'Cello',level:'grade 3',goalLabel:'School concert',goalDate:addDays(today(),60),sessionsPerWeek:3,minutes:25,reminder:'email'},teacherName:'Melisande',notes:[],flags:[],extras:[],tokens:{earned:9,redeemed:6},
       weeks:[{id:uid(),createdAt:addDays(today(),-6),lessonDate:addDays(today(),-6),nextLesson:addDays(today(),1),workedOn:'C major two octaves, thumb position, first page of the Squire.',line:'Keep the left hand soft.',encouragement:'Nearly there.',sessions:[W('Even bows','Same length of bow for every note.',[['Warm-up',3,'Open strings.'],['C major',6,'Two octaves, evenly.'],['Squire, page one',7,'Without stopping.'],['Scale, faster',3,'One notch up.'],['Wind down',1,'Stop.']]),W('Thumb','Find the thumb position in one movement.',[['Warm-up',3,'Open strings.'],['Thumb position',6,'A string, thumb soft.'],['Squire',7,'Page one.'],['Scale',3,'From memory.'],['Wind down',1,'Stop.']]),W('Run-through','Once through, as on the day.',[['Warm-up',3,'Open strings.'],['Squire, whole page',10,'No stopping.'],['Trouble spots',6,'Only the bars that went wrong.'],['Wind down',1,'Stop.']])],checklist:['C major with even bowing','Page one without stopping'],done:[{i:0,at:addDays(today(),-5)+'T17:00:00Z',feel:'OK'},{i:1,at:addDays(today(),-3)+'T17:00:00Z',feel:'Good'},{i:2,at:addDays(today(),-1)+'T17:00:00Z',feel:'Good'}],ticks:[0,1]}]};
-    const tom={profile:{name:'Tom',instrument:'violin',part:'First violin',level:'returning',goalLabel:'',goalDate:'',sessionsPerWeek:2,minutes:25},teacherName:'Melisande',notes:[],flags:[],extras:[],lessons:[],tokens:{earned:0,redeemed:0},weeks:[]};
+    const tom={profile:{name:'Tom',instrument:'violin',part:'First violin',level:'returning',goalLabel:'',goalDate:'',sessionsPerWeek:2,minutes:25},teacherName:'Melisande',notes:[],flags:[],extras:[],tokens:{earned:0,redeemed:0},weeks:[]};
     return [{user_id:'demo-emre',data:emre},{user_id:'demo-aisha',data:aisha},{user_id:'demo-tom',data:tom}];
   }
   let demoRole='pupil';
@@ -799,7 +740,7 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
   // deep link into the demo: ?demo=pupil|teacher|group|lessons|journey|goal|share (nothing is saved)
   (function(){ const q=new URLSearchParams(location.search).get('demo'); if(!q) return; enterDemo();
     const v=q.toLowerCase(); const wait=ms=>new Promise(r=>setTimeout(r,ms));
-    wait(50).then(()=>{ if(v==='teacher'){ setDemoRole('teacher'); } else if(v==='group'){ setDemoRole('teacher'); renderGroup(); } else if(v==='share'){ setDemoRole('share'); } else { setDemoRole('pupil'); if(v==='lessons') renderLessons(); else if(v==='journey') renderJourney(); else if(v==='goal') renderGoal(); } }); })();
+    wait(50).then(()=>{ if(v==='teacher'){ setDemoRole('teacher'); } else if(v==='group'){ setDemoRole('teacher'); renderGroup(); } else if(v==='share'){ setDemoRole('share'); } else { setDemoRole('pupil'); if(v==='journey') renderJourney(); else if(v==='goal') renderGoal(); } }); })();
 })();
 </script>
 </body>
