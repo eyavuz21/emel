@@ -23,6 +23,9 @@ Melodigo has two sides. The **teacher** writes a thirty-second note after each l
 - **A session every day.** Seven daily sessions by default (the teacher can set three to seven), one lighter day in the middle. The week is drawn as notes on a stave: filled notes are days done, the amber ring is today
 - **Tick what you worked on.** Every week comes with a work list (scale, passage, technique, piece). After each session, or after practising without the timer ("I practised on my own"), the pupil ticks what they did and can add their own. The teacher's pupil page shows **worked on most this week**, and last week's tally goes into the planner so neglected items get their turn
 - **The interface, redone for a nine-year-old and a teacher of any age.** One bold sans typeface throughout, black and white like the keys of a piano, every fact in its own box or chip (date, day 3 of 7, minutes set by the teacher), the teacher's line as a speech bubble, bigger buttons and labels, nothing crammed
+- **Today, in order.** The week on the stave, last time, today's session, the teacher's line for the week, the two buttons (start the guided session, or "I practised on my own"), news from the teacher, then the streak and how many points to the reward. Everything in the same size except the two buttons
+- **The teacher's home in two columns.** Left: the code to give pupils, then the pupils. Right: the whole-group box, then the studio, choirs and groups. Flags on a pupil's page are in red
+- **The parent card** is three boxes: the dates, the pupil's week (days done, minutes practised, points earned), and the teacher's feedback from the last lesson with "For next lesson" underneath
 
 ## What's in v0.4 (15 September 2026)
 
