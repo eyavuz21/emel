@@ -1,8 +1,8 @@
-<p align="center"><img src="logo.svg" alt="Melodigo. Moving towards your goal." width="420"></p>
+<p align="center"><img src="logo.svg" alt="Melodigo. One note closer." width="420"></p>
 
 # Melodigo
 
-**Moving towards your goal.** Couch to 5K for practising an instrument, on your own with a teacher or as part of a choir or orchestra. Your teacher sets the week in thirty seconds; Melodigo gets you to Thursday.
+**One note closer.** Couch to 5K for practising an instrument, on your own with a teacher or as part of a choir or orchestra. Your teacher sets the week in thirty seconds; Melodigo gets you to practise every day.
 
 **Live:** https://melodigo.vercel.app
 
@@ -10,13 +10,20 @@
 
 Every practice app is one of two things: it listens to you play and scores the notes (Yousician, Simply Piano, Trala), or it's a diary where you log your minutes (Tonara, Modacity). Both leave you alone on the part that matters, which is turning up three times a week when nobody is making you. Couch to 5K never measured anyone's running; it had a calm voice, a structure, and a reason to go out on Thursday. Nobody had done that for practising an instrument.
 
-Melodigo has two sides. The **teacher** writes a thirty-second note after each lesson (what we worked on, what to prepare, one line for the week); Melodigo turns it into that pupil's week: three guided sessions with step-by-step captions in the teacher's voice, a checklist for the next lesson, and a journey to get there. The **pupil** runs the sessions with a timer, flags questions and breakthroughs while they're fresh, ticks the checklist, and keeps a streak that forgives a missed day. Both set a goal date, an exam or a performance, and the road re-plans to it. A **conductor** does the same for a whole choir or orchestra: one rehearsal note becomes a week for every member, each for their own part.
+Melodigo has two sides. The **teacher** writes a thirty-second note after each lesson (what we worked on, what to prepare, one line for the week) and sets how many minutes a day; Melodigo turns it into that pupil's week: one short guided session for every day, with step-by-step captions in the teacher's voice, a work list, and a checklist for the next lesson. The **pupil** runs each day's session (or practises on their own and just ticks), then ticks what they worked on from the work list, flags questions and breakthroughs while they're fresh, and keeps a streak that forgives a missed day. Before the next lesson the teacher sees what was worked on most, and the next week is planned around it. A **conductor** does the same for a whole choir or orchestra: one rehearsal note becomes a week for every member, each for their own part.
 
 ## What's in v0.3 (14 September 2026)
 
 - **Group mode for choirs and orchestras:** a studio can be an ensemble. Members set their part (alto, second violin); the conductor opens the Group tab, picks everyone or particular parts, writes one rehearsal note, reviews one preview, and publishes a week to every member. The sessions are written for "your part": notes and rhythms slowly, entries counted, words from memory, listening with the score. The conductor's cloned voice is synthesised once and shared. Add a task to everyone, and book a rehearsal for everyone, from the same screen
 - **Tasks during the week:** a teacher who thinks of something on Wednesday adds it to a pupil's week without rewriting it. It appears on the pupil's Today screen under "New from [teacher]" and in their Journey checklist; the pupil ticks it off
 - New name, new mark: Melodigo, with a quaver whose flag is the finish flag as the i
+
+## What's in v0.5 (15 September 2026, evening)
+
+- **A session every day.** Seven daily sessions by default (the teacher can set three to seven), one lighter day in the middle. The week is drawn as notes on a stave: filled notes are days done, the amber ring is today
+- **Tick what you worked on.** Every week comes with a work list (scale, passage, technique, piece). After each session, or after practising without the timer ("I practised on my own"), the pupil ticks what they did and can add their own. The teacher's pupil page shows **worked on most this week**, and last week's tally goes into the planner so neglected items get their turn
+- **The interface, redone for a nine-year-old and a teacher of any age.** One bold sans typeface throughout, black and white like the keys of a piano, every fact in its own box or chip (date, day 3 of 7, minutes set by the teacher), the teacher's line as a speech bubble, bigger buttons and labels, nothing crammed
+- Lesson booking removed (not needed)
 
 ## What's in v0.4 (15 September 2026)
 
@@ -45,8 +52,8 @@ Two kinds of account: teacher and pupil. There is no parent login. A young pupil
 
 ## Stack
 
-- `index.html`: the whole app, no build step, two Google Fonts
-- `api/plan.js`: a Vercel function. Takes the teacher's note and the pupil's profile (or a conductor's rehearsal note and the parts it is for), calls Claude (`claude-opus-5`, structured JSON output, effort `medium`, server-side refusal fallbacks) and returns the week: sessions with steps, minutes and captions, a checklist, one line of encouragement
+- `index.html`: the whole app, no build step, one Google Font (Plus Jakarta Sans)
+- `api/plan.js`: a Vercel function. Takes the teacher's note, the pupil's profile and last week's tally (or a conductor's rehearsal note and the parts it is for), calls Claude (`claude-opus-5`, structured JSON output, effort `medium`, server-side refusal fallbacks) and returns the week: one session per day with steps, minutes and captions, a work list, a checklist, one line of encouragement
 - `api/voice.js`: creates the teacher's cloned voice from the recorded sample (ElevenLabs), or deletes it. Teacher only, verified server-side against Supabase
 - `api/speak.js`: turns one caption into audio in the studio's voice and stores it in the `sostenuto-audio` bucket under the studio's folder, using the teacher's own session so storage policies apply
 - `api/transcribe.js`: spoken notes to text (ElevenLabs Scribe) for browsers without built-in dictation
@@ -86,7 +93,7 @@ Open `index.html` in a browser and choose "Try it on this device". Accounts and 
 
 ## The name
 
-*Melodigo*: *melodi*, the Turkish word for melody, and *go*. The mark is the letter i drawn as a quaver whose flag is a chequered finish flag: a note with somewhere to get to. Previously Melodigo, Mosso, Sostenuto and Rosin, in that order.
+*Melodigo*: *melodi*, the Turkish word for melody, and *go*. The mark is the letter i drawn as a quaver whose flag is a chequered finish flag: a note with somewhere to get to. Black and white, like a piano, like the flag, like the page. The line under it: *One note closer.* Previously Melodigo, Mosso, Sostenuto and Rosin, in that order.
 
 ## Founders
 

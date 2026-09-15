@@ -4,29 +4,29 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Melodigo</title>
-<meta name="description" content="Moving towards your goal. Couch to 5K for practising an instrument, in a choir or in an orchestra. Your teacher sets the week; Melodigo gets you to Thursday.">
-<link rel="icon" type="image/svg+xml" href="icon-tile.svg"><link rel="apple-touch-icon" href="icon-192.png"><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#C8792A">
+<meta name="description" content="One note closer. Couch to 5K for practising an instrument, in a choir or in an orchestra. Your teacher sets the week; Melodigo gets you to practise every day.">
+<link rel="icon" type="image/svg+xml" href="icon-tile.svg"><link rel="apple-touch-icon" href="icon-192.png"><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#111111">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap">
 <style>
 :root{
-  --paper:#F7F3EA; --stave:#E6DECB; --card:#FFFDF8; --ink:#1E1A16; --muted:#6F6659; --line:#DED5C2;
-  --amber:#C8792A; --amber-ink:#FFF7EA; --varnish:#5A2A1E; --sage:#5E7F63; --gold:#B8892E; --danger:#A8412E;
-  --tintA:#EFE6D3; --tintB:#E4EAE0; --tintC:#F3E3D3; --shadow:0 12px 30px rgba(60,40,20,.12);
+  --paper:#FFFFFF; --stave:#E9E9E9; --card:#FFFFFF; --ink:#111111; --muted:#666666; --line:#DEDEDE;
+  --amber:#111111; --amber-ink:#FFFFFF; --varnish:#111111; --sage:#444444; --gold:#111111; --danger:#B00020;
+  --tintA:#F4F4F4; --tintB:#F7F7F7; --tintC:#EFEFEF; --shadow:0 12px 30px rgba(0,0,0,.08);
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --paper:#1B1714; --stave:#2A241F; --card:#241E1A; --ink:#F3ECE0; --muted:#B4A996; --line:#3A322B;
-    --amber:#E08A3A; --amber-ink:#1B1714; --varnish:#E9B58F; --sage:#8DB58F; --gold:#D9A94A; --danger:#E0745F;
-    --tintA:#2A241C; --tintB:#212A22; --tintC:#2E2320; --shadow:0 12px 30px rgba(0,0,0,.45);
+    --paper:#111111; --stave:#262626; --card:#1A1A1A; --ink:#FFFFFF; --muted:#A3A3A3; --line:#333333;
+    --amber:#FFFFFF; --amber-ink:#111111; --varnish:#FFFFFF; --sage:#CCCCCC; --gold:#FFFFFF; --danger:#FF6B6B;
+    --tintA:#1F1F1F; --tintB:#1C1C1C; --tintC:#242424; --shadow:0 12px 30px rgba(0,0,0,.5);
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"]{
-  --paper:#1B1714; --stave:#2A241F; --card:#241E1A; --ink:#F3ECE0; --muted:#B4A996; --line:#3A322B;
-  --amber:#E08A3A; --amber-ink:#1B1714; --varnish:#E9B58F; --sage:#8DB58F; --gold:#D9A94A; --danger:#E0745F;
-  --tintA:#2A241C; --tintB:#212A22; --tintC:#2E2320; --shadow:0 12px 30px rgba(0,0,0,.45);
+  --paper:#111111; --stave:#262626; --card:#1A1A1A; --ink:#FFFFFF; --muted:#A3A3A3; --line:#333333;
+  --amber:#FFFFFF; --amber-ink:#111111; --varnish:#FFFFFF; --sage:#CCCCCC; --gold:#FFFFFF; --danger:#FF6B6B;
+  --tintA:#1F1F1F; --tintB:#1C1C1C; --tintC:#242424; --shadow:0 12px 30px rgba(0,0,0,.5);
   color-scheme: dark;
 }
 *{box-sizing:border-box}
@@ -46,7 +46,7 @@ header.top{display:flex; align-items:center; justify-content:space-between; gap:
 .auth{display:flex; gap:8px; align-items:center; flex-wrap:wrap; font-size:13px; color:var(--muted)}
 .btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; border:none; border-radius:999px; padding:14px 22px; font-weight:700; background:var(--amber); color:var(--amber-ink); font-size:16px}
 .btn.block{width:100%; padding:18px 22px; font-size:19px}
-.btn.quiet{background:var(--card); color:var(--ink); border:1px solid var(--line)}
+.btn.quiet{background:var(--card); color:var(--ink); border:2px solid var(--ink)}
 .btn.sm{padding:10px 14px; font-size:14.5px}
 .btn.danger{background:transparent; color:var(--danger); border:1px solid var(--line)}
 .btn[disabled]{opacity:.5; cursor:not-allowed}
@@ -127,7 +127,7 @@ dialog::backdrop{background:rgba(30,26,22,.5)} dialog .in{padding:22px} dialog h
 .demo-bar{position:sticky; top:0; z-index:6; background:var(--varnish); color:var(--paper); padding:8px 12px; border-radius:12px; margin-bottom:12px; display:flex; gap:8px; align-items:center; flex-wrap:wrap; font-size:13.5px}
 .demo-bar .seg{display:inline-flex; border-radius:999px; overflow:hidden; border:1px solid rgba(255,255,255,.25)}
 .demo-bar .seg button{background:transparent; color:var(--paper); border:none; padding:6px 12px; font-weight:600; font-size:13px}
-.demo-bar .seg button.on{background:var(--amber); color:var(--amber-ink)}
+.demo-bar .seg button.on{background:var(--paper); color:var(--ink)}
 .demo-bar .x{margin-left:auto; background:transparent; border:1px solid rgba(255,255,255,.35); color:var(--paper); border-radius:999px; padding:5px 10px; font-size:12.5px}
 canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid var(--line); display:block; margin:10px auto}
 @media (prefers-reduced-motion: reduce){ .rec .blink{animation:none} }
@@ -138,7 +138,7 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
 <div class="wrap">
   <div id="demoBar" hidden></div>
   <header class="top">
-    <div class="brand"><h1><img src="wordmark.svg" alt="Melodigo" style="height:40px;display:block"></h1><small>Moving towards your goal.</small></div>
+    <div class="brand"><h1><img src="wordmark.svg" alt="Melodigo" style="height:40px;display:block"></h1><small>One note closer.</small></div>
     <div class="auth" id="auth"></div>
   </header>
 
@@ -425,17 +425,17 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
     const ctx=c.getContext('2d'); const W=c.width, H=c.height; const p=doc().profile; const w=week(); const tn=doc().teacherName||'your teacher';
     const n=w?doneCount(w):0, tot=w?w.sessions.length:3; const mins=w?(w.done||[]).reduce((a,d)=>a+(w.sessions[d.i]?w.sessions[d.i].steps.reduce((x,y)=>x+(+y.minutes||0),0):0),0):0;
     const wrap=(t,x,y,mw,lh,font,col)=>{ ctx.font=font; ctx.fillStyle=col; const words=String(t).split(' '); let line='', yy=y; for(const wd of words){ const test=line?line+' '+wd:wd; if(ctx.measureText(test).width>mw&&line){ ctx.fillText(line,x,yy); line=wd; yy+=lh; } else line=test; } if(line) ctx.fillText(line,x,yy); return yy+lh; };
-    ctx.fillStyle='#F7F3EA'; ctx.fillRect(0,0,W,H);
-    ctx.strokeStyle='#E6DECB'; ctx.lineWidth=2; for(let y=60;y<H;y+=42){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
-    ctx.fillStyle='#5A2A1E'; ctx.font='800 34px "Plus Jakarta Sans", system-ui, sans-serif'; ctx.fillText('Melodigo.',60,90);
-    ctx.fillStyle='#6F6659'; ctx.font='600 20px "Plus Jakarta Sans", system-ui, sans-serif'; ctx.fillText((p.name||'My')+"'s week"+(w?' · from '+fmt(w.lessonDate||w.createdAt):''),60,130);
-    ctx.fillStyle='#5A2A1E'; ctx.font='400 74px "Plus Jakarta Sans", system-ui, sans-serif'; ctx.fillText(w&&n===tot?'Week complete.':(n+' of '+tot+' done.'),60,230);
+    ctx.fillStyle='#FFFFFF'; ctx.fillRect(0,0,W,H);
+    ctx.strokeStyle='#E9E9E9'; ctx.lineWidth=2; for(let y=60;y<H;y+=42){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+    ctx.fillStyle='#111111'; ctx.font='800 34px "Plus Jakarta Sans", system-ui, sans-serif'; ctx.fillText('Melodigo.',60,90);
+    ctx.fillStyle='#666666'; ctx.font='600 20px "Plus Jakarta Sans", system-ui, sans-serif'; ctx.fillText((p.name||'My')+"'s week"+(w?' · from '+fmt(w.lessonDate||w.createdAt):''),60,130);
+    ctx.fillStyle='#111111'; ctx.font='400 74px "Plus Jakarta Sans", system-ui, sans-serif'; ctx.fillText(w&&n===tot?'Week complete.':(n+' of '+tot+' done.'),60,230);
     const stats=[[String(n)+'/'+tot,'sessions'],[String(mins),'minutes'],[String(streak()),'streak']];
-    stats.forEach((st,i)=>{ const x=60+i*250; ctx.fillStyle='#FFFDF8'; ctx.strokeStyle='#DED5C2'; ctx.lineWidth=2; ctx.beginPath(); ctx.roundRect(x,270,220,150,22); ctx.fill(); ctx.stroke(); ctx.fillStyle='#C8792A'; ctx.font='400 66px "Plus Jakarta Sans", system-ui, sans-serif'; ctx.fillText(st[0],x+24,350); ctx.fillStyle='#6F6659'; ctx.font='600 20px "Plus Jakarta Sans", system-ui, sans-serif'; ctx.fillText(st[1],x+24,392); });
+    stats.forEach((st,i)=>{ const x=60+i*250; ctx.fillStyle='#FFFFFF'; ctx.strokeStyle='#DEDEDE'; ctx.lineWidth=2; ctx.beginPath(); ctx.roundRect(x,270,220,150,22); ctx.fill(); ctx.stroke(); ctx.fillStyle='#111111'; ctx.font='400 66px "Plus Jakarta Sans", system-ui, sans-serif'; ctx.fillText(st[0],x+24,350); ctx.fillStyle='#666666'; ctx.font='600 20px "Plus Jakarta Sans", system-ui, sans-serif'; ctx.fillText(st[1],x+24,392); });
     let y=480;
-    if(w&&w.checklist&&w.checklist.length){ ctx.fillStyle='#6F6659'; ctx.font='600 18px "Plus Jakarta Sans", system-ui, sans-serif'; ctx.fillText('READY FOR THE LESSON',60,y); y+=36; for(let k=0;k<w.checklist.length&&k<4;k++){ const on=(w.ticks||[]).includes(k); ctx.fillStyle=on?'#C8792A':'#FFFDF8'; ctx.strokeStyle=on?'#C8792A':'#DED5C2'; ctx.beginPath(); ctx.roundRect(60,y-22,26,26,6); ctx.fill(); ctx.stroke(); y=wrap(w.checklist[k],100,y,680,30,'500 24px "Plus Jakarta Sans", system-ui, sans-serif',on?'#6F6659':'#1E1A16')+6; } y+=10; }
-    if(w&&(w.line||w.encouragement)){ y=wrap('"'+(w.line||w.encouragement)+'"',60,y+20,720,40,'italic 400 32px "Plus Jakarta Sans", system-ui, sans-serif','#1E1A16'); ctx.fillStyle='#6F6659'; ctx.font='600 20px "Plus Jakarta Sans", system-ui, sans-serif'; ctx.fillText(tn,60,y+4); }
-    ctx.fillStyle='#6F6659'; ctx.font='500 18px "Plus Jakarta Sans", system-ui, sans-serif'; ctx.fillText('Three short sessions between lessons. Shared by the pupil.',60,H-50);
+    if(w&&w.checklist&&w.checklist.length){ ctx.fillStyle='#666666'; ctx.font='600 18px "Plus Jakarta Sans", system-ui, sans-serif'; ctx.fillText('READY FOR THE LESSON',60,y); y+=36; for(let k=0;k<w.checklist.length&&k<4;k++){ const on=(w.ticks||[]).includes(k); ctx.fillStyle=on?'#111111':'#FFFFFF'; ctx.strokeStyle=on?'#111111':'#DEDEDE'; ctx.beginPath(); ctx.roundRect(60,y-22,26,26,6); ctx.fill(); ctx.stroke(); y=wrap(w.checklist[k],100,y,680,30,'500 24px "Plus Jakarta Sans", system-ui, sans-serif',on?'#666666':'#111111')+6; } y+=10; }
+    if(w&&(w.line||w.encouragement)){ y=wrap('"'+(w.line||w.encouragement)+'"',60,y+20,720,40,'italic 400 32px "Plus Jakarta Sans", system-ui, sans-serif','#111111'); ctx.fillStyle='#666666'; ctx.font='600 20px "Plus Jakarta Sans", system-ui, sans-serif'; ctx.fillText(tn,60,y+4); }
+    ctx.fillStyle='#666666'; ctx.font='500 18px "Plus Jakarta Sans", system-ui, sans-serif'; ctx.fillText('Three short sessions between lessons. Shared by the pupil.',60,H-50);
   }
 
   // ------------------------------------------------------------ goal
