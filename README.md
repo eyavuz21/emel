@@ -92,7 +92,7 @@ Open `index.html` in a browser and choose "Try it on this device". Accounts and 
 
 ## The name
 
-*Melodigo*: *melodi*, the Turkish word for melody, and *go*. The mark is the letter i drawn as a quaver whose flag is a chequered finish flag: a note with somewhere to get to. Black and white, like a piano, like the flag, like the page. The line under it: *One note closer.* Previously Melodigo, Mosso, Sostenuto and Rosin, in that order.
+*Melodigo*: *melodi*, the Turkish word for melody, and *go*. The mark is the letter i drawn as a quaver whose flag is a chequered finish flag: a note with somewhere to get to. Black and white, like a piano, like the flag, like the page. The line under it: *One note closer.*
 
 ## Founders
 
