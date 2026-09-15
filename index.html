@@ -347,13 +347,13 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
     const lastDone=(w.done||[]).slice(-1)[0]; const mins=p.minutes||levelMinutes(p.level);
     v.innerHTML=`
       <div class="chips"><span class="chip">${h(fmt(today()))}</span><span class="chip">Day <b>${Math.min(n+1,w.sessions.length)} of ${w.sessions.length}</b></span><span class="chip">${h(mins)} min <b>set by ${h(tn)}</b></span>${p.goalDate?`<span class="chip">${h(p.goalLabel||'Goal')} <b>${weeksBetween(today(),p.goalDate)} weeks</b></span>`:''}${w.group?`<span class="chip">${h(w.group.name||'Group')} week${p.part?' · '+h(p.part):''}</span>`:''}</div>
-      <div class="card"><div class="label">This week</div>${staveWeek(w)}${openExtras().length?`<div class="label" style="margin-top:12px">News from ${h(tn)}</div>${openExtras().map(x=>`<div class="flag"><span>${h(x.text)} <span class="note" style="margin:0">· ${h(fmt(x.at.slice(0,10)))}</span></span><button class="btn sm quiet" data-xdone="${x.id}">Done</button></div>`).join('')}`:''}</div>
+      <div class="card"><div class="label">This week</div>${staveWeek(w)}${openExtras().length?`<div class="label" style="margin-top:12px">News from ${h(tn)}</div>${openExtras().map(x=>`<div class="flag" style="font-weight:500"><span>${h(x.text)} (${h(fmt(x.at.slice(0,10)))})</span><button class="btn sm quiet" data-xdone="${x.id}">Done</button></div>`).join('')}`:''}</div>
       <div class="box says"><div class="label">${h(tn)} says, for this week</div><div class="quote">${h(w.line||w.encouragement||'Turn up every day and the lesson takes care of itself.')}</div></div>
-      ${lastDone?`<div class="card"><div class="label">Last time</div><p>${h(fmt(lastDone.at.slice(0,10)))} · you said it felt <b>${h(lastDone.feel||'')}</b>${(lastDone.worked||[]).length?` · you worked on <b>${h(lastDone.worked.join(', '))}</b>`:''}</p></div>`:''}
-      <div class="card"><div class="label">Today's session</div><div class="quote">${s?h(s.title):'Week complete'}</div>${s?`<p style="margin-top:6px">${h(s.intro)}</p><p class="muted">${h(s.steps.map(x=>x.name).join(' · '))}</p>`:`<p>All ${w.sessions.length} days done. Next lesson ${h(fmt(w.nextLesson))}.</p>`}</div>
+      ${lastDone?`<div class="card"><div class="label">Last time</div><p>${h(fmt(lastDone.at.slice(0,10)))}. It felt ${h((lastDone.feel||'').toLowerCase())}${(lastDone.worked||[]).length?`. You worked on ${h(lastDone.worked.join(', '))}`:''}.</p></div>`:''}
+      <div class="card"><div class="label">Today's session</div><p><b>${s?h(s.title):'Week complete'}</b>${s?'. '+h(s.intro):''}</p>${s?`<p>${h(s.steps.map(x=>x.name).join(' · '))}</p>`:`<p>All ${w.sessions.length} days done. Next lesson ${h(fmt(w.nextLesson))}.</p>`}</div>
       ${s?`<button class="btn block" id="start">Start the guided session · ${s.steps.reduce((a,x)=>a+(+x.minutes||0),0)} min</button><button class="btn block quiet" id="tickOnly" style="margin-top:10px">I practised on my own: tick what I did</button>`:''}
-      <div class="card" style="margin-top:14px"><div class="streak"><span class="n">${streak()}</span><span class="quote">${streak()===1?'day':'days'} in a row</span></div>
-        <div class="quote" style="margin-top:10px">${tokensView().toNext} more to go to ${p.reward?h(p.reward):'your reward'}</div></div>`;
+      <div class="card" style="margin-top:14px"><div class="streak"><span class="n">${streak()}</span><span>${streak()===1?'day':'days'} in a row</span></div>
+        <p style="margin-top:6px">${tokensView().toNext} more for ${p.reward?h(p.reward):'your reward'}.</p></div>`;
     const to=$('#tickOnly'); if(to) to.onclick=()=>{ si=i; sess=w.sessions[i]; finish(true); };
     const b=$('#start'); if(b) b.onclick=()=>startSession(i);
     $$('[data-xdone]').forEach(x=>x.onclick=()=>{ const e=extras().find(y=>y.id===x.dataset.xdone); if(e){ e.done=true; e.doneAt=new Date().toISOString(); } saveCurrent(); renderToday(); toast('Done. Nice.'); });
@@ -578,7 +578,7 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
     v.innerHTML=`<h2 class="big">${students.length?'Your pupils.':'No pupils yet.'}</h2>
       <div class="grid2" style="align-items:start">
         <div>
-          ${me?.code?`<div class="box b"><div class="label">Code to give pupils</div><div class="quote" style="letter-spacing:.2em">${h(me.code)}</div><div class="note">They sign in, choose "I'm a pupil", enter it, and they're in your studio.</div></div>`:''}
+          ${me?.code?`<div class="card"><div class="label">Code to give pupils</div><div class="quote" style="letter-spacing:.2em">${h(me.code)}</div><div class="note">They sign in, choose "I'm a pupil", enter it, and they're in your studio.</div></div>`:''}
           <div class="card"><div class="label">Pupils</div>${list||'<div class="note" style="margin:0">Pupils appear here when they join with your code.</div>'}</div>
         </div>
         <div>
