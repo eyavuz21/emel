@@ -96,6 +96,9 @@ header.top{display:flex; align-items:center; justify-content:space-between; gap:
 .check li{display:flex; gap:10px; align-items:flex-start; padding:6px 0; cursor:pointer}
 .check li i{width:18px; height:18px; border-radius:5px; border:1.5px solid var(--line); flex:none; margin-top:3px; background:var(--card)}
 .check li.on i{background:var(--amber); border-color:var(--amber)} .check li.on{color:var(--muted); text-decoration:line-through}
+
+.jmap{display:block; width:100%; height:auto; margin:6px 0} .jmap text{font-family:"Plus Jakarta Sans", system-ui, sans-serif} .jmap .t{font-size:14px; font-weight:800; fill:var(--ink)} .jmap .t.now{fill:var(--amber)} .jmap .m{font-size:14px; font-weight:600; fill:var(--muted)} .jmap .s{font-size:12px; font-weight:600; fill:var(--muted)}
+.box.warn{border-color:var(--danger)} .box.warn .label{color:var(--danger)}
 .stave-week{display:block; width:100%; height:auto; margin:6px 0 2px} .stave-week text{font-family:"Plus Jakarta Sans", system-ui, sans-serif; font-weight:800; font-size:13px; fill:var(--muted)}
 .ticks{list-style:none; padding:0; margin:8px 0 0} .ticks li{display:flex; align-items:center; gap:12px; padding:12px 14px; border:1.5px solid var(--line); border-radius:16px; margin-bottom:8px; font-weight:700; font-size:17px; background:var(--card); cursor:pointer} .ticks li i{width:26px; height:26px; border-radius:8px; border:2px solid var(--line); flex:none; display:inline-block} .ticks li.on{border-color:var(--amber); background:var(--tintC)} .ticks li.on i{background:var(--amber); border-color:var(--amber)}
 .tokens{display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-top:6px}
@@ -329,6 +332,27 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
     out+=`<text x="4" y="${H-4}" text-anchor="start">${h(fmtS(gw[0].a))}</text><text x="${W-4}" y="${H-4}" text-anchor="end" style="fill:var(--ink)">${h(label||'')}</text></svg>`;
     return out;
   }
+  function journeyMap(w, flags){ // the week as a winding path from the lesson to the next lesson: a note a day, a token a day, flags where they were raised
+    const N=w.sessions.length, RH=84, W=360, top=74, H=top+N*RH+78; const d=new Set((w.done||[]).map(x=>x.i)); const nx=nextIndex(w); const tn=doc().teacherName||'your teacher';
+    const sx=k=>k%2?240:120, sy=k=>top+k*RH+14; const pts=[[180,44],...w.sessions.map((_,k)=>[sx(k),sy(k)]),[180,H-56]];
+    let path=`M ${pts[0][0]} ${pts[0][1]}`; for(let i=1;i<pts.length;i++){ const [ax,ay]=pts[i-1],[bx,by]=pts[i]; const m=(ay+by)/2; path+=` C ${ax} ${m}, ${bx} ${m}, ${bx} ${by}`; }
+    const start=w.lessonDate||w.createdAt; const dayOf=k=>addDays(start,k+1);
+    const note=(x,y,filled,ring,sc)=>`<g transform="translate(${x} ${y}) scale(${sc})">${ring?'<circle r="19" fill="none" stroke="var(--amber)" stroke-width="3"/>':''}<ellipse rx="10" ry="7" transform="rotate(-22)" fill="${filled?'var(--varnish)':'var(--card)'}" stroke="var(--varnish)" stroke-width="2"/><rect x="8" y="-38" width="2.5" height="38" fill="var(--varnish)"/></g>`;
+    const coin=(x,y,on,label)=>`<g transform="translate(${x} ${y})"><circle r="11" fill="${on?'var(--varnish)':'var(--card)'}" stroke="var(--varnish)" stroke-width="1.5"/><text y="4" text-anchor="middle" style="font-size:12px;font-weight:800;fill:${on?'var(--card)':'var(--muted)'}">${label||'♪'}</text></g>`;
+    const cut=t=>t.length>24?t.slice(0,23)+'…':t;
+    let out=`<svg class="jmap" viewBox="0 0 ${W} ${H}" role="img" aria-label="${doneCount(w)} of ${N} days done, then the lesson">
+      <path d="${path}" fill="none" stroke="var(--line)" stroke-width="5" stroke-linecap="round" stroke-dasharray="1 10"/>
+      <rect x="70" y="6" width="220" height="40" rx="12" fill="var(--card)" stroke="var(--varnish)" stroke-width="2"/><text x="180" y="31" text-anchor="middle" class="t">Lesson · ${h(fmt(start))}</text>`;
+    w.sessions.forEach((sess,k)=>{ const x=sx(k), y=sy(k), left=k%2===0, done=d.has(k), now=k===nx; const lx=left?x+34:x-34; const anchor=left?'start':'end';
+      out+=note(x,y,done,now,0.95);
+      out+=`<text x="${lx}" y="${y-14}" text-anchor="${anchor}" class="${done?'t':now?'t now':'m'}">${h(dayLetter(w,k))} · ${h(cut(sess.title))}</text><text x="${lx}" y="${y+6}" text-anchor="${anchor}" class="s">${done?'done':now?'today':h(fmtS(dayOf(k)))}</text>`;
+      out+=coin(left?x-30:x+30, y-26, done, '♪');
+      const fl=(flags||[]).filter(f=>!f.resolved&&String(f.at).slice(0,10)===dayOf(k)); if(fl.length) out+=`<g transform="translate(${left?x-30:x+30} ${y+22})"><rect x="-14" y="-12" width="28" height="22" rx="8" fill="var(--danger)"/><path d="M -4 10 L 0 16 L 4 10 Z" fill="var(--danger)"/><text y="5" text-anchor="middle" style="font-size:13px;font-weight:800;fill:#fff">!</text></g>`; });
+    const full=doneCount(w)===N;
+    out+=`<rect x="40" y="${H-76}" width="280" height="44" rx="14" fill="var(--varnish)"/><text x="180" y="${H-49}" text-anchor="middle" class="t" style="fill:var(--card)">Next lesson with ${h(tn)} · ${h(fmt(w.nextLesson))}</text>`;
+    out+=coin(300,H-88,full,'+2')+`<text x="180" y="${H-12}" text-anchor="middle" class="s">${full?'Week complete: two extra tokens.':'Every day is a token. A full week is two more.'}</text></svg>`;
+    return out;
+  }
   const workList=w=>{ const items=[...(w.work||[]), ...(w.checklist||[])]; return [...new Set(items.map(x=>String(x).trim()).filter(Boolean))].slice(0,10); };
   function workTally(w){ const t={}; for(const d of (w.done||[])) for(const it of (d.worked||[])) t[it]=(t[it]||0)+1; return Object.entries(t).sort((a,b)=>b[1]-a[1]); }
   function tokensView(){ const t=doc().tokens||{earned:0,redeemed:0}; const avail=Math.max(0,(t.earned||0)-(t.redeemed||0)); return {avail, toNext: Math.max(0, 6-(avail%6||0))}; }
@@ -416,20 +440,15 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
       <div class="chips"><span class="chip">Next lesson <b>${h(fmt(w.nextLesson))}</b></span><span class="chip"><b>${n} of ${w.sessions.length}</b> days done</span></div>
       <div class="card"><div class="label">This week on the stave</div>${staveWeek(w)}</div>
       ${doc().weeks.length>1?`<div class="card"><div class="label">The last ${Math.min(5,doc().weeks.length)} weeks</div>${staveMonth(doc().weeks)}${p.goalDate?`<div class="note">${h(p.goalLabel||'Goal')} · ${h(fmtL(p.goalDate))} · ${weeksBetween(today(),p.goalDate)} weeks to go</div>`:''}</div>`:''}
-      <h2 class="big">${w.sessions.length} days, then ${h(tn)}.</h2>
-      <ul class="path">
-        <li class="lesson"><div class="t">Lesson · ${h(fmt(w.lessonDate||w.createdAt))}</div><div class="d">${h((w.workedOn||'').slice(0,90))}</div></li>
-        ${w.sessions.map((s,k)=>`<li class="${d.has(k)?'done':k===nextIndex(w)?'now':''}"><div class="t">${h(s.title)}${d.has(k)?' ✓':''}</div><div class="d">${h(s.steps.map(x=>x.name).slice(1,3).join(' · '))}</div></li>`).join('')}
-        <li class="lesson"><div class="t">Next lesson · ${h(fmt(w.nextLesson))}</div><div class="d">Play it for ${h(tn)}.</div></li>
-      </ul>
-      <div class="card"><div class="label">Show ${h(tn)} at the lesson</div>
+      <div class="card"><div class="label">${w.sessions.length} days, then ${h(tn)}</div>${journeyMap(w, flags)}</div>
+      <div class="card"><div class="label">At the lesson: show ${h(tn)}</div><p style="margin:0 0 6px">Where the path ends. Tick each one when you could show it.</p>
         <ul class="check" id="prep">${(w.checklist||[]).map((c,k)=>`<li class="${(w.ticks||[]).includes(k)?'on':''}" data-k="${k}"><i></i><span>${h(c)}</span></li>`).join('')||'<li><i></i><span style="color:var(--muted)">No checklist this week</span></li>'}</ul>
         ${extras().filter(x=>x.at>=w.createdAt).length?`<div class="eyebrow" style="margin-top:10px">Added during the week</div><ul class="check">${extras().filter(x=>x.at>=w.createdAt).map(x=>`<li class="${x.done?'on':''}" data-x="${x.id}"><i></i><span>${h(x.text)}</span></li>`).join('')}</ul>`:''}
-        <div class="note">Set by ${h(tn)}. Tick each one when you could show it in the lesson.</div></div>
-      <div class="card"><div class="label">Ask ${h(tn)} at the lesson</div>
+        <div class="note">Set by ${h(tn)} at the last lesson.</div></div>
+      <div class="box warn"><div class="label">At the lesson: ask ${h(tn)}</div>
         <div id="flags">${flags.filter(f=>!f.resolved).map(f=>`<div class="flag"><span>${h(f.text)}</span><button class="btn sm quiet" data-unflag="${f.id}" aria-label="Remove">×</button></div>`).join('')||'<div class="note" style="margin:0">Nothing flagged. Type it the moment it happens: a squeak, a question, a breakthrough.</div>'}</div>
         <form id="flagForm" class="row" style="margin-top:8px"><input id="flagText" placeholder="e.g. G string squeaks on down bows" style="flex:1"><button class="btn sm" type="submit">Flag it</button></form>
-        <div class="note">${h(tn)} sees these before the lesson starts.</div></div>
+        <div class="note">A red mark on the map is where it happened. ${h(tn)} sees these before the lesson starts.</div></div>
       <div class="card"><div class="label">Tokens</div><h3>${p.reward?'Six tokens: '+h(p.reward):'Six tokens: a small reward'}</h3>
         <div class="tokens">${Array.from({length:6},(_,k)=>`<i class="tok ${k<(tk.avail%6||(tk.avail>=6?6:0))?'on':''}"></i>`).join('')}<span class="note" style="margin:0 0 0 6px">${tk.avail} available${tk.avail>=6?' · ask '+h(tn)+(p.reward?' for your '+h(p.reward):' for your reward'):' · '+tk.toNext+' to go'}</span></div>
         <div class="note">One token per session, two more for a full week. ${p.reward?'At six, '+h(tn)+' has put up '+h(p.reward)+'.':'Six is a small reward your teacher, parent or school has put up.'} Earned for showing up, not for talent.</div></div>`;
@@ -502,7 +521,8 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
     if(!current) return; const p=doc().profile; const v=$('#v-goal');
     const has=!!p.goalDate; const left=has?weeksBetween(today(),p.goalDate):null;
     const totalW=has?Math.max(4,left+doc().weeks.length):null; const doneW=doc().weeks.length;
-    const phases=[['Foundations',.35,'Sound, rhythm, first patterns'],['Repertoire',.35,'The pieces, one at a time'],['Polish',.2,'Dynamics, phrasing, playing through'],['Mock exam',.07,'A full run for your teacher, then a parent'],['Exam',.03,'You\'re ready. Sleep.']];
+    const own=Array.isArray(p.stages)&&p.stages.length; const sumW=own?p.stages.reduce((a,x)=>a+(+x.weeks||1),0):0;
+    const phases=own?p.stages.map(x=>[x.name,(+x.weeks||1)/sumW,x.note||'']):[['Foundations',.35,'Sound, rhythm, first patterns'],['Repertoire',.35,'The pieces, one at a time'],['Polish',.2,'Dynamics, phrasing, playing through'],['Mock exam',.07,'A full run for your teacher, then a parent'],['Exam',.03,'You\'re ready. Sleep.']];
     let rows='', w=1, cur='Foundations';
     if(has){ let acc=0; for(const [n,f] of phases){ acc+=f; if(doneW/totalW<=acc){ cur=n; break; } }
       for(const [n,f,sub] of phases){ const c=Math.max(1,Math.round(totalW*f)); const a=w, b=Math.min(totalW,w+c-1); w=b+1; const k=b<doneW?'done':a<=doneW+1?'now':''; rows+=`<li class="${k}"><div class="t">${n} <span class="pill ${k==='now'?'on':''}">${k==='done'?'done':k==='now'?'now':'weeks '+a+'–'+b}</span></div><div class="d">${sub}</div></li>`; } }
@@ -512,7 +532,7 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
       ${has?`<div class="card"><div class="row" style="justify-content:space-between"><b>${left} weeks to go</b><span class="eyebrow">week ${doneW+1} · ${cur}</span></div>
         ${staveGoal(doc().weeks,p.goalDate,(p.goalLabel||'Goal')+' · '+fmtS(p.goalDate))||`<div style="height:8px;border-radius:4px;background:var(--stave);margin:8px 0 4px"><div style="width:${Math.min(100,Math.round(100*doneW/totalW))}%;height:8px;border-radius:4px;background:var(--amber)"></div></div>`}
         <div class="note" style="margin-top:6px">A note a week. Filled notes are weeks you practised; the double bar line is the day.</div></div>
-        <ul class="path">${rows}</ul>`:'<div class="card">Your teacher sets the exam or performance date, even roughly, and the road appears here. You can change it too, below.</div>'}
+        <ul class="path">${rows}</ul><div class="note">${own?'Stages set by '+h(doc().teacherName||'your teacher')+'.':'A suggested shape for the weeks. '+h(doc().teacherName||'Your teacher')+' can change the stages and their lengths in your profile.'}</div>`:'<div class="card">Your teacher sets the exam or performance date, even roughly, and the road appears here. You can change it too, below.</div>'}
       <div class="card"><h3>Set or change the goal</h3>
         <div class="grid2"><div><label class="l" for="gLabel">What it is</label><input id="gLabel" placeholder="e.g. Grade 3 exam, school concert" value="${h(p.goalLabel||'')}"></div><div><label class="l" for="gDate">Roughly when</label><input type="date" id="gDate" value="${h(p.goalDate||'')}"></div></div>
         <label class="l" for="gPart">Your part or section, if you sing or play in a group</label><input id="gPart" placeholder="e.g. Alto, Second violin, Cello" value="${h(p.part||'')}">
@@ -616,6 +636,7 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
           <div><label class="l" for="pGoal">Goal</label><input id="pGoal" value="${h(p.goalLabel||'')}" placeholder="Grade 3 exam"></div>
           <div><label class="l" for="pGoalDate">Goal date (rough)</label><input type="date" id="pGoalDate" value="${h(p.goalDate||'')}"></div>
           <div><label class="l" for="pSpw">Days a week</label><input type="number" id="pSpw" min="3" max="7" value="${h(p.sessionsPerWeek||7)}"><div class="note" style="margin:4px 0 0">Seven: one short session every day.</div></div>
+          <div style="grid-column:1/-1"><label class="l" for="pStages">Stages to the goal, one per line: name, weeks (optional)</label><textarea id="pStages" placeholder="Foundations, 8&#10;Pieces, 8&#10;Polish, 4&#10;Mock, 1&#10;Exam, 1">${h((p.stages||[]).map(x=>x.name+', '+x.weeks).join('\n'))}</textarea><div class="note" style="margin:4px 0 0">Leave empty and the pupil sees a suggested shape, marked as suggested. Fill it in and it is yours.</div></div>
           <div style="grid-column:1/-1"><label class="l" for="pReward">The reward at six tokens (a full week or two)</label><input id="pReward" value="${h(p.reward||'')}" placeholder="e.g. a hot chocolate after Thursday's lesson, a new set of strings, a sheet-music voucher"><div class="note" style="margin:4px 0 0">Named by you, a parent or the school. Small, occasional, from a real person. The pupil sees it on their Journey.</div></div>
           <div><label class="l" for="pMin">Minutes a day (you set this)</label><input type="number" id="pMin" min="10" max="120" step="5" value="${h(p.minutes||levelMinutes(p.level))}"><div class="note" style="margin:4px 0 0">Suggested for the level: ${levelMinutes(p.level)}. Change it and it sticks.</div></div>
         </div><button class="btn sm" id="pSave" style="margin-top:10px">Save profile</button></div>
@@ -635,7 +656,7 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
     $('#pLevel').onchange=()=>{ $('#pMin').value=levelMinutes($('#pLevel').value); };
     $('#xAdd').onclick=()=>{ const t=$('#xText').value.trim(); if(!t) return; d.extras=d.extras||[]; d.extras.push({id:uid(), text:t, at:new Date().toISOString(), done:false, by:me?.name||''}); saveCurrent(); renderTStudent(); toast('Added to their week.'); };
     $$('[data-xrm]').forEach(b=>b.onclick=()=>{ d.extras=(d.extras||[]).filter(x=>x.id!==b.dataset.xrm); saveCurrent(); renderTStudent(); });
-    $('#pSave').onclick=()=>{ p.instrument=$('#pInst').value.trim()||'violin'; p.part=$('#pPart').value.trim(); p.level=$('#pLevel').value||'beginner'; p.goalLabel=$('#pGoal').value.trim(); p.goalDate=$('#pGoalDate').value; p.sessionsPerWeek=+$('#pSpw').value||7; p.minutes=+$('#pMin').value||levelMinutes(p.level); p.reward=$('#pReward').value.trim(); saveCurrent(); toast('Profile saved.'); };
+    $('#pSave').onclick=()=>{ p.instrument=$('#pInst').value.trim()||'violin'; p.part=$('#pPart').value.trim(); p.level=$('#pLevel').value||'beginner'; p.goalLabel=$('#pGoal').value.trim(); p.goalDate=$('#pGoalDate').value; p.sessionsPerWeek=+$('#pSpw').value||7; p.minutes=+$('#pMin').value||levelMinutes(p.level); p.reward=$('#pReward').value.trim(); p.stages=$('#pStages').value.split('\n').map(l=>l.trim()).filter(Boolean).map(l=>{ const m=l.match(/^(.*?)[,:·]?\s*(\d+)?\s*(weeks?)?$/i); return {name:(m&&m[1]||l).replace(/[,:·]\s*$/,'').trim(), weeks:+(m&&m[2])||1}; }).filter(x=>x.name); saveCurrent(); toast('Profile saved.'); };
     $$('[data-res]').forEach(b=>b.onclick=()=>{ const f=flags.find(x=>x.id===b.dataset.res); if(f) f.resolved=true; saveCurrent(); renderTStudent(); });
     const aw=$('#award'); if(aw) aw.onclick=()=>{ d.tokens=d.tokens||{earned:0,redeemed:0}; d.tokens.redeemed=(d.tokens.redeemed||0)+6; saveCurrent(); renderTStudent(); toast('Reward marked as given.'); };
     $('#gen').onclick=generateWeek;
