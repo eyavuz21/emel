@@ -366,11 +366,9 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
     const own=Array.isArray(p.stages)&&p.stages.length; const sumW=own?p.stages.reduce((a,x)=>a+(+x.weeks||1),0):0;
     const phases=own?p.stages.map(x=>[x.name,(+x.weeks||1)/sumW,x.note||'']):[['Foundations',.35,'Sound, rhythm, first patterns'],['Repertoire',.35,'The pieces, one at a time'],['Polish',.2,'Dynamics, phrasing, playing through'],['Mock exam',.07,'A full run for your teacher, then a parent'],['Exam',.03,'You\'re ready. Sleep.']];
     let rows='', w=1, cur=phases[0][0]; let acc=0; for(const [n,f] of phases){ acc+=f; if(doneW/totalW<=acc){ cur=n; break; } }
-    for(const [n,f,sub] of phases){ const c=Math.max(1,Math.round(totalW*f)); const a=w, b=Math.min(totalW,w+c-1); w=b+1; const k=b<doneW?'done':a<=doneW+1?'now':''; rows+=`<li class="${k}"><div class="t">${h(n)} <span class="pill ${k==='now'?'on':''}">${k==='done'?'done':k==='now'?'now':'weeks '+a+'–'+b}</span></div><div class="d">${h(sub)}</div></li>`; }
-    return `<div class="card"><div class="label">The road to ${h(p.goalLabel||'your goal')} · ${h(fmtL(p.goalDate))}</div>
+    for(const [n,f,sub] of phases){ const c=Math.max(1,Math.round(totalW*f)); const a=Math.min(w,totalW), b=Math.min(totalW,w+c-1); w=b+1; const k=b<doneW?'done':a<=doneW+1?'now':''; rows+=`<li class="${k}"><div class="t">${h(n)} <span class="pill ${k==='now'?'on':''}">${k==='done'?'done':k==='now'?'now':a===b?'week '+a:'weeks '+a+'–'+b}</span></div><div class="d">${h(sub)}</div></li>`; }
+    return `<div class="card"><div class="label">The road to ${h(p.goalLabel||'your goal')}</div>
       <div class="row" style="justify-content:space-between"><b>${left} weeks to go</b><span class="eyebrow">week ${doneW+1} · ${h(cur)}</span></div>
-      ${staveGoal(doc().weeks,p.goalDate,(p.goalLabel||'Goal')+' · '+fmtS(p.goalDate))}
-      <div class="note" style="margin-top:6px">A note a week. Filled notes are weeks you practised; the double bar line is the day.</div>
       <ul class="path">${rows}</ul><div class="note">${own?'Stages set by '+h(tn)+'.':'A suggested shape for the weeks. '+h(tn)+' can change the stages and their lengths.'}</div></div>`;
   }
   const workList=w=>{ const items=[...(w.work||[]), ...(w.checklist||[])]; return [...new Set(items.map(x=>String(x).trim()).filter(Boolean))].slice(0,10); };
@@ -400,23 +398,22 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
     v.innerHTML=`
       <div class="chips"><span class="chip">${h(fmt(today()))}</span><span class="chip">Day <b>${Math.min(n+1,w.sessions.length)} of ${w.sessions.length}</b></span><span class="chip">${h(mins)} min <b>set by ${h(tn)}</b></span>${p.goalDate?`<span class="chip">${h(p.goalLabel||'Goal')} <b>${weeksBetween(today(),p.goalDate)} weeks</b></span>`:''}${w.group?`<span class="chip">${h(w.group.name||'Group')} week${p.part?' · '+h(p.part):''}</span>`:''}</div>
       <div class="box says"><div class="label">Lesson · ${h(fmt(w.lessonDate||w.createdAt))} · from ${h(tn)}</div><p style="margin:0"><b>What you did well:</b> ${h(w.line||w.encouragement||'Turn up every day and the lesson takes care of itself.')}</p>${(w.checklist||[]).length?`<p style="margin:8px 0 0"><b>What to work on:</b> ${h(w.checklist.join(' · '))}.</p>`:''}
-        ${openExtras().map(x=>`<div class="flag" style="font-weight:500;border-top-color:var(--line)"><span><b>News from ${h(tn)}:</b> ${h(x.text)} (${h(fmt(x.at.slice(0,10)))})</span><button class="btn sm quiet" data-xdone="${x.id}">Done</button></div>`).join('')}</div>
+        ${openExtras().map(x=>`<div class="row" style="margin:8px 0 0;justify-content:space-between;flex-wrap:nowrap;align-items:flex-start"><p style="margin:0"><b>News from ${h(tn)}:</b> ${h(x.text)} (${h(fmt(x.at.slice(0,10)))})</p><button class="btn sm quiet" data-xdone="${x.id}" style="flex:none">Done</button></div>`).join('')}</div>
       <div class="card"><div class="label">${w.sessions.length} days, then ${h(tn)}</div>
         ${s?journeyMap(w, flags, 'top'):''}${todayCard}${s?journeyMap(w, flags, 'bottom'):journeyMap(w, flags, 'all')}
-        <div class="streak" style="margin-top:8px"><span class="n">${streak()}</span><span>${streak()===1?'day':'days'} in a row</span></div>
-        <p style="margin-top:4px">${tk.toNext} more for ${p.reward?h(p.reward):'your reward'}.</p></div>
-      <div class="card"><div class="label">At the lesson: show ${h(tn)}</div><p style="margin:0 0 6px">Where the path ends. Tick each one when you could show it.</p>
+        <div class="label" style="margin-top:10px">At the lesson: show ${h(tn)}</div>
         <ul class="check" id="prep">${(w.checklist||[]).map((c,k)=>`<li class="${(w.ticks||[]).includes(k)?'on':''}" data-k="${k}"><i></i><span>${h(c)}</span></li>`).join('')||'<li><i></i><span style="color:var(--muted)">No checklist this week</span></li>'}</ul>
-        ${extras().filter(x=>x.at>=w.createdAt).length?`<div class="eyebrow" style="margin-top:10px">Added during the week</div><ul class="check">${extras().filter(x=>x.at>=w.createdAt).map(x=>`<li class="${x.done?'on':''}" data-x="${x.id}"><i></i><span>${h(x.text)}</span></li>`).join('')}</ul>`:''}</div>
+        ${extras().filter(x=>x.at>=w.createdAt).length?`<ul class="check">${extras().filter(x=>x.at>=w.createdAt).map(x=>`<li class="${x.done?'on':''}" data-x="${x.id}"><i></i><span>${h(x.text)}</span></li>`).join('')}</ul>`:''}
+        <div class="label" style="margin-top:12px">Tokens</div>
+        <div class="tokens">${Array.from({length:6},(_,k)=>`<i class="tok ${k<(tk.avail%6||(tk.avail>=6?6:0))?'on':''}"></i>`).join('')}<span style="margin-left:8px">${tk.avail>=6?'Six: ask '+h(tn)+(p.reward?' for '+h(p.reward):' for your reward'):tk.toNext+' more for '+(p.reward?h(p.reward):'your reward')}</span></div>
+        <div class="streak" style="margin-top:8px"><span class="n">${streak()}</span><span>${streak()===1?'day':'days'} in a row</span></div></div>
+      ${p.goalDate?`<div class="card"><div class="label">${weeksBetween(today(),p.goalDate)} weeks to ${h(p.goalLabel||'your goal')} · ${h(fmtL(p.goalDate))}</div>${staveGoal(doc().weeks,p.goalDate,(p.goalLabel||'Goal')+' · '+fmtS(p.goalDate))}<div class="note" style="margin-top:6px">A note a week. Filled notes are weeks you practised; the double bar line is the day.</div></div>`:''}
+      ${doc().weeks.length>1?`<div class="card"><div class="label">The last ${Math.min(5,doc().weeks.length)} weeks</div>${staveMonth(doc().weeks)}</div>`:''}
+      ${roadHTML(p)}
       <div class="box warn"><div class="label">At the lesson: ask ${h(tn)}</div>
         <div id="flags">${flags.filter(f=>!f.resolved).map(f=>`<div class="flag"><span>${h(f.text)}</span><button class="btn sm quiet" data-unflag="${f.id}" aria-label="Remove">×</button></div>`).join('')||'<div class="note" style="margin:0">Nothing flagged. Type it the moment it happens: a squeak, a question, a breakthrough.</div>'}</div>
         <form id="flagForm" class="row" style="margin-top:8px"><input id="flagText" placeholder="e.g. G string squeaks on down bows" style="flex:1"><button class="btn sm" type="submit">Flag it</button></form>
         <div class="note">A red mark on the map is where it happened. ${h(tn)} sees these before the lesson starts.</div></div>
-      <div class="card"><div class="label">Tokens</div><h3>${p.reward?'Six tokens: '+h(p.reward):'Six tokens: a small reward'}</h3>
-        <div class="tokens">${Array.from({length:6},(_,k)=>`<i class="tok ${k<(tk.avail%6||(tk.avail>=6?6:0))?'on':''}"></i>`).join('')}<span class="note" style="margin:0 0 0 6px">${tk.avail} available${tk.avail>=6?' · ask '+h(tn)+(p.reward?' for your '+h(p.reward):' for your reward'):' · '+tk.toNext+' to go'}</span></div>
-        <div class="note">One token per session, two more for a full week. ${p.reward?'At six, '+h(tn)+' has put up '+h(p.reward)+'.':'Six is a small reward your teacher, parent or school has put up.'} Earned for showing up, not for talent.</div></div>
-      ${doc().weeks.length>1?`<div class="card"><div class="label">The last ${Math.min(5,doc().weeks.length)} weeks</div>${staveMonth(doc().weeks)}</div>`:''}
-      ${roadHTML(p)}
       <div class="grid2" style="margin-top:4px"><button class="btn quiet" id="goGoal">Set or change the goal</button><button class="btn" id="goShare">Share the card</button></div>`;
     const to=$('#tickOnly'); if(to) to.onclick=()=>{ si=i; sess=w.sessions[i]; finish(true); };
     const b=$('#start'); if(b) b.onclick=()=>startSession(i);
