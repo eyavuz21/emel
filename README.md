@@ -27,6 +27,8 @@ Melodigo has two sides. The **teacher** writes a thirty-second note after each l
 - **The teacher's home in two columns.** Left: the code to give pupils, then the pupils. Right: one whole-group box (the studio, its parts and code, plus any group weeks). A third tab, **Message**, sends a note to everyone, to parts, or to chosen pupils; it lands under News on their Today screen. Flags on a pupil's page are in red
 - **The parent card** is three boxes: the dates, the pupil's week (days done, minutes practised, points earned), and the teacher's feedback from the last lesson with "For next lesson" underneath. When the teacher has set an exam or concert date, a fourth box draws the goal as the end of a piece: one note a week from the first week to the date, filled when practised, a ring on this week, bar lines every four weeks and the double bar line on the day; then weeks practised and weeks complete
 - **The month and the goal.** Today shows one chip with the goal and weeks to go, when there is one. Journey and the teacher's pupil page stack the last five weeks as small staves, most recent first, with the goal date under them. The Goal tab draws the same stave in place of a progress bar, above the road with its phases
+- **How it felt: Easy, Fine, Hard.** One axis, three taps. Hard asks one more thing, "which bit?", from the work list; that answer goes to the teacher as a flag for the next lesson. Easy and Fine ask nothing more
+- **This week, from the teacher** on Today shows the work for the week (her "know by next lesson" list) first, then her one line
 
 ## What's in v0.4 (15 September 2026)
 
