@@ -290,12 +290,13 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
   const extras=()=>(doc().extras=doc().extras||[]);
   const openExtras=()=>extras().filter(x=>!x.done);
   const DAYS=['M','T','W','T','F','S','S'];
+  const dayLetter=(w,i)=>{ const start=w.lessonDate||w.createdAt; if(!start||w.sessions.length!==7) return String(i+1); const [y,m,d]=addDays(start,i+1).split('-'); return DAYS[(new Date(+y,+m-1,+d).getDay()+6)%7]; };
   function staveWeek(w){ // the week drawn as notes on a stave: filled = done, amber ring = today, hollow = still to come
     const N=w.sessions.length; const d=new Set((w.done||[]).map(x=>x.i)); const nx=nextIndex(w); const W=Math.max(360, 60*N+40), H=110; const x0=40, dx=(W-2*x0)/Math.max(1,N-1);
     let out=`<svg class="stave-week" viewBox="0 0 ${W} ${H}" role="img" aria-label="${doneCount(w)} of ${N} sessions done">`;
     for(let k=0;k<5;k++) out+=`<line x1="8" y1="${22+k*12}" x2="${W-8}" y2="${22+k*12}" stroke="var(--line)" stroke-width="1.5"/>`;
     for(let i=0;i<N;i++){ const x=x0+i*dx, y=70-((i*7)%5)*6; const done=d.has(i), now=i===nx;
-      out+=`<g transform="translate(${x} ${y})">${now?'<circle r="17" fill="none" stroke="var(--amber)" stroke-width="3"/>':''}<ellipse rx="10" ry="7" transform="rotate(-22)" fill="${done?'var(--varnish)':'var(--card)'}" stroke="var(--varnish)" stroke-width="2"/><rect x="8" y="-38" width="2.5" height="38" fill="var(--varnish)"/></g><text x="${x}" y="${H-4}" text-anchor="middle" fill="${now?'var(--amber)':'var(--muted)'}">${N===7?DAYS[i]:i+1}</text>`; }
+      out+=`<g transform="translate(${x} ${y})">${now?'<circle r="17" fill="none" stroke="var(--amber)" stroke-width="3"/>':''}<ellipse rx="10" ry="7" transform="rotate(-22)" fill="${done?'var(--varnish)':'var(--card)'}" stroke="var(--varnish)" stroke-width="2"/><rect x="8" y="-38" width="2.5" height="38" fill="var(--varnish)"/></g><text x="${x}" y="${H-4}" text-anchor="middle" fill="${now?'var(--amber)':'var(--muted)'}">${dayLetter(w,i)}</text>`; }
     return out+'</svg>';
   }
   const fmtS=d=>{ if(!d) return ''; const [y,m,dd]=d.split('-'); return new Date(+y,+m-1,+dd).toLocaleDateString('en-GB',{day:'numeric',month:'short'}); };
@@ -347,8 +348,8 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
     const lastDone=(w.done||[]).slice(-1)[0]; const mins=p.minutes||levelMinutes(p.level);
     v.innerHTML=`
       <div class="chips"><span class="chip">${h(fmt(today()))}</span><span class="chip">Day <b>${Math.min(n+1,w.sessions.length)} of ${w.sessions.length}</b></span><span class="chip">${h(mins)} min <b>set by ${h(tn)}</b></span>${p.goalDate?`<span class="chip">${h(p.goalLabel||'Goal')} <b>${weeksBetween(today(),p.goalDate)} weeks</b></span>`:''}${w.group?`<span class="chip">${h(w.group.name||'Group')} week${p.part?' · '+h(p.part):''}</span>`:''}</div>
-      <div class="card"><div class="label">This week</div>${staveWeek(w)}${openExtras().length?`<div class="label" style="margin-top:12px">News from ${h(tn)}</div>${openExtras().map(x=>`<div class="flag" style="font-weight:500"><span>${h(x.text)} (${h(fmt(x.at.slice(0,10)))})</span><button class="btn sm quiet" data-xdone="${x.id}">Done</button></div>`).join('')}`:''}</div>
-      <div class="box says"><div class="label">This week, from ${h(tn)}</div>${(w.checklist||[]).length?`<p style="margin:0 0 8px">Work on: ${h(w.checklist.join(' · '))}.</p>`:''}<div class="quote">${h(w.line||w.encouragement||'Turn up every day and the lesson takes care of itself.')}</div></div>
+      <div class="card"><div class="label">This week</div>${staveWeek(w)}${openExtras().map(x=>`<div class="flag" style="font-weight:500"><span>News from ${h(tn)}: ${h(x.text)} (${h(fmt(x.at.slice(0,10)))})</span><button class="btn sm quiet" data-xdone="${x.id}">Done</button></div>`).join('')}</div>
+      <div class="box says"><div class="label">This week, from ${h(tn)}</div><p style="margin:0"><b>What you did well:</b> ${h(w.line||w.encouragement||'Turn up every day and the lesson takes care of itself.')}</p>${(w.checklist||[]).length?`<p style="margin:8px 0 0"><b>What to work on:</b> ${h(w.checklist.join(' · '))}.</p>`:''}</div>
       ${lastDone?`<div class="card"><div class="label">Last time</div><p>${h(fmt(lastDone.at.slice(0,10)))}. It felt ${h((lastDone.feel||'').toLowerCase())}${(lastDone.worked||[]).length?`. You worked on ${h(lastDone.worked.join(', '))}`:''}.</p></div>`:''}
       <div class="card"><div class="label">Today's session</div><p><b>${s?h(s.title):'Week complete'}</b>${s?'. '+h(s.intro):''}</p>${s?`<p>${h(s.steps.map(x=>x.name).join(' · '))}</p>`:`<p>All ${w.sessions.length} days done. Next lesson ${h(fmt(w.nextLesson))}.</p>`}</div>
       ${s?`<button class="btn block" id="start">Start the guided session · ${s.steps.reduce((a,x)=>a+(+x.minutes||0),0)} min</button><button class="btn block quiet" id="tickOnly" style="margin-top:10px">I practised on my own: tick what I did</button>`:''}
