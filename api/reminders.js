@@ -23,13 +23,13 @@ function compose(data, today) {
   if (next < 0) return null; // week complete: nothing to say
   // the most recent completed session across all weeks, with its date and feeling
   let last = null;
-  for (const wk of data.weeks) for (const d of wk.done || []) { const at = String(d.at || "").slice(0, 10); if (!last || at > last.at) last = { at, feel: d.feel, title: wk.sessions?.[d.i]?.title || "your session" }; }
+  for (const wk of data.weeks) for (const d of wk.done || []) { const at = String(d.at || "").slice(0, 10); if (!last || at > last.at) last = { at, feel: d.feel, title: wk.sessions?.[d.i]?.title || "your session", worked: Array.isArray(d.worked) ? d.worked.slice(0, 3) : [] }; }
   const minutes = Number(p.minutes) || 20; const s = w.sessions[next];
   let opening;
-  if (last && last.at === addDays(today, -1)) opening = `You did ${last.title} yesterday${last.feel ? ` and said it felt ${last.feel}` : ""}.`;
+  if (last && last.at === addDays(today, -1)) opening = last.worked.length ? `Yesterday you worked on ${last.worked.join(", ")}${last.feel ? ` and said it felt ${last.feel}` : ""}.` : `You practised yesterday${last.feel ? ` and said it felt ${last.feel}` : ""}.`;
   else if (last) opening = `Your last session was ${last.title}, on ${nice(last.at)}. No matter; today is a fresh start.`;
   else opening = `Your first session is waiting.`;
-  const body = `${opening} Today: ${s.title}, about ${minutes} minutes, whenever suits you.`;
+  const body = `${opening} Today is day ${next + 1} of ${w.sessions.length}: ${s.title}, about ${minutes} minutes, whenever suits you.`;
   return { title: `${tn}, this morning`, body, next, minutes, url: process.env.APP_URL || "https://melodigo.vercel.app" };
 }
 

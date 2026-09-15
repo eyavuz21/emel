@@ -7,7 +7,7 @@
 <meta name="description" content="Moving towards your goal. Couch to 5K for practising an instrument, in a choir or in an orchestra. Your teacher sets the week; Melodigo gets you to Thursday.">
 <link rel="icon" type="image/svg+xml" href="icon-tile.svg"><link rel="apple-touch-icon" href="icon-192.png"><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#C8792A">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap">
 <style>
 :root{
   --paper:#F7F3EA; --stave:#E6DECB; --card:#FFFDF8; --ink:#1E1A16; --muted:#6F6659; --line:#DED5C2;
@@ -31,8 +31,8 @@
 }
 *{box-sizing:border-box}
 html,body{margin:0}
-body{background:var(--paper) repeating-linear-gradient(0deg, transparent 0 34px, var(--stave) 34px 35px); color:var(--ink); font-family:"Instrument Sans", system-ui, sans-serif; font-size:16px; line-height:1.5; min-height:100vh}
-h1,h2,h3,.serif{font-family:"Instrument Serif", Georgia, serif; font-weight:400; letter-spacing:0; margin:0; text-wrap:balance}
+body{background:var(--paper) repeating-linear-gradient(0deg, transparent 0 34px, var(--stave) 34px 35px); color:var(--ink); font-family:"Plus Jakarta Sans", system-ui, sans-serif; font-size:17px; line-height:1.45; min-height:100vh; font-weight:500}
+h1,h2,h3{font-family:"Plus Jakarta Sans", system-ui, sans-serif; font-weight:800; letter-spacing:-.01em; margin:0; text-wrap:balance}
 a{color:var(--amber)}
 button{font:inherit; cursor:pointer}
 input,select,textarea{font:inherit; color:var(--ink); background:var(--card); border:1px solid var(--line); border-radius:12px; padding:10px 12px; width:100%}
@@ -42,39 +42,42 @@ label.l{display:block; font-size:11.5px; font-weight:600; letter-spacing:.08em; 
 .wrap{max-width:860px; margin:0 auto; padding:18px 18px 90px}
 header.top{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:6px 0 14px; border-bottom:1px solid var(--line); margin-bottom:16px}
 .brand{display:block} .brand h1{margin:0; line-height:1}
-.brand small{display:block; font-family:"Instrument Serif", Georgia, serif; font-style:italic; color:var(--muted); font-size:15px}
+.brand small{display:block; color:var(--muted); font-size:14px; font-weight:700; margin-top:4px}
 .auth{display:flex; gap:8px; align-items:center; flex-wrap:wrap; font-size:13px; color:var(--muted)}
-.btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; border:none; border-radius:999px; padding:12px 20px; font-weight:600; background:var(--amber); color:var(--amber-ink); font-size:15px}
-.btn.block{width:100%; padding:14px 22px; font-size:16px}
+.btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; border:none; border-radius:999px; padding:14px 22px; font-weight:700; background:var(--amber); color:var(--amber-ink); font-size:16px}
+.btn.block{width:100%; padding:18px 22px; font-size:19px}
 .btn.quiet{background:var(--card); color:var(--ink); border:1px solid var(--line)}
-.btn.sm{padding:8px 12px; font-size:13.5px}
+.btn.sm{padding:10px 14px; font-size:14.5px}
 .btn.danger{background:transparent; color:var(--danger); border:1px solid var(--line)}
 .btn[disabled]{opacity:.5; cursor:not-allowed}
-.eyebrow{font-size:11.5px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
-.big{font-size:36px; line-height:1.05; margin:2px 0 12px; color:var(--varnish)}
-.card{background:var(--card); border:1px solid var(--line); border-radius:18px; padding:16px 18px; margin-bottom:12px}
-.card h3{font-size:22px; margin-bottom:6px}
-.box{padding:16px 18px; border-radius:14px; border:1px solid var(--line); margin-bottom:12px}
+.eyebrow{font-size:13px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
+.chips{display:flex; gap:8px; flex-wrap:wrap; margin:0 0 12px} .chip{display:inline-flex; align-items:center; gap:6px; background:var(--card); border:1.5px solid var(--line); border-radius:999px; padding:7px 13px; font-size:14.5px; font-weight:700; color:var(--ink)} .chip.amber{background:var(--amber); color:var(--amber-ink); border-color:var(--amber)} .chip b{color:var(--muted); font-weight:600}
+.label{font-size:13px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); margin:0 0 6px}
+.big{font-size:38px; line-height:1.06; margin:2px 0 14px; color:var(--varnish)}
+.card{background:var(--card); border:1.5px solid var(--line); border-radius:24px; padding:18px 20px; margin-bottom:14px; box-shadow:0 2px 0 rgba(60,40,20,.04)}
+.card h3{font-size:22px; margin-bottom:8px}
+.box{padding:18px 20px; border-radius:24px; border:1.5px solid var(--line); margin-bottom:14px}
 .box.a{background:var(--tintA)} .box.b{background:var(--tintB)} .box.c{background:var(--tintC)}
-.quote{font-family:"Instrument Serif", Georgia, serif; font-style:italic; font-size:20px; line-height:1.3}
-.who{font-size:12.5px; color:var(--muted); margin-top:6px}
+.quote{font-size:20px; line-height:1.35; font-weight:600; color:var(--ink)}
+.says{position:relative; background:var(--tintC); border-color:transparent} .says::after{content:""; position:absolute; left:28px; bottom:-10px; width:18px; height:18px; background:var(--tintC); transform:rotate(45deg); border-radius:3px}
+.who{font-size:13.5px; color:var(--muted); margin-top:8px; font-weight:700}
 .row{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
 .grid2{display:grid; grid-template-columns:1fr 1fr; gap:10px} @media (max-width:640px){ .grid2{grid-template-columns:1fr} }
 .note{font-size:13px; color:var(--muted); margin-top:8px}
 .tabs{position:fixed; left:0; right:0; bottom:0; display:flex; background:var(--card); border-top:1px solid var(--line); padding:8px 8px 14px; z-index:5}
-.tabs button{flex:1; background:none; border:none; font-size:12px; font-weight:600; color:var(--muted); padding:6px 2px; border-radius:10px}
+.tabs button{flex:1; background:none; border:none; font-size:13.5px; font-weight:800; color:var(--muted); padding:6px 2px; border-radius:10px}
 .tabs button.on{color:var(--amber)}
-.tabs button span{display:block; font-family:"Instrument Serif", Georgia, serif; font-size:22px; line-height:1; margin-bottom:3px}
+.tabs button span{display:block; font-family:"Plus Jakarta Sans", system-ui, sans-serif; font-size:22px; line-height:1; margin-bottom:3px}
 .view{display:none} .view.on{display:block}
 .dots{display:inline-flex; gap:8px; align-items:center; vertical-align:middle}
 .dot{width:14px; height:14px; border-radius:50%; border:2px solid var(--line)} .dot.done{background:var(--amber); border-color:var(--amber)} .dot.now{border-color:var(--amber)}
 .streak{display:flex; justify-content:space-between; align-items:baseline}
-.streak .n{font-family:"Instrument Serif", Georgia, serif; font-size:48px; line-height:1; color:var(--amber)}
-.forgive{font-size:13px; color:var(--sage); font-weight:600; margin-top:4px}
+.streak .n{font-size:52px; line-height:1; color:var(--amber); font-weight:800}
+.forgive{font-size:14px; color:var(--sage); font-weight:700; margin-top:6px}
 .ring{width:210px; height:210px; margin:6px auto 10px; position:relative}
 .ring svg{width:100%; height:100%; transform:rotate(-90deg)}
 .ring .t{position:absolute; inset:0; display:grid; place-items:center; text-align:center}
-.ring .t b{font-family:"Instrument Serif", Georgia, serif; font-weight:400; font-size:50px; line-height:1; display:block; color:var(--varnish)}
+.ring .t b{font-family:"Plus Jakarta Sans", system-ui, sans-serif; font-weight:400; font-size:50px; line-height:1; display:block; color:var(--varnish)}
 .ring .t span{font-size:12px; color:var(--muted); letter-spacing:.06em; text-transform:uppercase}
 .steps{list-style:none; margin:10px 0 0; padding:0}
 .steps li{display:flex; justify-content:space-between; padding:8px 0; border-top:1px solid var(--line); color:var(--muted); font-size:14.5px}
@@ -92,6 +95,8 @@ header.top{display:flex; align-items:center; justify-content:space-between; gap:
 .check li{display:flex; gap:10px; align-items:flex-start; padding:6px 0; cursor:pointer}
 .check li i{width:18px; height:18px; border-radius:5px; border:1.5px solid var(--line); flex:none; margin-top:3px; background:var(--card)}
 .check li.on i{background:var(--amber); border-color:var(--amber)} .check li.on{color:var(--muted); text-decoration:line-through}
+.stave-week{display:block; width:100%; height:auto; margin:6px 0 2px} .stave-week text{font-family:"Plus Jakarta Sans", system-ui, sans-serif; font-weight:800; font-size:13px; fill:var(--muted)}
+.ticks{list-style:none; padding:0; margin:8px 0 0} .ticks li{display:flex; align-items:center; gap:12px; padding:12px 14px; border:1.5px solid var(--line); border-radius:16px; margin-bottom:8px; font-weight:700; font-size:17px; background:var(--card); cursor:pointer} .ticks li i{width:26px; height:26px; border-radius:8px; border:2px solid var(--line); flex:none; display:inline-block} .ticks li.on{border-color:var(--amber); background:var(--tintC)} .ticks li.on i{background:var(--amber); border-color:var(--amber)}
 .tokens{display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-top:6px}
 .tok{width:18px; height:18px; border-radius:50%; background:var(--stave); border:1.5px solid var(--line)} .tok.on{background:var(--gold); border-color:var(--gold)}
 .flag{display:flex; justify-content:space-between; gap:10px; padding:8px 0; border-top:1px solid var(--line); font-size:14.5px}
@@ -107,7 +112,7 @@ dialog{border:none; border-radius:22px; padding:0; width:min(560px,92vw); backgr
 dialog::backdrop{background:rgba(30,26,22,.5)} dialog .in{padding:22px} dialog h2{font-size:26px; margin-bottom:10px}
 .dlgrow{display:flex; gap:8px; justify-content:flex-end; margin-top:14px}
 .session-preview .s{border-top:1px solid var(--line); padding:10px 0}
-.session-preview .s b{font-family:"Instrument Serif", Georgia, serif; font-weight:400; font-size:20px}
+.session-preview .s b{font-family:"Plus Jakarta Sans", system-ui, sans-serif; font-weight:400; font-size:20px}
 .session-preview ol{margin:4px 0 0; padding-left:18px; font-size:14px; color:var(--muted)}
 .hero{padding:10px 0 6px}
 .hero h2{font-size:44px; line-height:1.02; color:var(--varnish); margin-bottom:10px}
@@ -117,7 +122,7 @@ dialog::backdrop{background:rgba(30,26,22,.5)} dialog .in{padding:22px} dialog h
 .rec{display:inline-flex; align-items:center; gap:8px}
 .rec .blink{width:10px; height:10px; border-radius:50%; background:var(--danger); animation:blink 1s infinite}
 @keyframes blink{50%{opacity:.2}}
-.script{font-family:"Instrument Serif", Georgia, serif; font-size:19px; line-height:1.45; padding:14px 16px; background:var(--tintA); border-radius:14px; border:1px solid var(--line)}
+.script{font-family:"Plus Jakarta Sans", system-ui, sans-serif; font-size:19px; line-height:1.45; padding:14px 16px; background:var(--tintA); border-radius:14px; border:1px solid var(--line)}
 .mic{width:auto; padding:8px 12px; font-size:13px}
 .demo-bar{position:sticky; top:0; z-index:6; background:var(--varnish); color:var(--paper); padding:8px 12px; border-radius:12px; margin-bottom:12px; display:flex; gap:8px; align-items:center; flex-wrap:wrap; font-size:13.5px}
 .demo-bar .seg{display:inline-flex; border-radius:999px; overflow:hidden; border:1px solid rgba(255,255,255,.25)}
@@ -140,8 +145,8 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
   <!-- LANDING -->
   <section class="view on" id="v-landing">
     <div class="hero">
-      <h2>Your teacher sets the week. Melodigo gets you to Thursday.</h2>
-      <p>Three short guided sessions between lessons, in your teacher's words. A checklist for the next lesson, a journey to get there, a place to flag the thing that squeaked, and a streak that forgives a missed day.  Nothing listens to you play and scores you. It does the harder thing: it gets you to turn up.</p>
+      <h2>Your teacher sets the week. Melodigo gets you to practise every day.</h2>
+      <p>A short guided session every day, in your teacher's words. Tick what you worked on, and your teacher sees the week before the lesson. A checklist, a journey to the next lesson, a place to flag the thing that squeaked, and a streak that forgives a missed day. Nothing listens to you play and scores you. It does the harder thing: it gets you to turn up.</p>
       <p class="note">Couch to 5K, for practising an instrument. It works for one pupil and one teacher, and for a whole choir or orchestra: the conductor sets the work for everyone, and each member gets their own week for their part.</p>
     </div>
     <div class="grid2">
@@ -185,14 +190,14 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
   </section>
   <!-- STUDENT: DONE -->
   <section class="view" id="v-done">
-    <div class="eyebrow">Session complete</div>
-    <h2 class="big" id="doneTitle"></h2>
-    <p id="doneSub" style="margin:0 0 6px"></p>
-    <div class="eyebrow" style="margin-top:12px">How did it feel?</div>
-    <div class="feel" id="feel"><button data-f="Tough">Tough</button><button data-f="OK">OK</button><button data-f="Good">Good</button></div>
-    <div class="card" id="tailor" hidden></div>
+    <div class="card"><div class="label">Session done</div><h2 class="big" id="doneTitle"></h2><p id="doneSub" style="margin:0"></p></div>
+    <div class="card"><div class="label">What did you work on today?</div><p class="note" style="margin:0">Tap everything you did. Your teacher sees this before the lesson.</p><ul class="ticks" id="worked"></ul>
+      <form id="workedOther" class="row" style="margin-top:6px"><input id="workedText" placeholder="Something else?" style="flex:1"><button class="btn sm" type="submit">Add</button></form></div>
+    <div class="card"><div class="label">How did it feel?</div>
+      <div class="feel" id="feel"><button data-f="Tough">Tough</button><button data-f="OK">OK</button><button data-f="Good">Good</button></div>
+      <div id="tailor" hidden style="margin-top:10px"></div></div>
     <button class="btn block" id="doneBack">Done for today</button>
-    <p class="note" style="text-align:center">Sleep on it. That's when the bow arm learns.</p>
+    <p class="note" style="text-align:center">Sleep on it. That's when it sticks.</p>
   </section>
   <!-- STUDENT: JOURNEY -->
   <section class="view" id="v-journey"></section>
@@ -234,7 +239,7 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
 
   const LEVELS=[['beginner','Beginner',20],['grade1-3','Grades 1 to 3',25],['grade4-6','Grades 4 to 6',40],['grade7-8','Grades 7 to 8, diploma',60],['returning','Returning adult',25],['advanced','Advanced, conservatoire',75]];
   function levelMinutes(level){ const l=LEVELS.find(x=>x[0]===level||x[1].toLowerCase()===String(level||'').toLowerCase()); return l?l[2]:20; }
-  function blankDoc(name){ return {profile:{name:name||'', instrument:'violin', part:'', level:'beginner', goalLabel:'', goalDate:'', sessionsPerWeek:3, minutes:20, reminder:'push'}, notes:[], weeks:[], flags:[], extras:[], tokens:{earned:0, redeemed:0}, teacherName:''}; }
+  function blankDoc(name){ return {profile:{name:name||'', instrument:'violin', part:'', level:'beginner', goalLabel:'', goalDate:'', sessionsPerWeek:7, minutes:20, reminder:'push'}, notes:[], weeks:[], flags:[], extras:[], tokens:{earned:0, redeemed:0}, teacherName:''}; }
   function loadLocal(){ try{ let s=localStorage.getItem(LKEY); if(!s){ for(const k of LKEY_OLDS){ s=localStorage.getItem(k); if(s){ localStorage.setItem(LKEY,s); localStorage.removeItem(k); break; } } } if(s) return JSON.parse(s); }catch(e){} return null; }
   function saveLocal(o){ try{ localStorage.setItem(LKEY, JSON.stringify(o)); }catch(e){} }
 
@@ -288,6 +293,17 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
   }
   const extras=()=>(doc().extras=doc().extras||[]);
   const openExtras=()=>extras().filter(x=>!x.done);
+  const DAYS=['M','T','W','T','F','S','S'];
+  function staveWeek(w){ // the week drawn as notes on a stave: filled = done, amber ring = today, hollow = still to come
+    const N=w.sessions.length; const d=new Set((w.done||[]).map(x=>x.i)); const nx=nextIndex(w); const W=Math.max(360, 60*N+40), H=110; const x0=40, dx=(W-2*x0)/Math.max(1,N-1);
+    let out=`<svg class="stave-week" viewBox="0 0 ${W} ${H}" role="img" aria-label="${doneCount(w)} of ${N} sessions done">`;
+    for(let k=0;k<5;k++) out+=`<line x1="8" y1="${22+k*12}" x2="${W-8}" y2="${22+k*12}" stroke="var(--line)" stroke-width="1.5"/>`;
+    for(let i=0;i<N;i++){ const x=x0+i*dx, y=70-((i*7)%5)*6; const done=d.has(i), now=i===nx;
+      out+=`<g transform="translate(${x} ${y})">${now?'<circle r="17" fill="none" stroke="var(--amber)" stroke-width="3"/>':''}<ellipse rx="10" ry="7" transform="rotate(-22)" fill="${done?'var(--varnish)':'var(--card)'}" stroke="var(--varnish)" stroke-width="2"/><rect x="8" y="-38" width="2.5" height="38" fill="var(--varnish)"/></g><text x="${x}" y="${H-4}" text-anchor="middle" fill="${now?'var(--amber)':'var(--muted)'}">${N===7?DAYS[i]:i+1}</text>`; }
+    return out+'</svg>';
+  }
+  const workList=w=>{ const items=[...(w.work||[]), ...(w.checklist||[])]; return [...new Set(items.map(x=>String(x).trim()).filter(Boolean))].slice(0,10); };
+  function workTally(w){ const t={}; for(const d of (w.done||[])) for(const it of (d.worked||[])) t[it]=(t[it]||0)+1; return Object.entries(t).sort((a,b)=>b[1]-a[1]); }
   function tokensView(){ const t=doc().tokens||{earned:0,redeemed:0}; const avail=Math.max(0,(t.earned||0)-(t.redeemed||0)); return {avail, toNext: Math.max(0, 6-(avail%6||0))}; }
 
   function renderToday(){
@@ -295,25 +311,25 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
     const w=week(); const p=doc().profile; const v=$('#v-today');
     const tn=doc().teacherName||'your teacher';
     if(!w){
-      v.innerHTML=`<div class="eyebrow">${h(p.name||'')}</div><h2 class="big">No week yet.</h2>
-        <div class="card"><div class="quote">"Your first week appears here after your next lesson, once ${h(tn)} has written it."</div></div>
+      v.innerHTML=`<div class="chips"><span class="chip">${h(fmt(today()))}</span><span class="chip">${h(p.name||'')}</span></div><div class="card"><div class="label">Today's session</div><h2 class="big">No week yet.</h2><p>Your first week appears here after your next lesson, once ${h(tn)} has written it.</p></div>
         ${openExtras().length?`<div class="box c"><h3>From ${h(tn)}</h3>${openExtras().map(x=>`<div class="flag"><span>${h(x.text)}</span><button class="btn sm quiet" data-xdone="${x.id}">Done</button></div>`).join('')}</div>`:''}
         ${mode==='local'?'<div class="card"><h3>Trying it on your own?</h3><p>Open the <b>Teacher</b> tab, write a lesson note as if you were the teacher, and generate a week. Then come back here.</p></div>':''}`;
       $$('[data-xdone]').forEach(x=>x.onclick=()=>{ const e=extras().find(y=>y.id===x.dataset.xdone); if(e){ e.done=true; } saveCurrent(); renderToday(); });
       show('today'); return;
     }
     const i=nextIndex(w); const n=doneCount(w); const s=i>=0?w.sessions[i]:null;
-    const lastDone=(w.done||[]).slice(-1)[0];
+    const lastDone=(w.done||[]).slice(-1)[0]; const mins=p.minutes||levelMinutes(p.level);
     v.innerHTML=`
-      <div class="eyebrow">${h(fmt(today()))} · week of ${h(fmt(w.createdAt))} · session ${Math.min(n+1,w.sessions.length)} of ${w.sessions.length}${w.group?' · group week ('+h(w.group.name||'everyone')+')'+(p.part?' · your part: '+h(p.part):''):''}${p.minutes?' · '+h(p.minutes)+' min a day, set by '+h(tn):''}</div>
-      <h2 class="big">${s?h(s.title):'Week complete.'}</h2>
-      ${openExtras().length?`<div class="box c"><h3>New from ${h(tn)}</h3>${openExtras().map(x=>`<div class="flag"><span>${h(x.text)} <span class="note" style="margin:0">· ${h(fmt(x.at.slice(0,10)))}</span></span><button class="btn sm quiet" data-xdone="${x.id}">Done</button></div>`).join('')}</div>`:''}
-      <div class="card"><div class="quote">"${h(s?s.intro:(w.encouragement||'Rest until the lesson. You did the work.'))}"</div><div class="who">${h(tn)}</div></div>
-      ${s?`<button class="btn block" id="start">Start · ${s.steps.reduce((a,x)=>a+(+x.minutes||0),0)} min</button>`:`<button class="btn block quiet" disabled>All ${w.sessions.length} sessions done. Next lesson ${h(fmt(w.nextLesson))}.</button>`}
-      <div class="card" style="margin-top:12px"><div class="streak"><span class="n">${streak()}</span><small>session streak</small></div>
-        <div class="forgive">One rest day a week is built in. A missed day pauses the streak; only a whole missed week breaks it.</div>
-        <div class="row" style="margin-top:10px"><span class="eyebrow">This week</span><span class="dots">${w.sessions.map((_,k)=>`<i class="dot ${k<n?'done':k===n?'now':''}"></i>`).join('')}</span></div></div>
-      ${lastDone?`<div class="card"><h3>Last time</h3><div>${h(fmt(lastDone.at.slice(0,10)))} · you said <b>${h(lastDone.feel||'')}</b>${w.line?`. ${h(w.line)}`:''}</div></div>`:(w.line?`<div class="card"><h3>From ${h(tn)}</h3><div class="quote" style="font-size:18px">"${h(w.line)}"</div></div>`:'')}`;
+      <div class="chips"><span class="chip">${h(fmt(today()))}</span><span class="chip">Day <b>${Math.min(n+1,w.sessions.length)} of ${w.sessions.length}</b></span><span class="chip">${h(mins)} min <b>set by ${h(tn)}</b></span>${w.group?`<span class="chip">${h(w.group.name||'Group')} week${p.part?' · '+h(p.part):''}</span>`:''}</div>
+      <div class="card"><div class="label">Today's session</div><h2 class="big" style="margin-bottom:6px">${s?h(s.title):'Week complete'}</h2>${s?`<p>${h(s.steps.map(x=>x.name).join(' · '))}</p>`:`<p>All ${w.sessions.length} days done. Next lesson ${h(fmt(w.nextLesson))}.</p>`}</div>
+      <div class="box says"><div class="label">${h(tn)} says</div><div class="quote">${h(s?s.intro:(w.encouragement||'Rest until the lesson. You did the work.'))}</div></div>
+      ${s?`<button class="btn block" id="start">Start the guided session · ${s.steps.reduce((a,x)=>a+(+x.minutes||0),0)} min</button><button class="btn block quiet" id="tickOnly" style="margin-top:10px">I practised on my own: tick what I did</button>`:''}
+      ${openExtras().length?`<div class="box c" style="margin-top:14px"><div class="label">New from ${h(tn)}</div>${openExtras().map(x=>`<div class="flag"><span>${h(x.text)} <span class="note" style="margin:0">· ${h(fmt(x.at.slice(0,10)))}</span></span><button class="btn sm quiet" data-xdone="${x.id}">Done</button></div>`).join('')}</div>`:''}
+      <div class="card" style="margin-top:14px"><div class="label">This week</div>${staveWeek(w)}
+        <div class="streak"><span class="n">${streak()}</span><small><b>day streak</b></small></div>
+        <div class="forgive">One rest day a week is built in. A missed day pauses the streak; only a whole missed week breaks it.</div></div>
+      ${lastDone?`<div class="card"><div class="label">Last time</div><div>${h(fmt(lastDone.at.slice(0,10)))} · you said it felt <b>${h(lastDone.feel||'')}</b>${(lastDone.worked||[]).length?` · you worked on <b>${h(lastDone.worked.join(', '))}</b>`:''}</div></div>`:''}`;
+    const to=$('#tickOnly'); if(to) to.onclick=()=>{ si=i; sess=w.sessions[i]; finish(true); };
     const b=$('#start'); if(b) b.onclick=()=>startSession(i);
     $$('[data-xdone]').forEach(x=>x.onclick=()=>{ const e=extras().find(y=>y.id===x.dataset.xdone); if(e){ e.done=true; e.doneAt=new Date().toISOString(); } saveCurrent(); renderToday(); toast('Done. Nice.'); });
     show('today');
@@ -340,14 +356,18 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
   function run(){ clearInterval(timer); timer=setInterval(()=>{ if(paused) return; left--; tick(); if(left<=0) nextStep(); },1000); }
   function nextStep(){ stepI++; if(stepI>=sess.steps.length){ finish(); return; } stepInit(); }
   function startSession(i){ const w=week(); si=i; sess=w.sessions[i]; stepI=0; paused=false; $('#pause').textContent='Pause'; $('#sessTitle').textContent=sess.title; $('#speak').checked=true; stepInit(); run(); show('session'); }
-  function finish(){
+  function finish(ownTime){
     clearInterval(timer); try{ speechSynthesis.cancel(); player.pause(); }catch(e){}
-    const w=week(); w.done=w.done||[]; if(!w.done.some(x=>x.i===si)) w.done.push({i:si, at:new Date().toISOString(), feel:''});
+    const w=week(); w.done=w.done||[]; if(!w.done.some(x=>x.i===si)) w.done.push({i:si, at:new Date().toISOString(), feel:'', worked:[], own:!!ownTime});
     const t=doc().tokens||(doc().tokens={earned:0,redeemed:0}); t.earned=(t.earned||0)+1; if(doneCount(w)===w.sessions.length) t.earned+=2;
     saveCurrent();
-    $('#doneTitle').textContent=`That's ${streak()} in a row.`; $('#doneSub').textContent=`${sess.steps.reduce((a,x)=>a+(+x.minutes||0),0)} minutes. ${doneCount(w)} of ${w.sessions.length} this week.${doneCount(w)===w.sessions.length?' Week complete: two bonus tokens.':''}`;
-    $$('#feel button').forEach(b=>b.classList.remove('on')); $('#tailor').hidden=true; show('done');
+    $('#doneTitle').textContent=`Day ${doneCount(w)} of ${w.sessions.length}. That's ${streak()} in a row.`; $('#doneSub').textContent=(ownTime?'Practised on your own. ':`${sess.steps.reduce((a,x)=>a+(+x.minutes||0),0)} minutes. `)+(doneCount(w)===w.sessions.length?'Week complete: two bonus tokens.':'');
+    renderWorked(); $$('#feel button').forEach(b=>b.classList.remove('on')); $('#tailor').hidden=true; show('done');
   }
+  function renderWorked(){ const w=week(); const d=(w.done||[]).find(x=>x.i===si); const items=workList(w); const on=new Set(d?.worked||[]);
+    $('#worked').innerHTML=[...new Set([...items, ...on])].map(it=>`<li class="${on.has(it)?'on':''}" data-w="${h(it)}"><i></i><span>${h(it)}</span></li>`).join('')||'<li style="cursor:default"><span class="note" style="margin:0">Nothing on the list yet. Add what you did below.</span></li>';
+    $$('#worked li[data-w]').forEach(li=>li.onclick=()=>{ const it=li.dataset.w; d.worked=d.worked||[]; d.worked=d.worked.includes(it)?d.worked.filter(x=>x!==it):[...d.worked,it]; saveCurrent(); renderWorked(); }); }
+  $('#workedOther').onsubmit=e=>{ e.preventDefault(); const t=$('#workedText').value.trim(); if(!t) return; const w=week(); const d=(w.done||[]).find(x=>x.i===si); d.worked=[...(d.worked||[]),t]; w.work=[...(w.work||[]),t]; $('#workedText').value=''; saveCurrent(); renderWorked(); };
   $('#pause').onclick=e=>{ paused=!paused; e.target.textContent=paused?'Resume':'Pause'; if(paused){ try{ speechSynthesis.pause(); player.pause(); }catch(x){} } else { try{ speechSynthesis.resume(); if(player.src&&player.currentTime>0&&!player.ended) player.play().catch(()=>{}); }catch(x){} } };
   $('#skip').onclick=()=>nextStep();
   $('#quit').onclick=()=>{ clearInterval(timer); try{ speechSynthesis.cancel(); player.pause(); }catch(e){} renderToday(); };
@@ -362,22 +382,23 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
     const n=doneCount(w); const d=new Set((w.done||[]).map(x=>x.i)); const tk=tokensView();
     const flags=doc().flags||[];
     v.innerHTML=`
-      <div class="eyebrow">Journey to ${h(fmt(w.nextLesson))}</div>
-      <h2 class="big">${w.sessions.length} stops, then ${h(tn)}.</h2>
+      <div class="chips"><span class="chip">Next lesson <b>${h(fmt(w.nextLesson))}</b></span><span class="chip"><b>${n} of ${w.sessions.length}</b> days done</span></div>
+      <div class="card"><div class="label">This week on the stave</div>${staveWeek(w)}</div>
+      <h2 class="big">${w.sessions.length} days, then ${h(tn)}.</h2>
       <ul class="path">
         <li class="lesson"><div class="t">Lesson · ${h(fmt(w.lessonDate||w.createdAt))}</div><div class="d">${h((w.workedOn||'').slice(0,90))}</div></li>
         ${w.sessions.map((s,k)=>`<li class="${d.has(k)?'done':k===nextIndex(w)?'now':''}"><div class="t">${h(s.title)}${d.has(k)?' ✓':''}</div><div class="d">${h(s.steps.map(x=>x.name).slice(1,3).join(' · '))}</div></li>`).join('')}
         <li class="lesson"><div class="t">Next lesson · ${h(fmt(w.nextLesson))}</div><div class="d">Play it for ${h(tn)}.</div></li>
       </ul>
-      <div class="card"><h3>Prepare for the lesson</h3>
+      <div class="card"><div class="label">Show ${h(tn)} at the lesson</div>
         <ul class="check" id="prep">${(w.checklist||[]).map((c,k)=>`<li class="${(w.ticks||[]).includes(k)?'on':''}" data-k="${k}"><i></i><span>${h(c)}</span></li>`).join('')||'<li><i></i><span style="color:var(--muted)">No checklist this week</span></li>'}</ul>
         ${extras().filter(x=>x.at>=w.createdAt).length?`<div class="eyebrow" style="margin-top:10px">Added during the week</div><ul class="check">${extras().filter(x=>x.at>=w.createdAt).map(x=>`<li class="${x.done?'on':''}" data-x="${x.id}"><i></i><span>${h(x.text)}</span></li>`).join('')}</ul>`:''}
         <div class="note">Set by ${h(tn)}. Tick each one when you could show it in the lesson.</div></div>
-      <div class="card"><h3>For the next lesson</h3>
+      <div class="card"><div class="label">Ask ${h(tn)} at the lesson</div>
         <div id="flags">${flags.filter(f=>!f.resolved).map(f=>`<div class="flag"><span>${h(f.text)}</span><button class="btn sm quiet" data-unflag="${f.id}" aria-label="Remove">×</button></div>`).join('')||'<div class="note" style="margin:0">Nothing flagged. Type it the moment it happens: a squeak, a question, a breakthrough.</div>'}</div>
         <form id="flagForm" class="row" style="margin-top:8px"><input id="flagText" placeholder="e.g. G string squeaks on down bows" style="flex:1"><button class="btn sm" type="submit">Flag it</button></form>
         <div class="note">${h(tn)} sees these before the lesson starts.</div></div>
-      <div class="card"><h3>${p.reward?'Six tokens: '+h(p.reward):'Tokens'}</h3>
+      <div class="card"><div class="label">Tokens</div><h3>${p.reward?'Six tokens: '+h(p.reward):'Six tokens: a small reward'}</h3>
         <div class="tokens">${Array.from({length:6},(_,k)=>`<i class="tok ${k<(tk.avail%6||(tk.avail>=6?6:0))?'on':''}"></i>`).join('')}<span class="note" style="margin:0 0 0 6px">${tk.avail} available${tk.avail>=6?' · ask '+h(tn)+(p.reward?' for your '+h(p.reward):' for your reward'):' · '+tk.toNext+' to go'}</span></div>
         <div class="note">One token per session, two more for a full week. ${p.reward?'At six, '+h(tn)+' has put up '+h(p.reward)+'.':'Six is a small reward your teacher, parent or school has put up.'} Earned for showing up, not for talent.</div></div>`;
     $$('#prep li[data-k]').forEach(li=>li.onclick=()=>{ w.ticks=w.ticks||[]; const k=+li.dataset.k; w.ticks=w.ticks.includes(k)?w.ticks.filter(x=>x!==k):[...w.ticks,k]; saveCurrent(); renderJourney(false); });
@@ -406,15 +427,15 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
     const wrap=(t,x,y,mw,lh,font,col)=>{ ctx.font=font; ctx.fillStyle=col; const words=String(t).split(' '); let line='', yy=y; for(const wd of words){ const test=line?line+' '+wd:wd; if(ctx.measureText(test).width>mw&&line){ ctx.fillText(line,x,yy); line=wd; yy+=lh; } else line=test; } if(line) ctx.fillText(line,x,yy); return yy+lh; };
     ctx.fillStyle='#F7F3EA'; ctx.fillRect(0,0,W,H);
     ctx.strokeStyle='#E6DECB'; ctx.lineWidth=2; for(let y=60;y<H;y+=42){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
-    ctx.fillStyle='#5A2A1E'; ctx.font='italic 400 34px "Instrument Serif", Georgia, serif'; ctx.fillText('Melodigo.',60,90);
-    ctx.fillStyle='#6F6659'; ctx.font='600 20px "Instrument Sans", system-ui, sans-serif'; ctx.fillText((p.name||'My')+"'s week"+(w?' · from '+fmt(w.lessonDate||w.createdAt):''),60,130);
-    ctx.fillStyle='#5A2A1E'; ctx.font='400 74px "Instrument Serif", Georgia, serif'; ctx.fillText(w&&n===tot?'Week complete.':(n+' of '+tot+' done.'),60,230);
+    ctx.fillStyle='#5A2A1E'; ctx.font='800 34px "Plus Jakarta Sans", system-ui, sans-serif'; ctx.fillText('Melodigo.',60,90);
+    ctx.fillStyle='#6F6659'; ctx.font='600 20px "Plus Jakarta Sans", system-ui, sans-serif'; ctx.fillText((p.name||'My')+"'s week"+(w?' · from '+fmt(w.lessonDate||w.createdAt):''),60,130);
+    ctx.fillStyle='#5A2A1E'; ctx.font='400 74px "Plus Jakarta Sans", system-ui, sans-serif'; ctx.fillText(w&&n===tot?'Week complete.':(n+' of '+tot+' done.'),60,230);
     const stats=[[String(n)+'/'+tot,'sessions'],[String(mins),'minutes'],[String(streak()),'streak']];
-    stats.forEach((st,i)=>{ const x=60+i*250; ctx.fillStyle='#FFFDF8'; ctx.strokeStyle='#DED5C2'; ctx.lineWidth=2; ctx.beginPath(); ctx.roundRect(x,270,220,150,22); ctx.fill(); ctx.stroke(); ctx.fillStyle='#C8792A'; ctx.font='400 66px "Instrument Serif", Georgia, serif'; ctx.fillText(st[0],x+24,350); ctx.fillStyle='#6F6659'; ctx.font='600 20px "Instrument Sans", system-ui, sans-serif'; ctx.fillText(st[1],x+24,392); });
+    stats.forEach((st,i)=>{ const x=60+i*250; ctx.fillStyle='#FFFDF8'; ctx.strokeStyle='#DED5C2'; ctx.lineWidth=2; ctx.beginPath(); ctx.roundRect(x,270,220,150,22); ctx.fill(); ctx.stroke(); ctx.fillStyle='#C8792A'; ctx.font='400 66px "Plus Jakarta Sans", system-ui, sans-serif'; ctx.fillText(st[0],x+24,350); ctx.fillStyle='#6F6659'; ctx.font='600 20px "Plus Jakarta Sans", system-ui, sans-serif'; ctx.fillText(st[1],x+24,392); });
     let y=480;
-    if(w&&w.checklist&&w.checklist.length){ ctx.fillStyle='#6F6659'; ctx.font='600 18px "Instrument Sans", system-ui, sans-serif'; ctx.fillText('READY FOR THE LESSON',60,y); y+=36; for(let k=0;k<w.checklist.length&&k<4;k++){ const on=(w.ticks||[]).includes(k); ctx.fillStyle=on?'#C8792A':'#FFFDF8'; ctx.strokeStyle=on?'#C8792A':'#DED5C2'; ctx.beginPath(); ctx.roundRect(60,y-22,26,26,6); ctx.fill(); ctx.stroke(); y=wrap(w.checklist[k],100,y,680,30,'500 24px "Instrument Sans", system-ui, sans-serif',on?'#6F6659':'#1E1A16')+6; } y+=10; }
-    if(w&&(w.line||w.encouragement)){ y=wrap('"'+(w.line||w.encouragement)+'"',60,y+20,720,40,'italic 400 32px "Instrument Serif", Georgia, serif','#1E1A16'); ctx.fillStyle='#6F6659'; ctx.font='600 20px "Instrument Sans", system-ui, sans-serif'; ctx.fillText(tn,60,y+4); }
-    ctx.fillStyle='#6F6659'; ctx.font='500 18px "Instrument Sans", system-ui, sans-serif'; ctx.fillText('Three short sessions between lessons. Shared by the pupil.',60,H-50);
+    if(w&&w.checklist&&w.checklist.length){ ctx.fillStyle='#6F6659'; ctx.font='600 18px "Plus Jakarta Sans", system-ui, sans-serif'; ctx.fillText('READY FOR THE LESSON',60,y); y+=36; for(let k=0;k<w.checklist.length&&k<4;k++){ const on=(w.ticks||[]).includes(k); ctx.fillStyle=on?'#C8792A':'#FFFDF8'; ctx.strokeStyle=on?'#C8792A':'#DED5C2'; ctx.beginPath(); ctx.roundRect(60,y-22,26,26,6); ctx.fill(); ctx.stroke(); y=wrap(w.checklist[k],100,y,680,30,'500 24px "Plus Jakarta Sans", system-ui, sans-serif',on?'#6F6659':'#1E1A16')+6; } y+=10; }
+    if(w&&(w.line||w.encouragement)){ y=wrap('"'+(w.line||w.encouragement)+'"',60,y+20,720,40,'italic 400 32px "Plus Jakarta Sans", system-ui, sans-serif','#1E1A16'); ctx.fillStyle='#6F6659'; ctx.font='600 20px "Plus Jakarta Sans", system-ui, sans-serif'; ctx.fillText(tn,60,y+4); }
+    ctx.fillStyle='#6F6659'; ctx.font='500 18px "Plus Jakarta Sans", system-ui, sans-serif'; ctx.fillText('Three short sessions between lessons. Shared by the pupil.',60,H-50);
   }
 
   // ------------------------------------------------------------ goal
@@ -517,7 +538,8 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
       <button class="btn sm quiet" id="backT">← Pupils</button>
       <div class="eyebrow" style="margin-top:10px">Pupil</div><h2 class="big">${h(p.name||'Pupil')}</h2>
       ${flags.filter(f=>!f.resolved).length?`<div class="box c"><h3>Flagged for the next lesson</h3>${flags.filter(f=>!f.resolved).map(f=>`<div class="flag"><span>${h(f.text)} <span class="note" style="margin:0">· ${h(fmt(f.at.slice(0,10)))}</span></span><button class="btn sm quiet" data-res="${f.id}">Done</button></div>`).join('')}</div>`:''}
-      ${w?`<div class="card"><h3>This week</h3><div class="row"><span class="dots">${w.sessions.map((_,k)=>`<i class="dot ${(w.done||[]).some(x=>x.i===k)?'done':''}"></i>`).join('')}</span><span class="note" style="margin:0">${doneCount(w)} of ${w.sessions.length} done · ${(w.done||[]).map(x=>x.feel).filter(Boolean).join(', ')||'no feelings logged yet'} · next lesson ${h(fmt(w.nextLesson))}</span></div>
+      ${w?`<div class="card"><div class="label">This week</div>${staveWeek(w)}<div class="note" style="margin:0">${doneCount(w)} of ${w.sessions.length} days done · felt: ${(w.done||[]).map(x=>x.feel).filter(Boolean).join(', ')||'nothing logged yet'} · next lesson ${h(fmt(w.nextLesson))}</div>
+        ${workTally(w).length?`<div class="label" style="margin-top:12px">Worked on most this week</div><ul class="ticks" style="margin-top:4px">${workTally(w).map(([it,c])=>`<li style="cursor:default"><span style="flex:1">${h(it)}</span><span class="pill on">${c} ${c===1?'day':'days'}</span></li>`).join('')}</ul>`:'<div class="note">What the pupil ticks after each session appears here, most-worked first, so you can plan the lesson.</div>'}
         <div class="note">Tokens: ${(d.tokens?.earned||0)-(d.tokens?.redeemed||0)} available. ${((d.tokens?.earned||0)-(d.tokens?.redeemed||0))>=6?'<button class="btn sm" id="award">Mark reward given'+(p.reward?' ('+h(p.reward)+')':'')+'</button>':''}</div></div>`:''}
       <div class="card"><h3>Profile</h3>
         <div class="grid2">
@@ -526,7 +548,7 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
           <div><label class="l" for="pPart">Part or section (groups)</label><input id="pPart" value="${h(p.part||'')}" placeholder="Alto, Second violin…"></div>
           <div><label class="l" for="pGoal">Goal</label><input id="pGoal" value="${h(p.goalLabel||'')}" placeholder="Grade 3 exam"></div>
           <div><label class="l" for="pGoalDate">Goal date (rough)</label><input type="date" id="pGoalDate" value="${h(p.goalDate||'')}"></div>
-          <div><label class="l" for="pSpw">Sessions a week</label><input type="number" id="pSpw" min="2" max="5" value="${h(p.sessionsPerWeek||3)}"></div>
+          <div><label class="l" for="pSpw">Days a week</label><input type="number" id="pSpw" min="3" max="7" value="${h(p.sessionsPerWeek||7)}"><div class="note" style="margin:4px 0 0">Seven: one short session every day.</div></div>
           <div style="grid-column:1/-1"><label class="l" for="pReward">The reward at six tokens (a full week or two)</label><input id="pReward" value="${h(p.reward||'')}" placeholder="e.g. a hot chocolate after Thursday's lesson, a new set of strings, a sheet-music voucher"><div class="note" style="margin:4px 0 0">Named by you, a parent or the school. Small, occasional, from a real person. The pupil sees it on their Journey.</div></div>
           <div><label class="l" for="pMin">Minutes a day (you set this)</label><input type="number" id="pMin" min="10" max="120" step="5" value="${h(p.minutes||levelMinutes(p.level))}"><div class="note" style="margin:4px 0 0">Suggested for the level: ${levelMinutes(p.level)}. Change it and it sticks.</div></div>
         </div><button class="btn sm" id="pSave" style="margin-top:10px">Save profile</button></div>
@@ -540,13 +562,13 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
         <label class="l" for="nNextL">For next lesson, one per line <button type="button" class="btn quiet mic" data-dictate="nNextL">Dictate</button></label><textarea id="nNextL" placeholder="Scale from memory, two octaves&#10;First phrase in tune&#10;Bow nearer the bridge on long notes"></textarea>
         <label class="l" for="nLine">One line for the week <button type="button" class="btn quiet mic" data-dictate="nLine">Dictate</button></label><input id="nLine" placeholder="Lovely tone today. Don't rush the scale.">
         <div class="row" style="margin-top:10px"><button class="btn" id="gen">Write this week's sessions</button><span class="status" id="genStatus" style="margin:0"></span></div>
-        <div class="note">Thirty seconds here becomes ${h(p.sessionsPerWeek||3)} guided sessions, a checklist and a journey for ${h(p.name||'the pupil')}. You review before it goes to them.</div></div>
+        <div class="note">Thirty seconds here becomes ${h(p.sessionsPerWeek||7)} daily sessions, a work list the pupil ticks off each day, and a checklist for the lesson. You review before it goes to them.</div></div>
       <div id="previewBox"></div>`;
     $('#backT').onclick=()=>renderTeacher();
     $('#pLevel').onchange=()=>{ $('#pMin').value=levelMinutes($('#pLevel').value); };
     $('#xAdd').onclick=()=>{ const t=$('#xText').value.trim(); if(!t) return; d.extras=d.extras||[]; d.extras.push({id:uid(), text:t, at:new Date().toISOString(), done:false, by:me?.name||''}); saveCurrent(); renderTStudent(); toast('Added to their week.'); };
     $$('[data-xrm]').forEach(b=>b.onclick=()=>{ d.extras=(d.extras||[]).filter(x=>x.id!==b.dataset.xrm); saveCurrent(); renderTStudent(); });
-    $('#pSave').onclick=()=>{ p.instrument=$('#pInst').value.trim()||'violin'; p.part=$('#pPart').value.trim(); p.level=$('#pLevel').value||'beginner'; p.goalLabel=$('#pGoal').value.trim(); p.goalDate=$('#pGoalDate').value; p.sessionsPerWeek=+$('#pSpw').value||3; p.minutes=+$('#pMin').value||levelMinutes(p.level); p.reward=$('#pReward').value.trim(); saveCurrent(); toast('Profile saved.'); };
+    $('#pSave').onclick=()=>{ p.instrument=$('#pInst').value.trim()||'violin'; p.part=$('#pPart').value.trim(); p.level=$('#pLevel').value||'beginner'; p.goalLabel=$('#pGoal').value.trim(); p.goalDate=$('#pGoalDate').value; p.sessionsPerWeek=+$('#pSpw').value||7; p.minutes=+$('#pMin').value||levelMinutes(p.level); p.reward=$('#pReward').value.trim(); saveCurrent(); toast('Profile saved.'); };
     $$('[data-res]').forEach(b=>b.onclick=()=>{ const f=flags.find(x=>x.id===b.dataset.res); if(f) f.resolved=true; saveCurrent(); renderTStudent(); });
     const aw=$('#award'); if(aw) aw.onclick=()=>{ d.tokens=d.tokens||{earned:0,redeemed:0}; d.tokens.redeemed=(d.tokens.redeemed||0)+6; saveCurrent(); renderTStudent(); toast('Reward marked as given.'); };
     $('#gen').onclick=generateWeek;
@@ -562,7 +584,8 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
     try{
       let out;
       if(location.protocol.startsWith('http')){
-        const r=await fetch('/api/plan',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({profile:p, note, teacherName:d.teacherName||me?.name||'your teacher', weeksToGoal})});
+        const lastWeek=d.weeks.length?d.weeks[d.weeks.length-1]:null; const tally=lastWeek?workTally(lastWeek).map(([it,c])=>`${it} (${c} ${c===1?'day':'days'})`):[];
+        const r=await fetch('/api/plan',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({profile:p, note, teacherName:d.teacherName||me?.name||'your teacher', weeksToGoal, lastWeekTally:tally})});
         if(!r.ok){ let e={}; try{ e=await r.json(); }catch(x){} throw new Error(e.message||('HTTP '+r.status)); }
         out=await r.json();
       } else { out=offlinePlan(p, note); }
@@ -573,12 +596,14 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
   function offlinePlan(p, note){ // used only when the page is opened as a file, so the flow can still be tried
     const items=note.forNext.length?note.forNext:['the thing we worked on']; const per=Math.max(3,Math.round((p.minutes||levelMinutes(p.level))/5));
     const mk=(t,i)=>({title:t, intro:`Session ${i}. ${note.line||'Slow and in tune beats fast and nearly.'}`, steps:[{name:'Warm-up',minutes:3,caption:'Long, slow bows on the open strings. Listen for the note to bloom.'},{name:items[0],minutes:per,caption:`${items[0]}, slowly. Hear it before you play it.`},{name:'The piece',minutes:per,caption:'First phrase only, three times. Stop before it gets messy.'},{name:items[1]||items[0]+' again',minutes:per,caption:`Back to ${(items[1]||items[0]).toLowerCase()}, one notch faster than before.`},{name:'Wind down',minutes:1,caption:'One last open string, as beautiful as you can. Stop there.'}]});
-    return {sessions:Array.from({length:p.sessionsPerWeek||3},(_,i)=>mk(['Foundations','Building','Ready for the lesson'][i]||'Session',i+1)), checklist:items, encouragement:'Three short sessions beat one long one. Turn up.'};
+    const names=['Foundations','Slow and wide','Building','Halfway','Contact point','Nearly there','Ready for the lesson'];
+    return {sessions:Array.from({length:p.sessionsPerWeek||7},(_,i)=>mk(names[i]||'Session',i+1)), checklist:items, work:items, encouragement:'A short session every day beats one long one. Turn up.'};
   }
   function renderPreview(){
     const box=$('#previewBox'); const {note,out}=preview;
     box.innerHTML=`<div class="box a session-preview"><h3>Preview: ${h(current.data.profile.name||'the pupil')}'s week</h3><div class="note">Read it as the pupil will hear it. Regenerate if it's off; publish when it's right.</div>
       ${out.sessions.map((s,i)=>`<div class="s"><b>${i+1}. ${h(s.title)}</b> <span class="note" style="margin:0">· ${s.steps.reduce((a,x)=>a+(+x.minutes||0),0)} min</span><div class="quote" style="font-size:16px;margin:4px 0">"${h(s.intro)}"</div><ol>${s.steps.map(x=>`<li><b>${h(x.name)}</b> (${h(x.minutes)} min): ${h(x.caption)}</li>`).join('')}</ol></div>`).join('')}
+      <div class="s"><b>Work list (the pupil ticks these each day)</b><ul class="check">${(out.work||out.checklist).map(c=>`<li><i></i><span>${h(c)}</span></li>`).join('')}</ul></div>
       <div class="s"><b>Checklist for ${h(fmt(note.nextLesson))}</b><ul class="check">${out.checklist.map(c=>`<li><i></i><span>${h(c)}</span></li>`).join('')}</ul></div>
       <div class="s"><div class="quote" style="font-size:17px">"${h(out.encouragement)}"</div></div>
       <div class="row" style="margin-top:12px"><button class="btn" id="publish">Publish to ${h(current.data.profile.name||'the pupil')}</button><button class="btn quiet" id="regen">Regenerate</button><button class="btn quiet" id="discard">Discard</button></div></div>`;
@@ -595,7 +620,7 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
   }
   async function publishWeek(targets, note, out, group){
     for(const st of targets){ const d=st.data; d.notes=d.notes||[]; d.weeks=d.weeks||[]; d.notes.push({id:uid(), ...note, group:!!group});
-      d.weeks.push({id:uid(), createdAt:today(), lessonDate:note.date, nextLesson:note.nextLesson, workedOn:note.workedOn, line:note.line, sessions:JSON.parse(JSON.stringify(out.sessions)), checklist:out.checklist.slice(), encouragement:out.encouragement, done:[], ticks:[], group:group||undefined});
+      d.weeks.push({id:uid(), createdAt:today(), lessonDate:note.date, nextLesson:note.nextLesson, workedOn:note.workedOn, line:note.line, sessions:JSON.parse(JSON.stringify(out.sessions)), checklist:out.checklist.slice(), work:(out.work||[]).slice(), encouragement:out.encouragement, done:[], ticks:[], group:group||undefined});
       d.teacherName=d.teacherName||me?.name||''; try{ await saveStudent(st); }catch(e){} }
   }
 
@@ -615,7 +640,7 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
         <label class="l" for="gNextL">Know by next rehearsal, one per line <button type="button" class="btn quiet mic" data-dictate="gNextL">Dictate</button></label><textarea id="gNextL" placeholder="Movement 1 notes secure&#10;Entries at bar 30 counted, not guessed&#10;Words of movement 1 from memory"></textarea>
         <label class="l" for="gLine">One line for the week <button type="button" class="btn quiet mic" data-dictate="gLine">Dictate</button></label><input id="gLine" placeholder="Learn it slowly and it stays learnt.">
         <div class="row" style="margin-top:10px"><button class="btn" id="ggen">Write everyone's week</button><span class="status" id="ggenStatus" style="margin:0"></span></div>
-        <div class="note">Each member gets their own sessions for their own part: notes, rhythm, entries, words, listening. You review one preview, then it goes to all of them.</div></div>
+        <div class="note">Each member gets a short session every day for their own part: notes, rhythm, entries, words, listening, and a work list they tick off. You review one preview, then it goes to all of them.</div></div>
       <div id="gPreviewBox"></div>
       <div class="card"><h3>Add a task for everyone this week</h3>
         <div class="row"><input id="gxText" placeholder="e.g. Listen to the recording of movement 3 before Thursday" style="flex:1"><button class="btn sm" id="gxAdd">Add to all</button></div>
@@ -635,7 +660,7 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
     if(!tg.length){ st.textContent='Nobody matches those parts.'; return; }
     btn.disabled=true; st.textContent='Writing the week for '+tg.length+' members…';
     const parts=[...new Set(tg.map(s=>(s.data.profile?.part||'').trim()).filter(Boolean))];
-    const p0=tg[0].data.profile||{}; const profile={name:'each member', instrument:parts.length?'their part ('+parts.join(', ')+')':(p0.instrument||'their instrument or voice'), level:'mixed', sessionsPerWeek:3, minutes:p0.minutes||levelMinutes(p0.level)};
+    const p0=tg[0].data.profile||{}; const profile={name:'each member', instrument:parts.length?'their part ('+parts.join(', ')+')':(p0.instrument||'their instrument or voice'), level:'mixed', sessionsPerWeek:7, minutes:p0.minutes||levelMinutes(p0.level)};
     try{ let out;
       if(location.protocol.startsWith('http')){ const r=await fetch('/api/plan',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({profile, note, teacherName:me?.name||'your conductor', weeksToGoal:null, group:{name:me?.studio||'the group', parts}})}); if(!r.ok){ let e={}; try{ e=await r.json(); }catch(x){} throw new Error(e.message||('HTTP '+r.status)); } out=await r.json(); }
       else out=offlinePlan(profile, note);
@@ -658,15 +683,17 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
   // ------------------------------------------------------------ demo: see how it works, no account, nothing leaves the device
   function demoSeed(){
     const W=(title,intro,steps)=>({title,intro,steps:steps.map(([name,minutes,caption])=>({name,minutes,caption}))});
-    const emre={profile:{name:'Emre',instrument:'violin',part:'Second violin',level:'beginner',goalLabel:'Grade 1 exam',goalDate:addDays(today(),150),sessionsPerWeek:3,minutes:20,reminder:'push',reward:'a hot chocolate after Thursday\'s lesson'},teacherName:'Melisande',notes:[],extras:[{id:uid(),text:'Listen to the Twinkle variations recording once before Thursday',at:new Date().toISOString(),done:false,by:'Melisande'}],flags:[{id:uid(),text:'G string squeaks on down bows',at:new Date().toISOString(),resolved:false},{id:uid(),text:'Got the third-finger F sharp in tune three times in a row',at:new Date().toISOString(),resolved:false}],tokens:{earned:4,redeemed:0},
-      weeks:[{id:uid(),createdAt:addDays(today(),-3),lessonDate:addDays(today(),-3),nextLesson:addDays(today(),4),workedOn:'D major scale, bow contact point nearer the bridge, first phrase of Twinkle variation A. Rushes the scale.',line:"Lovely tone today. Don't rush the scale.",encouragement:'Three short sessions and the lesson takes care of itself.',
-        sessions:[W('Slow and wide','Everything at half the speed you think it needs, especially the scale.',[['Warm-up',3,'Long slow bows on the open D. Listen for the note to bloom.'],['D major, one note per breath',5,'Full bow on each note and a long pause at the top. The rushing happens between the notes.'],['Twinkle, first phrase',5,'Three times, then stop before it gets messy.'],['Scale again, nearer the bridge',4,"Same scale, bow a finger's width closer to the bridge. Brighter, not louder."],['Wind down',1,'One last open D, as beautiful as you can. Stop there.']]),
-          W('Contact point','The bridge end of the string is where today lives.',[['Warm-up',3,'Open strings, long bows, eyes on the contact point.'],['Scale from memory',5,'Music away. Say the note names aloud as you play.'],['Twinkle',5,'Phrase one, in tune, twice. If the F sharp is low, stop and find it.'],['Contact point drill',4,'Slide the bow toward the bridge until the sound brightens, then hold it there.'],['Wind down',1,'Stop.']]),
-          W('As if it were the lesson','Short, tidy steps. Play each thing once, properly.',[['Warm-up',3,'Two long bows per string.'],['Scale, once',4,'One go only. Steady, not fast.'],['Twinkle, once',5,"As you'll play it for me on Tuesday."],['Checklist run',5,'Tick what you can show.'],['Wind down',1,'Done. Sleep on it.']])],
-        checklist:['D major scale from memory','First phrase of Twinkle in tune, with a high F sharp','Bow nearer the bridge on long notes'],done:[{i:0,at:addDays(today(),-2)+'T18:00:00Z',feel:'Good'}],ticks:[0]}]};
-    const aisha={profile:{name:'Aisha',instrument:'cello',part:'Cello',level:'grade 3',goalLabel:'School concert',goalDate:addDays(today(),60),sessionsPerWeek:3,minutes:25,reminder:'email'},teacherName:'Melisande',notes:[],flags:[],extras:[],tokens:{earned:9,redeemed:6},
+    const WORK=['D major scale, two octaves','Twinkle variation A, first phrase','Bow nearer the bridge','Long slow bows'];
+    const day=(t,intro,a,b)=>W(t,intro,[['Warm-up',3,'Long slow bows on the open D. Listen for the note to bloom.'],[a,7,a+', slowly. Hear it before you play it.'],[b,7,b+'. Stop before it gets messy.'],['Wind down',3,'One last open D, as beautiful as you can. Stop there.']]);
+    const emre={profile:{name:'Emre',instrument:'violin',part:'Second violin',level:'beginner',goalLabel:'Grade 1 exam',goalDate:addDays(today(),150),sessionsPerWeek:7,minutes:20,reminder:'push',reward:'a hot chocolate after Thursday\'s lesson'},teacherName:'Melisande',notes:[],extras:[{id:uid(),text:'Listen to the Twinkle variations recording once before Thursday',at:new Date().toISOString(),done:false,by:'Melisande'}],
+      flags:[{id:uid(),text:'G string squeaks on down bows',at:new Date().toISOString(),resolved:false},{id:uid(),text:'Got the third-finger F sharp in tune three times in a row',at:new Date().toISOString(),resolved:false}],tokens:{earned:4,redeemed:0},
+      weeks:[{id:uid(),createdAt:addDays(today(),-3),lessonDate:addDays(today(),-3),nextLesson:addDays(today(),4),workedOn:'D major scale, bow contact point nearer the bridge, first phrase of Twinkle variation A. Rushes the scale.',line:"Lovely tone today. Don't rush the scale.",encouragement:'A short session every day and the lesson takes care of itself.',
+        sessions:[day('Slow and wide','Everything at half the speed you think it needs, especially the scale.',WORK[0],WORK[1]),day('Contact point','The bridge end of the string is where today lives.',WORK[2],WORK[1]),day('From memory','Music away today. Say the note names as you play.',WORK[0],WORK[3]),day('In tune','If the F sharp is low, stop and find it.',WORK[1],WORK[0]),day('Brighter, not louder','A finger\'s width closer to the bridge on every long note.',WORK[2],WORK[3]),day('Once through','Play each thing once, properly, as you would for me.',WORK[0],WORK[1]),day('Ready for Tuesday','Short and tidy. Then rest.',WORK[1],WORK[2])],
+        checklist:['D major scale from memory','First phrase of Twinkle in tune, with a high F sharp','Bow nearer the bridge on long notes'],work:WORK,
+        done:[{i:0,at:addDays(today(),-2)+'T18:00:00Z',feel:'Good',worked:[WORK[0],WORK[1]]},{i:1,at:addDays(today(),-1)+'T18:10:00Z',feel:'OK',worked:[WORK[2],WORK[1],WORK[3]]}],ticks:[0]}]};
+    const aisha={profile:{name:'Aisha',instrument:'cello',part:'Cello',level:'grade 3',goalLabel:'School concert',goalDate:addDays(today(),60),sessionsPerWeek:7,minutes:25,reminder:'email'},teacherName:'Melisande',notes:[],flags:[],extras:[],tokens:{earned:9,redeemed:6},
       weeks:[{id:uid(),createdAt:addDays(today(),-6),lessonDate:addDays(today(),-6),nextLesson:addDays(today(),1),workedOn:'C major two octaves, thumb position, first page of the Squire.',line:'Keep the left hand soft.',encouragement:'Nearly there.',sessions:[W('Even bows','Same length of bow for every note.',[['Warm-up',3,'Open strings.'],['C major',6,'Two octaves, evenly.'],['Squire, page one',7,'Without stopping.'],['Scale, faster',3,'One notch up.'],['Wind down',1,'Stop.']]),W('Thumb','Find the thumb position in one movement.',[['Warm-up',3,'Open strings.'],['Thumb position',6,'A string, thumb soft.'],['Squire',7,'Page one.'],['Scale',3,'From memory.'],['Wind down',1,'Stop.']]),W('Run-through','Once through, as on the day.',[['Warm-up',3,'Open strings.'],['Squire, whole page',10,'No stopping.'],['Trouble spots',6,'Only the bars that went wrong.'],['Wind down',1,'Stop.']])],checklist:['C major with even bowing','Page one without stopping'],done:[{i:0,at:addDays(today(),-5)+'T17:00:00Z',feel:'OK'},{i:1,at:addDays(today(),-3)+'T17:00:00Z',feel:'Good'},{i:2,at:addDays(today(),-1)+'T17:00:00Z',feel:'Good'}],ticks:[0,1]}]};
-    const tom={profile:{name:'Tom',instrument:'violin',part:'First violin',level:'returning',goalLabel:'',goalDate:'',sessionsPerWeek:2,minutes:25},teacherName:'Melisande',notes:[],flags:[],extras:[],tokens:{earned:0,redeemed:0},weeks:[]};
+    const tom={profile:{name:'Tom',instrument:'violin',part:'First violin',level:'returning',goalLabel:'',goalDate:'',sessionsPerWeek:7,minutes:25},teacherName:'Melisande',notes:[],flags:[],extras:[],tokens:{earned:0,redeemed:0},weeks:[]};
     return [{user_id:'demo-emre',data:emre},{user_id:'demo-aisha',data:aisha},{user_id:'demo-tom',data:tom}];
   }
   let demoRole='pupil';

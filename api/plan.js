@@ -27,9 +27,10 @@ const SCHEMA = {
       },
     },
     checklist: { type: "array", items: { type: "string" } },
+    work: { type: "array", items: { type: "string" } },
     encouragement: { type: "string" },
   },
-  required: ["sessions", "checklist", "encouragement"],
+  required: ["sessions", "checklist", "work", "encouragement"],
   additionalProperties: false,
 };
 
@@ -39,8 +40,8 @@ export default async function handler(req, res) {
   if (req.method !== "POST") { res.setHeader("Allow", "GET, POST"); return res.status(405).json({ error: "method_not_allowed" }); }
   if (!process.env.ANTHROPIC_API_KEY) return res.status(503).json({ error: "not_configured", message: "ANTHROPIC_API_KEY is not set on this deployment." });
 
-  const { profile = {}, note = {}, teacherName = "your teacher", weeksToGoal = null, group = null } = req.body || {};
-  const sessions = Math.min(5, Math.max(2, Number(profile.sessionsPerWeek) || 3));
+  const { profile = {}, note = {}, teacherName = "your teacher", weeksToGoal = null, group = null, lastWeekTally = [] } = req.body || {};
+  const sessions = Math.min(7, Math.max(3, Number(profile.sessionsPerWeek) || 7));
   const minutes = Math.min(120, Math.max(10, Number(profile.minutes) || 20));
   const workedOn = String(note.workedOn || "").slice(0, 2000);
   const forNext = Array.isArray(note.forNext) ? note.forNext.map(String).slice(0, 10) : [];
@@ -66,11 +67,11 @@ What we worked on: ${workedOn || "(not given)"}
 For next lesson: ${forNext.length ? forNext.map((x) => "- " + x).join("\n") : "(not given)"}
 One line for the week: ${line || "(none)"}
 
-Write exactly ${sessions} sessions for the week, each about ${minutes} minutes in total, which is the length the teacher has set for this pupil (the step minutes must add up to between ${minutes - 2} and ${minutes + 2}). Each session has ${minutes >= 45 ? "6 to 9" : "4 to 6"} steps. Structure every session: a short warm-up, then technique from the note, then the piece or passage from the note, then a return to the technique in a new way (interleave), then a one-minute wind-down that ends by telling the pupil to stop. Steps get shorter and more focused as the week goes on; session ${sessions} should feel like preparation for the lesson.
+Write exactly ${sessions} sessions, one for each day of the week in order (day 1 is the day after the lesson), each about ${minutes} minutes in total, which is the length the teacher has set for this pupil (the step minutes must add up to between ${minutes - 2} and ${minutes + 2}). Each session has ${minutes >= 45 ? "6 to 9" : "4 to 6"} steps. One of the middle days should be deliberately lighter.${Array.isArray(lastWeekTally) && lastWeekTally.length ? `\n\nWhat the pupil ticked as worked on last week, most first: ${lastWeekTally.slice(0, 10).join("; ")}. Balance this week so the neglected items get their turn, and say so in a caption once.` : ""} Structure every session: a short warm-up, then technique from the note, then the piece or passage from the note, then a return to the technique in a new way (interleave), then a one-minute wind-down that ends by telling the pupil to stop. Steps get shorter and more focused as the week goes on; session ${sessions} should feel like preparation for the lesson.
 
 Each step's caption is what the teacher says at the start of that step, one or two sentences, concrete and physical (what to do with the bow, fingers, ears), and it must refer to the note where possible. Never say "great job" style filler. A "stop before it gets messy" instruction belongs somewhere in each session. Vary the sessions; do not repeat captions.
 
-Also write a checklist of 3 to 5 short items the pupil should be able to show at the next lesson, drawn from "For next lesson", and one sentence of encouragement for the week that a real teacher would say.
+Also write: a checklist of 3 to 5 short items the pupil should be able to show at the next lesson, drawn from "For next lesson"; a work list of 4 to 8 short labels (a scale, a passage, a technique, a piece) that the pupil will tick after each day's practice to say what they worked on, written as nouns a child can recognise ("D major scale", "Twinkle, first phrase"); and one sentence of encouragement for the week that a real teacher would say.
 
 Respond with JSON only.`.replace(/the pupil/g, isGroup ? "each member" : "the pupil").replace(/the lesson/g, isGroup ? "the rehearsal" : "the lesson").replace(/next lesson/g, isGroup ? "next rehearsal" : "next lesson");
 
@@ -91,6 +92,7 @@ Respond with JSON only.`.replace(/the pupil/g, isGroup ? "each member" : "the pu
     const plain = (t) => String(t || "").replace(/\s*[\u2014\u2013]\s*/g, ", ").replace(/,\s*,/g, ",");
     parsed.sessions = (parsed.sessions || []).slice(0, sessions).map((s) => ({ ...s, title: plain(s.title), intro: plain(s.intro), steps: (s.steps || []).map((x) => ({ ...x, name: plain(x.name), caption: plain(x.caption) })) }));
     parsed.checklist = (parsed.checklist || []).map(plain);
+    parsed.work = (parsed.work || []).map(plain).slice(0, 8);
     parsed.encouragement = plain(parsed.encouragement);
     return res.status(200).json(parsed);
   } catch (err) {
