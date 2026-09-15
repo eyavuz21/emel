@@ -525,11 +525,8 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
   function renderTeacher(){
     const v=$('#v-teacher');
     const list=students.map(s=>{ const d=s.data; const w=d.weeks&&d.weeks.length?d.weeks[d.weeks.length-1]:null; const flags=(d.flags||[]).filter(f=>!f.resolved).length;
-      return `<div class="student" data-sid="${h(s.user_id)}"><div><div class="n">${h(d.profile?.name||'Pupil')}</div><div class="m">${h(d.profile?.instrument||'')} · ${h(d.profile?.level||'')}${d.profile?.minutes?` · ${d.profile.minutes} min a day`:''}${w?` · this week ${doneCount(w)}/${w.sessions.length}`:' · no week set'}${flags?` · <b>${flags} flagged</b>`:''}</div></div><span class="pill">open</span></div>`; }).join('');
-    const groups={}; students.forEach(s=>(s.data.weeks||[]).forEach(w=>{ if(w.group&&w.group.name){ const g=groups[w.group.name]||(groups[w.group.name]={n:0,next:null,parts:new Set()}); g.n++; if(!g.next||w.nextLesson>g.next) g.next=w.nextLesson; (w.group.parts||[]).forEach(x=>g.parts.add(x)); } }));
+      return `<div class="student" data-sid="${h(s.user_id)}"><div><div class="n">${h(d.profile?.name||'Pupil')}</div><div class="m">${h(d.profile?.instrument||'')} · ${h(d.profile?.level||'')}${d.profile?.minutes?` · ${d.profile.minutes} min a day`:''}${w?` · this week ${doneCount(w)}/${w.sessions.length}`:' · no week set'}${flags?` · <b style="color:var(--danger)">${flags} flagged</b>`:''}</div></div><span class="pill">open</span></div>`; }).join('');
     const parts=partsOf();
-    const groupList=`<div class="student" style="cursor:default"><div><div class="n">${h(me?.studio||'Your studio')}</div><div class="m">${students.length} ${students.length===1?'member':'members'}${parts.length?' · parts: '+h(parts.join(', ')):''}${me?.code?' · code '+h(me.code):''}</div></div></div>`+
-      Object.entries(groups).map(([name,g])=>`<div class="student" style="cursor:default"><div><div class="n">${h(name)}</div><div class="m">week set for ${g.n} ${g.n===1?'member':'members'}${g.parts.size?' · '+h([...g.parts].join(', ')):''}${g.next?' · next rehearsal '+h(fmt(g.next)):''}</div></div></div>`).join('');
     v.innerHTML=`<h2 class="big">${students.length?'Your pupils.':'No pupils yet.'}</h2>
       <div class="grid2" style="align-items:start">
         <div>
@@ -537,13 +534,13 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
           <div class="card"><div class="label">Pupils</div>${list||'<div class="note" style="margin:0">Pupils appear here when they join with your code.</div>'}</div>
         </div>
         <div>
-          <div class="box a" id="groupCard" style="cursor:pointer"><div class="label">Whole group</div><div class="quote">One week for everyone.</div><div class="note">Set one week for the whole studio, choir or orchestra. Each member gets it for their own part. Tap to open.</div>${groupList}<div class="note">One studio per sign-in for now. A second choir or orchestra needs its own code.</div></div>
+          <div class="box a" id="groupCard" style="cursor:pointer"><div class="label">Whole group</div><div class="quote">Send a message to the whole group.</div><div class="note">${students.length} ${students.length===1?'member':'members'}${parts.length?' · '+h(parts.join(', ')):''}. Tap to open.</div></div>
         </div>
       </div>
       ${mode==='cloud'?`<div class="box ${me?.voice_ready?'b':'c'}" id="voiceCard" style="cursor:pointer"><div class="label">Your voice</div><div class="quote">${me?.voice_ready?'Recorded.':'Not recorded yet.'}</div><div class="note">${me?.voice_ready?'New weeks are spoken in it. Tap to re-record or remove.':'Record thirty seconds and pupils hear their sessions in your voice. Tap to set it up.'}</div></div>`:''}`;
     $$('[data-sid]').forEach(el=>el.onclick=()=>{ current=students.find(s=>s.user_id===el.dataset.sid); renderTStudent(); show('tstudent'); });
     const vc=$('#voiceCard'); if(vc) vc.onclick=renderVoice;
-    const gc=$('#groupCard'); if(gc) gc.onclick=renderGroup; 
+    const gc=$('#groupCard'); if(gc) gc.onclick=renderMessage; 
     show('teacher');
   }
   let preview=null;
