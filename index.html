@@ -51,7 +51,7 @@ header.top{display:flex; align-items:center; justify-content:space-between; gap:
 .btn.danger{background:transparent; color:var(--danger); border:1px solid var(--line)}
 .btn[disabled]{opacity:.5; cursor:not-allowed}
 .eyebrow{font-size:13px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
-.chips{display:flex; gap:8px; flex-wrap:wrap; margin:0 0 12px} .chip{display:inline-flex; align-items:center; gap:6px; background:var(--card); border:1.5px solid var(--line); border-radius:999px; padding:7px 13px; font-size:14.5px; font-weight:700; color:var(--ink)} .chip.amber{background:var(--amber); color:var(--amber-ink); border-color:var(--amber)} .chip b{color:var(--muted); font-weight:600}
+.chips{display:flex; gap:8px; flex-wrap:wrap; margin:0 0 12px} .chip{display:inline-flex; align-items:center; gap:6px; background:var(--card); border:1.5px solid var(--line); border-radius:999px; padding:9px 15px; font-size:17px; font-weight:700; color:var(--ink)} .chip.amber{background:var(--amber); color:var(--amber-ink); border-color:var(--amber)} .chip b{color:var(--muted); font-weight:600}
 .muted{color:var(--muted)}
 .label{font-size:13px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); margin:0 0 6px}
 .big{font-size:38px; line-height:1.06; margin:2px 0 14px; color:var(--varnish)}
@@ -72,7 +72,7 @@ header.top{display:flex; align-items:center; justify-content:space-between; gap:
 .view{display:none} .view.on{display:block}
 .dots{display:inline-flex; gap:8px; align-items:center; vertical-align:middle}
 .dot{width:14px; height:14px; border-radius:50%; border:2px solid var(--line)} .dot.done{background:var(--amber); border-color:var(--amber)} .dot.now{border-color:var(--amber)}
-.streak{display:flex; justify-content:space-between; align-items:baseline}
+.streak{display:flex; gap:12px; align-items:baseline}
 .streak .n{font-size:52px; line-height:1; color:var(--amber); font-weight:800}
 .forgive{font-size:14px; color:var(--sage); font-weight:700; margin-top:6px}
 .ring{width:210px; height:210px; margin:6px auto 10px; position:relative}
@@ -321,10 +321,9 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
       <div class="card"><div class="label">Today's session</div><h2 class="big" style="margin-bottom:6px">${s?h(s.title):'Week complete'}</h2>${s?`<p>${h(s.intro)}</p><p class="muted">${h(s.steps.map(x=>x.name).join(' · '))}</p>`:`<p>All ${w.sessions.length} days done. Next lesson ${h(fmt(w.nextLesson))}.</p>`}</div>
       <div class="box says"><div class="label">${h(tn)} says, for this week</div><div class="quote">${h(w.line||w.encouragement||'Turn up every day and the lesson takes care of itself.')}</div></div>
       ${s?`<button class="btn block" id="start">Start the guided session · ${s.steps.reduce((a,x)=>a+(+x.minutes||0),0)} min</button><button class="btn block quiet" id="tickOnly" style="margin-top:10px">I practised on my own: tick what I did</button>`:''}
-      ${openExtras().length?`<div class="box c" style="margin-top:14px"><div class="label">News from ${h(tn)}</div>${openExtras().map(x=>`<div class="flag"><span>${h(x.text)} <span class="note" style="margin:0">· ${h(fmt(x.at.slice(0,10)))}</span></span><button class="btn sm quiet" data-xdone="${x.id}">Done</button></div>`).join('')}</div>`:''}
-      <div class="card" style="margin-top:14px"><div class="label">Streak and points</div>
-        <div class="streak"><span class="n">${streak()}</span><small><b>days in a row</b></small></div>
-        <p class="note">${tokensView().avail} points earned${p.reward?' · six points is '+h(p.reward):''}. One rest day a week is built in. A missed day pauses the streak; only a whole missed week breaks it.</p></div>`;
+      ${openExtras().length?`<div class="box says" style="margin-top:14px"><div class="label">News from ${h(tn)}</div>${openExtras().map((x,k)=>`<div class="quote"${k?' style="margin-top:14px"':''}>${h(x.text)}</div><div class="row" style="margin-top:8px; justify-content:space-between"><span class="note" style="margin:0">${h(fmt(x.at.slice(0,10)))}</span><button class="btn sm quiet" data-xdone="${x.id}">Done</button></div>`).join('')}</div>`:''}
+      <div class="card" style="margin-top:14px"><div class="streak"><span class="n">${streak()}</span><span class="quote">${streak()===1?'day':'days'} in a row</span></div>
+        <div class="quote" style="margin-top:10px">${tokensView().toNext} more to go to ${p.reward?h(p.reward):'your reward'}</div></div>`;
     const to=$('#tickOnly'); if(to) to.onclick=()=>{ si=i; sess=w.sessions[i]; finish(true); };
     const b=$('#start'); if(b) b.onclick=()=>startSession(i);
     $$('[data-xdone]').forEach(x=>x.onclick=()=>{ const e=extras().find(y=>y.id===x.dataset.xdone); if(e){ e.done=true; e.doneAt=new Date().toISOString(); } saveCurrent(); renderToday(); toast('Done. Nice.'); });
@@ -408,8 +407,7 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
   function renderShare(showIt){
     if(!current) return; const v=$('#v-share'); const w=week(); const p=doc().profile; const tn=doc().teacherName||'your teacher';
     v.innerHTML=`<div class="eyebrow">Share</div><h2 class="big">Your week, as a card.</h2>
-      <p>A picture of this week: sessions done, minutes, streak, and what ${h(tn)} said. Send it to a parent, a friend, anyone you choose. Nothing is shared unless you send it, and nothing else about you is in it.</p>
-      <canvas class="cardc" id="cardc" width="840" height="800" aria-label="Your week card"></canvas>
+      <canvas class="cardc" id="cardc" width="840" height="900" aria-label="Your week card"></canvas>
       <div class="row" style="justify-content:center"><button class="btn" id="shareBtn">Share the card</button><button class="btn quiet" id="dlBtn">Save the image</button></div>
       <p class="note" style="text-align:center">${w?'':'There is no week to show yet, so the card is a preview.'}</p>`;
     drawCard($('#cardc'));
@@ -418,21 +416,31 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
     if(showIt!==false) show('share');
   }
   function drawCard(c){
-    const ctx=c.getContext('2d'); const W=c.width, H=c.height; const p=doc().profile; const w=week(); const tn=doc().teacherName||'your teacher';
-    const n=w?doneCount(w):0, tot=w?w.sessions.length:3; const mins=w?(w.done||[]).reduce((a,d)=>a+(w.sessions[d.i]?w.sessions[d.i].steps.reduce((x,y)=>x+(+y.minutes||0),0):0),0):0;
-    const wrap=(t,x,y,mw,lh,font,col)=>{ ctx.font=font; ctx.fillStyle=col; const words=String(t).split(' '); let line='', yy=y; for(const wd of words){ const test=line?line+' '+wd:wd; if(ctx.measureText(test).width>mw&&line){ ctx.fillText(line,x,yy); line=wd; yy+=lh; } else line=test; } if(line) ctx.fillText(line,x,yy); return yy+lh; };
+    const ctx=c.getContext('2d'); const W=c.width; const p=doc().profile; const w=week(); const tn=doc().teacherName||'your teacher';
+    const n=w?doneCount(w):0, tot=w?w.sessions.length:7; const mins=w?(w.done||[]).reduce((a,d)=>a+(w.sessions[d.i]?w.sessions[d.i].steps.reduce((x,y)=>x+(+y.minutes||0),0):0),0):0;
+    const F=(wt,px)=>`${wt} ${px}px "Plus Jakarta Sans", system-ui, sans-serif`;
+    const lines=(t,mw,font)=>{ ctx.font=font; const words=String(t).split(' '); const out=[]; let line=''; for(const wd of words){ const test=line?line+' '+wd:wd; if(ctx.measureText(test).width>mw&&line){ out.push(line); line=wd; } else line=test; } if(line) out.push(line); return out; };
+    const wrap=(t,x,y,mw,lh,font,col)=>{ const ls=lines(t,mw,font); ctx.font=font; ctx.fillStyle=col; ls.forEach((l,i)=>ctx.fillText(l,x,y+i*lh)); return y+ls.length*lh; };
+    const box=(y,hh)=>{ ctx.fillStyle='#FFFFFF'; ctx.strokeStyle='#DEDEDE'; ctx.lineWidth=2; ctx.beginPath(); ctx.roundRect(40,y,W-80,hh,26); ctx.fill(); ctx.stroke(); };
+    const label=(t,y)=>{ ctx.fillStyle='#666666'; ctx.font=F(800,18); ctx.fillText(t.toUpperCase(),70,y); };
+    const top=490; const fb=w&&(w.line||w.encouragement); const list=w&&w.checklist?w.checklist.slice(0,4):[];
+    let hh=42; if(fb) hh+=36+lines(fb,W-140,F(700,28)).length*38+40; if(list.length){ hh+=36; list.forEach(t=>hh+=lines(t,W-180,F(600,24)).length*30+8); } if(!fb&&!list.length) hh+=40; hh+=18;
+    const H=top+hh+40; if(c.height!==H) c.height=H;
     ctx.fillStyle='#FFFFFF'; ctx.fillRect(0,0,W,H);
-    ctx.strokeStyle='#E9E9E9'; ctx.lineWidth=2; for(let y=60;y<H;y+=42){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
-    ctx.fillStyle='#111111'; ctx.font='800 34px "Plus Jakarta Sans", system-ui, sans-serif'; ctx.fillText('Melodigo.',60,90);
-    ctx.fillStyle='#666666'; ctx.font='600 20px "Plus Jakarta Sans", system-ui, sans-serif'; ctx.fillText((p.name||'My')+"'s week"+(w?' · from '+fmt(w.lessonDate||w.createdAt):''),60,130);
-    let y=170;
-    if(w&&(w.line||w.encouragement)){ ctx.fillStyle='#666666'; ctx.font='800 18px "Plus Jakarta Sans", system-ui, sans-serif'; ctx.fillText('FEEDBACK FROM THE LAST LESSON',60,y); y=wrap((w.line||w.encouragement),60,y+42,720,42,'700 32px "Plus Jakarta Sans", system-ui, sans-serif','#111111'); ctx.fillStyle='#666666'; ctx.font='600 20px "Plus Jakarta Sans", system-ui, sans-serif'; ctx.fillText(tn,60,y+2); y+=60; }
-    ctx.fillStyle='#111111'; ctx.font='800 60px "Plus Jakarta Sans", system-ui, sans-serif'; ctx.fillText(w&&n===tot?'Week complete.':(n+' of '+tot+' days done.'),60,y+40); y+=90;
+    ctx.strokeStyle='#E9E9E9'; ctx.lineWidth=2; for(let y=40;y<H;y+=42){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+    // box 1: the dates
+    const from=w?fmt(w.lessonDate||w.createdAt):fmt(today()); const to=w&&w.nextLesson?fmt(w.nextLesson):null;
+    box(40,120); ctx.fillStyle='#111111'; ctx.font=F(800,34); ctx.fillText('Melodigo.',70,92); ctx.font=F(700,26); ctx.fillText('From '+from+(to?' to '+to:''),70,136);
+    // box 2: the pupil's week
+    let y=190; box(y,270); label((p.name||'My')+"'s week",y+42);
+    ctx.fillStyle='#111111'; ctx.font=F(800,52); ctx.fillText(w&&n===tot?'Week complete.':(n+' of '+tot+' days done.'),70,y+106);
     const stats=[[String(n)+'/'+tot,'days practised'],[String(mins),'minutes practised'],[String(tokensView().avail),'points earned']];
-    stats.forEach((st,i)=>{ const x=60+i*250; ctx.fillStyle='#FFFFFF'; ctx.strokeStyle='#DEDEDE'; ctx.lineWidth=2; ctx.beginPath(); ctx.roundRect(x,y,220,150,22); ctx.fill(); ctx.stroke(); ctx.fillStyle='#111111'; ctx.font='800 60px "Plus Jakarta Sans", system-ui, sans-serif'; ctx.fillText(st[0],x+24,y+80); ctx.fillStyle='#666666'; ctx.font='600 19px "Plus Jakarta Sans", system-ui, sans-serif'; ctx.fillText(st[1],x+24,y+122); });
-    y+=200;
-    if(w&&w.checklist&&w.checklist.length){ ctx.fillStyle='#666666'; ctx.font='800 18px "Plus Jakarta Sans", system-ui, sans-serif'; ctx.fillText('READY FOR THE LESSON',60,y); y+=36; for(let k=0;k<w.checklist.length&&k<4;k++){ const on=(w.ticks||[]).includes(k); ctx.fillStyle=on?'#111111':'#FFFFFF'; ctx.strokeStyle=on?'#111111':'#DEDEDE'; ctx.beginPath(); ctx.roundRect(60,y-22,26,26,6); ctx.fill(); ctx.stroke(); y=wrap(w.checklist[k],100,y,680,30,'600 24px "Plus Jakarta Sans", system-ui, sans-serif',on?'#666666':'#111111')+6; } }
-    ctx.fillStyle='#666666'; ctx.font='500 18px "Plus Jakarta Sans", system-ui, sans-serif'; ctx.fillText('A short session every day. Shared by the pupil.',60,H-50);
+    stats.forEach((st,i)=>{ const x=70+i*236; ctx.fillStyle='#F4F4F4'; ctx.beginPath(); ctx.roundRect(x,y+132,216,108,18); ctx.fill(); ctx.fillStyle='#111111'; ctx.font=F(800,44); ctx.fillText(st[0],x+20,y+188); ctx.fillStyle='#666666'; ctx.font=F(600,18); ctx.fillText(st[1],x+20,y+222); });
+    // box 3: feedback from the last lesson, and what is wanted for the next one
+    box(top,hh); y=top+42;
+    if(fb){ label('Feedback from the last lesson',y); y=wrap(fb,70,y+36,W-140,38,F(700,28),'#111111'); ctx.fillStyle='#666666'; ctx.font=F(600,19); ctx.fillText(tn,70,y-4); y+=40; }
+    if(list.length){ label('For next lesson:',y); y+=36; list.forEach((t,k)=>{ const on=(w.ticks||[]).includes(k); ctx.fillStyle=on?'#111111':'#FFFFFF'; ctx.strokeStyle=on?'#111111':'#DEDEDE'; ctx.lineWidth=2; ctx.beginPath(); ctx.roundRect(70,y-20,24,24,6); ctx.fill(); ctx.stroke(); y=wrap(t,108,y,W-180,30,F(600,24),on?'#666666':'#111111')+8; }); }
+    if(!fb&&!list.length){ ctx.fillStyle='#666666'; ctx.font=F(600,22); ctx.fillText('Feedback appears here after the next lesson.',70,y+2); }
   }
 
   // ------------------------------------------------------------ goal
@@ -518,14 +526,25 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
     const v=$('#v-teacher');
     const list=students.map(s=>{ const d=s.data; const w=d.weeks&&d.weeks.length?d.weeks[d.weeks.length-1]:null; const flags=(d.flags||[]).filter(f=>!f.resolved).length;
       return `<div class="student" data-sid="${h(s.user_id)}"><div><div class="n">${h(d.profile?.name||'Pupil')}</div><div class="m">${h(d.profile?.instrument||'')} · ${h(d.profile?.level||'')}${d.profile?.minutes?` · ${d.profile.minutes} min a day`:''}${w?` · this week ${doneCount(w)}/${w.sessions.length}`:' · no week set'}${flags?` · <b>${flags} flagged</b>`:''}</div></div><span class="pill">open</span></div>`; }).join('');
-    v.innerHTML=`<div class="eyebrow">${h(me?.studio||'Your studio')}${me?.code?` · code <b>${h(me.code)}</b>`:''}</div><h2 class="big">${students.length?'Your pupils.':'No pupils yet.'}</h2>
-      ${students.length>1?`<div class="box a" id="groupCard" style="cursor:pointer"><b>Whole group.</b> <span class="note" style="margin:0">Set one week for everyone, or add a task to all. For choirs, orchestras and ensembles. Tap to open.</span></div>`:''}
-      ${me?.code?`<div class="box b"><b>Give pupils this code:</b> <span class="pill on" style="font-size:16px;letter-spacing:.2em">${h(me.code)}</span><div class="note">They sign in, choose "I'm a pupil", enter it, and they're in your studio.</div></div>`:''}
-      ${mode==='cloud'?`<div class="box ${me?.voice_ready?'b':'c'}" id="voiceCard" style="cursor:pointer"><b>Your voice: ${me?.voice_ready?'recorded':'not recorded yet'}.</b> <span class="note" style="margin:0">${me?.voice_ready?'New weeks are spoken in it. Tap to re-record or remove.':'Record thirty seconds and pupils hear their sessions in your voice. Tap to set it up.'}</span></div>`:''}
-      <div class="card">${list||'<div class="note" style="margin:0">Pupils appear here when they join with your code.</div>'}</div>`;
+    const groups={}; students.forEach(s=>(s.data.weeks||[]).forEach(w=>{ if(w.group&&w.group.name){ const g=groups[w.group.name]||(groups[w.group.name]={n:0,next:null,parts:new Set()}); g.n++; if(!g.next||w.nextLesson>g.next) g.next=w.nextLesson; (w.group.parts||[]).forEach(x=>g.parts.add(x)); } }));
+    const parts=partsOf();
+    const groupList=`<div class="student" data-group="1"><div><div class="n">${h(me?.studio||'Your studio')}</div><div class="m">${students.length} ${students.length===1?'member':'members'}${parts.length?' · parts: '+h(parts.join(', ')):''}${me?.code?' · code '+h(me.code):''}</div></div><span class="pill">open</span></div>`+
+      Object.entries(groups).map(([name,g])=>`<div class="student" data-group="1"><div><div class="n">${h(name)}</div><div class="m">week set for ${g.n} ${g.n===1?'member':'members'}${g.parts.size?' · '+h([...g.parts].join(', ')):''}${g.next?' · next rehearsal '+h(fmt(g.next)):''}</div></div><span class="pill">open</span></div>`).join('');
+    v.innerHTML=`<h2 class="big">${students.length?'Your pupils.':'No pupils yet.'}</h2>
+      <div class="grid2" style="align-items:start">
+        <div>
+          ${me?.code?`<div class="box b"><div class="label">Code to give pupils</div><div class="quote" style="letter-spacing:.2em">${h(me.code)}</div><div class="note">They sign in, choose "I'm a pupil", enter it, and they're in your studio.</div></div>`:''}
+          <div class="card"><div class="label">Pupils</div>${list||'<div class="note" style="margin:0">Pupils appear here when they join with your code.</div>'}</div>
+        </div>
+        <div>
+          <div class="box a" id="groupCard" style="cursor:pointer"><div class="label">Whole group</div><div class="quote">One week for everyone.</div><div class="note">Set one week for the whole studio, choir or orchestra, or add a task to all of them. Each member gets it for their own part. Tap to open.</div></div>
+          <div class="card"><div class="label">Studios, choirs and groups</div>${groupList}<div class="note">One studio per sign-in for now. A second choir or orchestra needs its own code.</div></div>
+        </div>
+      </div>
+      ${mode==='cloud'?`<div class="box ${me?.voice_ready?'b':'c'}" id="voiceCard" style="cursor:pointer"><div class="label">Your voice</div><div class="quote">${me?.voice_ready?'Recorded.':'Not recorded yet.'}</div><div class="note">${me?.voice_ready?'New weeks are spoken in it. Tap to re-record or remove.':'Record thirty seconds and pupils hear their sessions in your voice. Tap to set it up.'}</div></div>`:''}`;
     $$('[data-sid]').forEach(el=>el.onclick=()=>{ current=students.find(s=>s.user_id===el.dataset.sid); renderTStudent(); show('tstudent'); });
     const vc=$('#voiceCard'); if(vc) vc.onclick=renderVoice;
-    const gc=$('#groupCard'); if(gc) gc.onclick=renderGroup;
+    const gc=$('#groupCard'); if(gc) gc.onclick=renderGroup; $$('[data-group]').forEach(el=>el.onclick=renderGroup);
     show('teacher');
   }
   let preview=null;
