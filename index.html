@@ -52,6 +52,7 @@ header.top{display:flex; align-items:center; justify-content:space-between; gap:
 .btn[disabled]{opacity:.5; cursor:not-allowed}
 .eyebrow{font-size:13px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
 .chips{display:flex; gap:8px; flex-wrap:wrap; margin:0 0 12px} .chip{display:inline-flex; align-items:center; gap:6px; background:var(--card); border:1.5px solid var(--line); border-radius:999px; padding:7px 13px; font-size:14.5px; font-weight:700; color:var(--ink)} .chip.amber{background:var(--amber); color:var(--amber-ink); border-color:var(--amber)} .chip b{color:var(--muted); font-weight:600}
+.muted{color:var(--muted)}
 .label{font-size:13px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); margin:0 0 6px}
 .big{font-size:38px; line-height:1.06; margin:2px 0 14px; color:var(--varnish)}
 .card{background:var(--card); border:1.5px solid var(--line); border-radius:24px; padding:18px 20px; margin-bottom:14px; box-shadow:0 2px 0 rgba(60,40,20,.04)}
@@ -144,17 +145,11 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
 
   <!-- LANDING -->
   <section class="view on" id="v-landing">
-    <div class="hero">
-      <h2>Your teacher sets the week. Melodigo gets you to practise every day.</h2>
-      <p>A short guided session every day, in your teacher's words. Tick what you worked on, and your teacher sees the week before the lesson. A checklist, a journey to the next lesson, a place to flag the thing that squeaked, and a streak that forgives a missed day. Nothing listens to you play and scores you. It does the harder thing: it gets you to turn up.</p>
-      <p class="note">Couch to 5K, for practising an instrument. It works for one pupil and one teacher, and for a whole choir or orchestra: the conductor sets the work for everyone, and each member gets their own week for their part.</p>
-    </div>
-    <div class="grid2">
-      <div class="box a"><h3>Pupils</h3><p style="margin:6px 0 0">Sign in, enter your teacher's code, and your first week is waiting after your next lesson.</p></div>
-      <div class="box b"><h3>Teachers and conductors</h3><p style="margin:6px 0 0">Sign in, create a studio or a group, give people the code. After each lesson or rehearsal, thirty seconds of notes becomes their week.</p></div>
-    </div>
-    <div class="row" style="margin-top:8px"><button class="btn" id="landSignin">Sign in with email</button><button class="btn quiet" id="landDemo">See how it works</button><button class="btn quiet" id="landLocal">Try it on this device, no account</button></div>
-    <p class="note">Two kinds of account, teacher and pupil. There is no parent login: a parent sets up and holds a young child's account with their own email, and the pupil chooses what to share, with a parent or anyone, as a card. Nobody else can see a pupil's week.</p>
+    <div class="card"><h2 class="big">Practise every day. Your teacher sees it.</h2>
+      <p>A short session every day, in your teacher's words. Tick what you worked on. Your teacher plans the next lesson from it.</p></div>
+    <div class="row" style="margin-top:8px"><button class="btn block" id="landSignin">Sign in with email</button></div>
+    <div class="row" style="margin-top:10px"><button class="btn quiet" id="landDemo">See how it works</button><button class="btn quiet" id="landLocal">Try it on this device</button></div>
+    <p class="note">Pupils join with their teacher's code. Teachers and conductors create a studio. A parent holds a young child's account.</p>
     <p class="note" id="landNote"></p>
   </section>
 
@@ -321,14 +316,15 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
     const lastDone=(w.done||[]).slice(-1)[0]; const mins=p.minutes||levelMinutes(p.level);
     v.innerHTML=`
       <div class="chips"><span class="chip">${h(fmt(today()))}</span><span class="chip">Day <b>${Math.min(n+1,w.sessions.length)} of ${w.sessions.length}</b></span><span class="chip">${h(mins)} min <b>set by ${h(tn)}</b></span>${w.group?`<span class="chip">${h(w.group.name||'Group')} week${p.part?' · '+h(p.part):''}</span>`:''}</div>
-      <div class="card"><div class="label">Today's session</div><h2 class="big" style="margin-bottom:6px">${s?h(s.title):'Week complete'}</h2>${s?`<p>${h(s.steps.map(x=>x.name).join(' · '))}</p>`:`<p>All ${w.sessions.length} days done. Next lesson ${h(fmt(w.nextLesson))}.</p>`}</div>
-      <div class="box says"><div class="label">${h(tn)} says</div><div class="quote">${h(s?s.intro:(w.encouragement||'Rest until the lesson. You did the work.'))}</div></div>
+      <div class="card"><div class="label">This week</div>${staveWeek(w)}</div>
+      ${lastDone?`<div class="card"><div class="label">Last time</div><p>${h(fmt(lastDone.at.slice(0,10)))} · you said it felt <b>${h(lastDone.feel||'')}</b>${(lastDone.worked||[]).length?` · you worked on <b>${h(lastDone.worked.join(', '))}</b>`:''}</p></div>`:''}
+      <div class="card"><div class="label">Today's session</div><h2 class="big" style="margin-bottom:6px">${s?h(s.title):'Week complete'}</h2>${s?`<p>${h(s.intro)}</p><p class="muted">${h(s.steps.map(x=>x.name).join(' · '))}</p>`:`<p>All ${w.sessions.length} days done. Next lesson ${h(fmt(w.nextLesson))}.</p>`}</div>
+      <div class="box says"><div class="label">${h(tn)} says, for this week</div><div class="quote">${h(w.line||w.encouragement||'Turn up every day and the lesson takes care of itself.')}</div></div>
       ${s?`<button class="btn block" id="start">Start the guided session · ${s.steps.reduce((a,x)=>a+(+x.minutes||0),0)} min</button><button class="btn block quiet" id="tickOnly" style="margin-top:10px">I practised on my own: tick what I did</button>`:''}
-      ${openExtras().length?`<div class="box c" style="margin-top:14px"><div class="label">New from ${h(tn)}</div>${openExtras().map(x=>`<div class="flag"><span>${h(x.text)} <span class="note" style="margin:0">· ${h(fmt(x.at.slice(0,10)))}</span></span><button class="btn sm quiet" data-xdone="${x.id}">Done</button></div>`).join('')}</div>`:''}
-      <div class="card" style="margin-top:14px"><div class="label">This week</div>${staveWeek(w)}
-        <div class="streak"><span class="n">${streak()}</span><small><b>day streak</b></small></div>
-        <div class="forgive">One rest day a week is built in. A missed day pauses the streak; only a whole missed week breaks it.</div></div>
-      ${lastDone?`<div class="card"><div class="label">Last time</div><div>${h(fmt(lastDone.at.slice(0,10)))} · you said it felt <b>${h(lastDone.feel||'')}</b>${(lastDone.worked||[]).length?` · you worked on <b>${h(lastDone.worked.join(', '))}</b>`:''}</div></div>`:''}`;
+      ${openExtras().length?`<div class="box c" style="margin-top:14px"><div class="label">News from ${h(tn)}</div>${openExtras().map(x=>`<div class="flag"><span>${h(x.text)} <span class="note" style="margin:0">· ${h(fmt(x.at.slice(0,10)))}</span></span><button class="btn sm quiet" data-xdone="${x.id}">Done</button></div>`).join('')}</div>`:''}
+      <div class="card" style="margin-top:14px"><div class="label">Streak and points</div>
+        <div class="streak"><span class="n">${streak()}</span><small><b>days in a row</b></small></div>
+        <p class="note">${tokensView().avail} points earned${p.reward?' · six points is '+h(p.reward):''}. One rest day a week is built in. A missed day pauses the streak; only a whole missed week breaks it.</p></div>`;
     const to=$('#tickOnly'); if(to) to.onclick=()=>{ si=i; sess=w.sessions[i]; finish(true); };
     const b=$('#start'); if(b) b.onclick=()=>startSession(i);
     $$('[data-xdone]').forEach(x=>x.onclick=()=>{ const e=extras().find(y=>y.id===x.dataset.xdone); if(e){ e.done=true; e.doneAt=new Date().toISOString(); } saveCurrent(); renderToday(); toast('Done. Nice.'); });
@@ -413,7 +409,7 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
     if(!current) return; const v=$('#v-share'); const w=week(); const p=doc().profile; const tn=doc().teacherName||'your teacher';
     v.innerHTML=`<div class="eyebrow">Share</div><h2 class="big">Your week, as a card.</h2>
       <p>A picture of this week: sessions done, minutes, streak, and what ${h(tn)} said. Send it to a parent, a friend, anyone you choose. Nothing is shared unless you send it, and nothing else about you is in it.</p>
-      <canvas class="cardc" id="cardc" width="840" height="1000" aria-label="Your week card"></canvas>
+      <canvas class="cardc" id="cardc" width="840" height="800" aria-label="Your week card"></canvas>
       <div class="row" style="justify-content:center"><button class="btn" id="shareBtn">Share the card</button><button class="btn quiet" id="dlBtn">Save the image</button></div>
       <p class="note" style="text-align:center">${w?'':'There is no week to show yet, so the card is a preview.'}</p>`;
     drawCard($('#cardc'));
@@ -429,13 +425,14 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
     ctx.strokeStyle='#E9E9E9'; ctx.lineWidth=2; for(let y=60;y<H;y+=42){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
     ctx.fillStyle='#111111'; ctx.font='800 34px "Plus Jakarta Sans", system-ui, sans-serif'; ctx.fillText('Melodigo.',60,90);
     ctx.fillStyle='#666666'; ctx.font='600 20px "Plus Jakarta Sans", system-ui, sans-serif'; ctx.fillText((p.name||'My')+"'s week"+(w?' · from '+fmt(w.lessonDate||w.createdAt):''),60,130);
-    ctx.fillStyle='#111111'; ctx.font='400 74px "Plus Jakarta Sans", system-ui, sans-serif'; ctx.fillText(w&&n===tot?'Week complete.':(n+' of '+tot+' done.'),60,230);
-    const stats=[[String(n)+'/'+tot,'sessions'],[String(mins),'minutes'],[String(streak()),'streak']];
-    stats.forEach((st,i)=>{ const x=60+i*250; ctx.fillStyle='#FFFFFF'; ctx.strokeStyle='#DEDEDE'; ctx.lineWidth=2; ctx.beginPath(); ctx.roundRect(x,270,220,150,22); ctx.fill(); ctx.stroke(); ctx.fillStyle='#111111'; ctx.font='400 66px "Plus Jakarta Sans", system-ui, sans-serif'; ctx.fillText(st[0],x+24,350); ctx.fillStyle='#666666'; ctx.font='600 20px "Plus Jakarta Sans", system-ui, sans-serif'; ctx.fillText(st[1],x+24,392); });
-    let y=480;
-    if(w&&w.checklist&&w.checklist.length){ ctx.fillStyle='#666666'; ctx.font='600 18px "Plus Jakarta Sans", system-ui, sans-serif'; ctx.fillText('READY FOR THE LESSON',60,y); y+=36; for(let k=0;k<w.checklist.length&&k<4;k++){ const on=(w.ticks||[]).includes(k); ctx.fillStyle=on?'#111111':'#FFFFFF'; ctx.strokeStyle=on?'#111111':'#DEDEDE'; ctx.beginPath(); ctx.roundRect(60,y-22,26,26,6); ctx.fill(); ctx.stroke(); y=wrap(w.checklist[k],100,y,680,30,'500 24px "Plus Jakarta Sans", system-ui, sans-serif',on?'#666666':'#111111')+6; } y+=10; }
-    if(w&&(w.line||w.encouragement)){ y=wrap('"'+(w.line||w.encouragement)+'"',60,y+20,720,40,'italic 400 32px "Plus Jakarta Sans", system-ui, sans-serif','#111111'); ctx.fillStyle='#666666'; ctx.font='600 20px "Plus Jakarta Sans", system-ui, sans-serif'; ctx.fillText(tn,60,y+4); }
-    ctx.fillStyle='#666666'; ctx.font='500 18px "Plus Jakarta Sans", system-ui, sans-serif'; ctx.fillText('Three short sessions between lessons. Shared by the pupil.',60,H-50);
+    let y=170;
+    if(w&&(w.line||w.encouragement)){ ctx.fillStyle='#666666'; ctx.font='800 18px "Plus Jakarta Sans", system-ui, sans-serif'; ctx.fillText('FEEDBACK FROM THE LAST LESSON',60,y); y=wrap((w.line||w.encouragement),60,y+42,720,42,'700 32px "Plus Jakarta Sans", system-ui, sans-serif','#111111'); ctx.fillStyle='#666666'; ctx.font='600 20px "Plus Jakarta Sans", system-ui, sans-serif'; ctx.fillText(tn,60,y+2); y+=60; }
+    ctx.fillStyle='#111111'; ctx.font='800 60px "Plus Jakarta Sans", system-ui, sans-serif'; ctx.fillText(w&&n===tot?'Week complete.':(n+' of '+tot+' days done.'),60,y+40); y+=90;
+    const stats=[[String(n)+'/'+tot,'days practised'],[String(mins),'minutes practised'],[String(tokensView().avail),'points earned']];
+    stats.forEach((st,i)=>{ const x=60+i*250; ctx.fillStyle='#FFFFFF'; ctx.strokeStyle='#DEDEDE'; ctx.lineWidth=2; ctx.beginPath(); ctx.roundRect(x,y,220,150,22); ctx.fill(); ctx.stroke(); ctx.fillStyle='#111111'; ctx.font='800 60px "Plus Jakarta Sans", system-ui, sans-serif'; ctx.fillText(st[0],x+24,y+80); ctx.fillStyle='#666666'; ctx.font='600 19px "Plus Jakarta Sans", system-ui, sans-serif'; ctx.fillText(st[1],x+24,y+122); });
+    y+=200;
+    if(w&&w.checklist&&w.checklist.length){ ctx.fillStyle='#666666'; ctx.font='800 18px "Plus Jakarta Sans", system-ui, sans-serif'; ctx.fillText('READY FOR THE LESSON',60,y); y+=36; for(let k=0;k<w.checklist.length&&k<4;k++){ const on=(w.ticks||[]).includes(k); ctx.fillStyle=on?'#111111':'#FFFFFF'; ctx.strokeStyle=on?'#111111':'#DEDEDE'; ctx.beginPath(); ctx.roundRect(60,y-22,26,26,6); ctx.fill(); ctx.stroke(); y=wrap(w.checklist[k],100,y,680,30,'600 24px "Plus Jakarta Sans", system-ui, sans-serif',on?'#666666':'#111111')+6; } }
+    ctx.fillStyle='#666666'; ctx.font='500 18px "Plus Jakarta Sans", system-ui, sans-serif'; ctx.fillText('A short session every day. Shared by the pupil.',60,H-50);
   }
 
   // ------------------------------------------------------------ goal
@@ -537,7 +534,7 @@ canvas.cardc{width:100%; max-width:420px; border-radius:16px; border:1px solid v
     v.innerHTML=`
       <button class="btn sm quiet" id="backT">← Pupils</button>
       <div class="eyebrow" style="margin-top:10px">Pupil</div><h2 class="big">${h(p.name||'Pupil')}</h2>
-      ${flags.filter(f=>!f.resolved).length?`<div class="box c"><h3>Flagged for the next lesson</h3>${flags.filter(f=>!f.resolved).map(f=>`<div class="flag"><span>${h(f.text)} <span class="note" style="margin:0">· ${h(fmt(f.at.slice(0,10)))}</span></span><button class="btn sm quiet" data-res="${f.id}">Done</button></div>`).join('')}</div>`:''}
+      ${flags.filter(f=>!f.resolved).length?`<div class="box" style="border-color:var(--danger)"><h3 style="color:var(--danger)">Flagged for the next lesson</h3>${flags.filter(f=>!f.resolved).map(f=>`<div class="flag"><span>${h(f.text)} <span class="note" style="margin:0">· ${h(fmt(f.at.slice(0,10)))}</span></span><button class="btn sm quiet" data-res="${f.id}">Done</button></div>`).join('')}</div>`:''}
       ${w?`<div class="card"><div class="label">This week</div>${staveWeek(w)}<div class="note" style="margin:0">${doneCount(w)} of ${w.sessions.length} days done · felt: ${(w.done||[]).map(x=>x.feel).filter(Boolean).join(', ')||'nothing logged yet'} · next lesson ${h(fmt(w.nextLesson))}</div>
         ${workTally(w).length?`<div class="label" style="margin-top:12px">Worked on most this week</div><ul class="ticks" style="margin-top:4px">${workTally(w).map(([it,c])=>`<li style="cursor:default"><span style="flex:1">${h(it)}</span><span class="pill on">${c} ${c===1?'day':'days'}</span></li>`).join('')}</ul>`:'<div class="note">What the pupil ticks after each session appears here, most-worked first, so you can plan the lesson.</div>'}
         <div class="note">Tokens: ${(d.tokens?.earned||0)-(d.tokens?.redeemed||0)} available. ${((d.tokens?.earned||0)-(d.tokens?.redeemed||0))>=6?'<button class="btn sm" id="award">Mark reward given'+(p.reward?' ('+h(p.reward)+')':'')+'</button>':''}</div></div>`:''}
